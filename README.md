@@ -8,7 +8,7 @@ establishing hierarchies of objects which have intrinsic knowledge of their resp
 
 ## Documentaion
 
-- Specific `module` documentation and examples moved to [the wiki](https://github.com/taskrabbit/sudojs/wiki).
+- Specific `module` documentation and examples moved to [the wiki](https://github.com/sudo-js/make-me-a-sandwich/wiki).
 - See the Docco annotated source code located in the docs directory.
 - Utilize the patterns and best practices docs in the [TechRabbit Blog](http://tech.taskrabbit.com/)
 
@@ -16,7 +16,7 @@ establishing hierarchies of objects which have intrinsic knowledge of their resp
 
 ### Methods Exposed by Module and Their Corresponding Wiki Page
 
-#### [Base](https://github.com/taskrabbit/sudojs/wiki/base)
+#### [Base](https://github.com/sudo-js/make-me-a-sandwich/wiki/base)
 
 + addDelegate(object)
 + getDelegate(role)
@@ -25,7 +25,7 @@ establishing hierarchies of objects which have intrinsic knowledge of their resp
 + construct([el][, data])
 + base(methodName[, args...])
 
-####[Model](https://github.com/taskrabbit/sudojs/wiki/model)
+####[Model](https://github.com/sudo-js/make-me-a-sandwich/wiki/model)
 
 + set(key, value)
 + setPath(path, value)
@@ -37,7 +37,7 @@ establishing hierarchies of objects which have intrinsic knowledge of their resp
 + unsetPath(path)
 + unsets(array)
 
-#### [Container](https://github.com/taskrabbit/sudojs/wiki/container)
+#### [Container](https://github.com/sudo-js/make-me-a-sandwich/wiki/container)
 
 + addChild(child, name)
 + getChild(_argument_)
@@ -46,7 +46,7 @@ establishing hierarchies of objects which have intrinsic knowledge of their resp
 + removeFromParent()
 + send(_arguments_)
 
-#### [View](https://github.com/taskrabbit/sudojs/wiki/view)
+#### [View](https://github.com/sudo-js/make-me-a-sandwich/wiki/view)
 
 + becomePremier
 + init
@@ -55,7 +55,7 @@ establishing hierarchies of objects which have intrinsic knowledge of their resp
 + $(selector)
 
 
-#### [observable extension](https://github.com/taskrabbit/sudojs/wiki/observable-extension)
+#### [observable extension](https://github.com/sudo-js/make-me-a-sandwich/wiki/observable-extension)
 
 + observe(fn)
 + observes(array)
@@ -65,20 +65,20 @@ establishing hierarchies of objects which have intrinsic knowledge of their resp
 
 ### Modules Residing in 'Extras'
 
-####[Change Delegate](https://github.com/taskrabbit/sudojs/wiki/change-delegate)
+####[Change Delegate](https://github.com/sudo-js/make-me-a-sandwich/wiki/change-delegate)
 
 + filter
 
-####[Data Delegate](https://github.com/taskrabbit/sudojs/wiki/data-delegate)
+####[Data Delegate](https://github.com/sudo-js/make-me-a-sandwich/wiki/data-delegate)
 
 + filter
 
-#### [listener extension](https://github.com/taskrabbit/sudojs/wiki/listener-extension)
+#### [listener extension](https://github.com/sudo-js/make-me-a-sandwich/wiki/listener-extension)
 
 + bindEvents
 + unbindEvents
 
-#### [persistable extension](https://github.com/taskrabbit/sudojs/wiki/persistable-extension)
+#### [persistable extension](https://github.com/sudo-js/make-me-a-sandwich/wiki/persistable-extension)
 
 + create([options])
 + read([options])
@@ -86,20 +86,20 @@ establishing hierarchies of objects which have intrinsic knowledge of their resp
 + destroy([options])
 + save([options])
 
-#### [DataView](https://github.com/taskrabbit/sudojs/wiki/dataview)
+#### [DataView](https://github.com/sudo-js/make-me-a-sandwich/wiki/dataview)
 
 + addedToParent(parent)
 + render([change])
 
-#### [template](https://github.com/taskrabbit/sudojs/wiki/template)
+#### [template](https://github.com/sudo-js/make-me-a-sandwich/wiki/template)
 
 + template(string, data, scope)
 
-#### [ViewController](https://github.com/taskrabbit/sudojs/wiki/viewcontroller)
+#### [ViewController](https://github.com/sudo-js/make-me-a-sandwich/wiki/viewcontroller)
 
 + instantiateChildren()
 
-#### [bindable extension](https://github.com/taskrabbit/sudojs/wiki/bindable-extension)
+#### [bindable extension](https://github.com/sudo-js/make-me-a-sandwich/wiki/bindable-extension)
 
 + setBinding()
 + setBindings()
