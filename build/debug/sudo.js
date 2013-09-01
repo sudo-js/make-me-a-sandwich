@@ -775,9 +775,7 @@ sudo.DataView = function(el, data) {
     this.autoRenderBlacklist = {event: true, events: true};
     // autoRender types observe their own model
     if(!this.model.observe) $.extend(this.model, sudo.extensions.observable);
-    // you may need to override `build` if you provide a template and the data
-    // isnt hydrated (as that is the expectation)
-  } else this.build();
+  }
   if(this.role === 'dataview') this.init();
 };
 // `private`
@@ -794,42 +792,25 @@ sudo.DataView.prototype.addedToParent = function(parent) {
   else this.observer = this.model.observe(this.render.bind(this));
   return this;
 };
-// ###build
-// Construct the innerHTML of the $el here so that the behavior of the
-// DataView, that the markup is ready after a subclass calls `this.construct`,
-// is the same as other View classes -- IF there is a template available
-// there may not be yet as some get added later by a ViewController
-sudo.DataView.prototype.build = function build() {
-  var t;
-  if(!(t = this.model.data.template)) return this;
-  if(typeof t === 'string') t = sudo.template(t);
-  this.$el.html(t(this.model.data));
-  this.built = true;
-  return this;
-};
-
 // ###removeFromParent
 // Remove this object from the DOM and its parent's list of children.
 // Overrides `sudo.View.removeFromParent` to unbind events and `remove` its $el 
-// as well if not passed a truthy value as 'keep', will `detach` its $el in that case
 //
-// `param` {bool} `keep` Optional arg to Call `detach` if truthy, `remove` by default
-// (if omitted or falsy)
 // `returns` {Object} `this`
-sudo.DataView.prototype.removeFromParent = function removeFromParent(keep) {
+sudo.DataView.prototype.removeFromParent = function removeFromParent() {
   this.parent.removeChild(this);
-  this.unbindEvents().$el[keep ? 'detach' : 'remove']();
+  this.unbindEvents().$el.remove();
   // in the case that this.model is 'foreign'
   if(this.observer) this.model.unobserve(this.observer);
   return this;
 };
 // ###render
-// (Re)hydrate the innerHTML of this object via its template and internal data store.
+// (Re)hydrate the innerHTML of this object via its template and data store.
 // If a `renderTarget` is present this Object will inject itself into the target via
 // `this.get('renderMethod')` or defualt to `$.append`. After injection, the `renderTarget`
-// is deleted from this Objects data store.
+// is deleted from this Objects data store (to prevent multiple injection).
 // Event unbinding/rebinding is generally not necessary for the Objects innerHTML as all events from the
-// Object's list of events (`this.get('event(s)'))` are delegated to the $el on instantiation.
+// Object's list of events (`this.get('event(s)'))` are delegated to the $el when added to parent.
 //
 // `param` {object} `change` dataviews may be observing their model if `autoRender: true`
 //
@@ -837,12 +818,11 @@ sudo.DataView.prototype.removeFromParent = function removeFromParent(keep) {
 sudo.DataView.prototype.render = function render(change) {
   // return early if a `blacklisted` key is set to my model
   if(change && this.autoRenderBlacklist[change.name]) return this;
-  // has `build` been executed already? If not call it again
-  if(!this.built) this.build();
-  // if there is no template by this point *you are doing it wrong*
-  // erase the flag
-  else this.built = false;
-  d = this.model.data;
+  var d = this.model.data;
+  // (re)hydrate the innerHTML
+  if(typeof d.template === 'string') d.template = sudo.template(d.template);
+  this.$el.html(d.template(d));
+  // am I in the dom yet?
   if(d.renderTarget) {
     this._normalizedEl_(d.renderTarget)[d.renderMethod || 'append'](this.$el);
     delete d.renderTarget;
@@ -1477,6 +1457,37 @@ sudo.extensions.persistable = {
     } else return base;
   }
 };
+//##Filtered Delegate
+
+// The base type for both the Data and Change delegates.
+//
+// `param` {Object} data
+sudo.delegates.Filtered = function(data) {
+  sudo.Model.call(this, data);
+};
+// The filtered delegate
+sudo.inherit(sudo.Model, sudo.delegates.Filtered);
+// ###addFilter
+// Place an entry into this object's hash of filters
+//
+// `param` {string} `key`
+// `param` {string} `val`
+// `returns` {object} this
+sudo.delegates.Filtered.prototype.addFilter = function addFilter(key, val) {
+  this.data.filters[key] = val;
+  return this;
+};
+// ###removeFilter
+// Remove an entry from this object's hash of filters
+//
+// `param` {string} `key`
+// `returns` {object} this
+sudo.delegates.Filtered.prototype.removeFilter = function removeFilter(key) {
+  delete this.data.filters[key];
+  return this;
+};
+// `private`
+sudo.delegates.Filtered.prototype.role = 'filtered';
 //##Change Delegate
 
 // Delegates, if present, can override or extend the behavior
@@ -1490,18 +1501,8 @@ sudo.extensions.persistable = {
 sudo.delegates.Change = function(data) {
   this.construct(data);
 };
-// Delegates inherit from Model
-sudo.delegates.Change.prototype = Object.create(sudo.Model.prototype);
-// ###addFilter
-// Place an entry into this object's hash of filters
-//
-// `param` {string} `key`
-// `param` {string} `val`
-// `returns` {object} this
-sudo.delegates.Change.prototype.addFilter = function addFilter(key, val) {
-  this.data.filters[key] = val;
-  return this;
-};
+// Delegates inherit from the Filtered Delegate
+sudo.delegates.Change.prototype = Object.create(sudo.delegates.Filtered.prototype);
 // ###filter
 // Change records are delivered here and filtered, calling any matching
 // methods specified in `this.get('filters').
@@ -1529,15 +1530,6 @@ sudo.delegates.Change.prototype.filter = function filter(change) {
     return this.delegator[filters[name]].call(this.delegator, obj);
   }
 };
-// ###removeFilter
-// Remove an entry from this object's hash of filters
-//
-// `param` {string} `key`
-// `returns` {object} this
-sudo.delegates.Change.prototype.removeFilter = function removeFilter(key) {
-  delete this.data.filters[key];
-  return this;
-};
 // `private`
 sudo.delegates.Change.prototype.role = 'change';
 //##Data Delegate
@@ -1553,18 +1545,8 @@ sudo.delegates.Change.prototype.role = 'change';
 sudo.delegates.Data = function(data) {
   this.construct(data);
 };
-// inherits from Model
-sudo.delegates.Data.prototype = Object.create(sudo.Model.prototype);
-// ###addFilter
-// Place an entry into this object's hash of filters
-//
-// `param` {string} `key`
-// `param` {string} `val`
-// `returns` {object} this
-sudo.delegates.Data.prototype.addFilter = function addFilter(key, val) {
-  this.data.filters[key] = val;
-  return this;
-};
+// inherits from the Filtered Delegate
+sudo.delegates.Data.prototype = Object.create(sudo.delegates.Filtered.prototype);
 // ###filter
 // iterates over a given object literal and returns a value (if present)
 // located at a given key or path
@@ -1588,15 +1570,6 @@ sudo.delegates.Data.prototype.filter = function(obj) {
         this.delegator, o[k]);
     }
   }
-};
-// ###removeFilter
-// Remove an entry from this object's hash of filters
-//
-// `param` {string} `key`
-// `returns` {object} this
-sudo.delegates.Data.prototype.removeFilter = function removeFilter(key) {
-  delete this.data.filters[key];
-  return this;
 };
 // `private`
 sudo.delegates.Data.prototype.role = 'data';

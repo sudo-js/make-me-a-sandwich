@@ -11,18 +11,8 @@
 sudo.delegates.Change = function(data) {
   this.construct(data);
 };
-// Delegates inherit from Model
-sudo.delegates.Change.prototype = Object.create(sudo.Model.prototype);
-// ###addFilter
-// Place an entry into this object's hash of filters
-//
-// `param` {string} `key`
-// `param` {string} `val`
-// `returns` {object} this
-sudo.delegates.Change.prototype.addFilter = function addFilter(key, val) {
-  this.data.filters[key] = val;
-  return this;
-};
+// Delegates inherit from the Filtered Delegate
+sudo.delegates.Change.prototype = Object.create(sudo.delegates.Filtered.prototype);
 // ###filter
 // Change records are delivered here and filtered, calling any matching
 // methods specified in `this.get('filters').
@@ -49,15 +39,6 @@ sudo.delegates.Change.prototype.filter = function filter(change) {
     }
     return this.delegator[filters[name]].call(this.delegator, obj);
   }
-};
-// ###removeFilter
-// Remove an entry from this object's hash of filters
-//
-// `param` {string} `key`
-// `returns` {object} this
-sudo.delegates.Change.prototype.removeFilter = function removeFilter(key) {
-  delete this.data.filters[key];
-  return this;
 };
 // `private`
 sudo.delegates.Change.prototype.role = 'change';

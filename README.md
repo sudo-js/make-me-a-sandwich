@@ -8,9 +8,8 @@ establishing hierarchies of objects which have intrinsic knowledge of their resp
 
 ## Documentaion
 
-- Specific `module` documentation and examples moved to [the wiki](https://github.com/sudo-js/make-me-a-sandwich/wiki).
+- Specific `module` documentation and examples moved to [the wiki](https://github.com/sudo-js/make-me-a-sandwich/wiki/_pages).
 - See the Docco annotated source code located in the docs directory.
-- Utilize the patterns and best practices docs in the [TechRabbit Blog](http://tech.taskrabbit.com/)
 
 ## API Reference
 
@@ -111,11 +110,6 @@ choice or, if you have Node.js installed you can `npm install node-static` then 
 serve the spec runner at `localhost:5678/specRunner.html`. This is useful, for me at least, for x-platform
 testing as I can just point virtual machines at the host. Note that individual spec files can be run from here as well, just
 adjust the path accordingly. The `sudo.Base` module for example could be run at `localhost:5678/base/specRunner.html`
-
-## Rails Gem
-
-A rather opinionated gem is available [here](https://github.com/robrobbins/sudojs-rails). More than just making sudo builds
-(sudo and sudo-x) available for your rails apps it enforces a rather unique workflow. More info there...
 
 ## Node.js Module
 

@@ -28,7 +28,6 @@ describe('sudo.js Dataview Object', function() {
       '</div>'
   });
 
-  // autoRender Dataview wont do much til added
   dv.addedToParent();
 
   it('!exists with the inner content', function() {
@@ -96,7 +95,7 @@ describe('sudo.js Dataview Object', function() {
     expect(spy.callCount).toBe(4);
   });
 
-  it('can remove itself from a parent ViewController', function() {
+  it('can remove itself from a parent View', function() {
     // reset dv	
     dv.$el.empty().remove();
     expect($('#testTarget').html()).toBeFalsy();
