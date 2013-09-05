@@ -1,4 +1,4 @@
-describe('Sudo Navigator Class -- PushState', function() {
+describe('Sudo Navigator Class -- QueryString', function() {
   var model = $.extend(new _.Model(), _.extensions.observable),
     nav = new _.Navigator({
       root: '/',

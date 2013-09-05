@@ -13,6 +13,31 @@ sudo.Navigator = function(data) {
 };
 // Navigator inherits from `sudo.Model`
 sudo.Navigator.prototype = Object.create(sudo.Model.prototype);
+// ###buildPath
+// Put together a path from the arguments passed in.
+// If you want a hash paramaterized pass it as the last arg.
+//
+// `params` {*} N number of path fragments
+// `returns` {string} /a/completed/path?withParams=ifPresent
+sudo.Navigator.prototype.buildPath = function getPath() {
+  var args = Array.prototype.slice.call(arguments), query;
+  // check if the last arg is a hash
+  if(typeof args[args.length - 1] === 'object') {
+    query = this.getQuery(args.pop());
+  }
+  return this.data.root + args.join('/') + (query || '');
+};
+// ###buildRelativePath
+// Extend the already existing getUrl type functionality with the ability to append
+// to that path as well as paramaterize a hash
+//
+// `params` {*} N number of path fragments
+// `returns` {string} /a/completed/path?withParams=ifPresent
+sudo.Navigator.prototype.buildRelativePath = function getRelativePath() {
+  var args = Array.prototype.slice.call(arguments);
+  args.unshift(this.data.fragment);
+  return this.buildPath.apply(this, args);
+};
 // ###getFragment
 // 'Fragment' is defined as any URL information after the 'root' path
 // including the `search` or `hash`
@@ -44,20 +69,6 @@ sudo.Navigator.prototype.getHash = function getHash(fragment) {
   var match = fragment.match(/#(.*)$/);
   return match ? match[1] : '';
 };
-// ###buildPath
-// Put together a path from the arguments passed in.
-// If you want a hash paramaterized pass it as the last arg.
-//
-// `params` {*} N number of path fragments
-// `returns` {string} /a/completed/path?withParams=ifPresent
-sudo.Navigator.prototype.buildPath = function getPath() {
-  var args = Array.prototype.slice.call(arguments), query;
-  // check if the last arg is a hash
-  if(typeof args[args.length - 1] === 'object') {
-    query = this.getQuery(args.pop());
-  }
-  return this.data.root + args.join('/') + (query || '');
-};
 // ###getQuery
 // Take a hash and convert it to a `search` query. Reuse
 // Zepto|jQuery `param` method
@@ -67,17 +78,7 @@ sudo.Navigator.prototype.buildPath = function getPath() {
 sudo.Navigator.prototype.getQuery = function getQuery(obj) {
   return '?' + ($.param(obj));
 };
-// ###buildRelativePath
-// Extend the already existing getUrl type functionality with the ability to append
-// to that path as well as paramaterize a hash
-//
-// `params` {*} N number of path fragments
-// `returns` {string} /a/completed/path?withParams=ifPresent
-sudo.Navigator.prototype.buildRelativePath = function getRelativePath() {
-  var args = Array.prototype.slice.call(arguments);
-  args.unshift(this.data.fragment);
-  return this.buildPath.apply(this, args);
-};
+
 // ###getSearch
 // Check either the passed in fragment, or the full location.href
 // for a `search` value
