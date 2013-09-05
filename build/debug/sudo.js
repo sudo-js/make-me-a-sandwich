@@ -871,11 +871,45 @@ sudo.Navigator.prototype.getFragment = function getFragment(fragment) {
 // for a `hash` value
 //
 // `param` {string} `fragment` Optional fragment to check
-// `returns` {String} the normalized current `hash`
+// `returns` {string} the normalized current `hash`
 sudo.Navigator.prototype.getHash = function getHash(fragment) {
   fragment || (fragment = window.location.href);
   var match = fragment.match(/#(.*)$/);
   return match ? match[1] : '';
+};
+// ###buildPath
+// Put together a path from the arguments passed in.
+// If you want a hash paramaterized pass it as the last arg.
+//
+// `params` {*} N number of path fragments
+// `returns` {string} /a/completed/path?withParams=ifPresent
+sudo.Navigator.prototype.buildPath = function getPath() {
+  var args = Array.prototype.slice.call(arguments), query;
+  // check if the last arg is a hash
+  if(typeof args[args.length - 1] === 'object') {
+    query = this.getQuery(args.pop());
+  }
+  return this.data.root + args.join('/') + (query || '');
+};
+// ###getQuery
+// Take a hash and convert it to a `search` query. Reuse
+// Zepto|jQuery `param` method
+//
+// `param` {object} `obj`
+// `returns` {string} the serialized query string
+sudo.Navigator.prototype.getQuery = function getQuery(obj) {
+  return '?' + ($.param(obj));
+};
+// ###buildRelativePath
+// Extend the already existing getUrl type functionality with the ability to append
+// to that path as well as paramaterize a hash
+//
+// `params` {*} N number of path fragments
+// `returns` {string} /a/completed/path?withParams=ifPresent
+sudo.Navigator.prototype.buildRelativePath = function getRelativePath() {
+  var args = Array.prototype.slice.call(arguments);
+  args.unshift(this.data.fragment);
+  return this.buildPath.apply(this, args);
 };
 // ###getSearch
 // Check either the passed in fragment, or the full location.href
@@ -976,7 +1010,7 @@ sudo.Navigator.prototype.start = function start() {
     (!hasPushState && 'onhashchange' in window);
   this.isPushState = !this.isHashChange && !!hasPushState;
   // normalize the root to always contain a leading and trailing slash
-  this.data['root'] = ('/' + this.data['root'] + '/').replace(this.slashStripper, '/');
+  this.data.root = ('/' + this.data.root + '/').replace(this.slashStripper, '/');
   // Get a snapshot of the current fragment
   this.urlChanged();
   // monitor URL changes via popState or hashchange
@@ -985,18 +1019,18 @@ sudo.Navigator.prototype.start = function start() {
   } else if (this.isHashChange) {
     $(window).on('hashchange', this.handleChange.bind(this));
   } else return;
-  atRoot = window.location.pathname.replace(/[^\/]$/, '$&/') === this.data['root'];
+  atRoot = window.location.pathname.replace(/[^\/]$/, '$&/') === this.data.root;
   // somehow a URL got here not in my 'format', unless explicitly told not too, correct this
   if(!this.data.stay) {
    if(this.isHashChange && !atRoot) {
-      window.location.replace(this.data['root'] + window.location.search + '#' + 
+      window.location.replace(this.data.root + window.location.search + '#' + 
         this.data.fragment);
       // return early as browser will redirect
       return true;
       // the converse of the above
     } else if(this.isPushState && atRoot && window.location.hash) {
       tmp = this.getHash().replace(this.leadingStripper, '');
-      window.history.replaceState({}, document.title, this.data['root'] + 
+      window.history.replaceState({}, document.title, this.data.root + 
         tmp + window.location.search);
     } 
   }
