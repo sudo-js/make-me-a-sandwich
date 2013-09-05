@@ -5,7 +5,7 @@ describe('Sudo Navigator Class -- PushState', function() {
       observable: model
     });
 
-  var anchor = $('<a></a>').attr('href', 'http://www.foo.com?query=someQuery');
+  var anchor = $('<a></a>').attr('href', 'http://www.foo.com?query=bar');
 
   // override the go function so as not to actually go anywhere
   nav.go = function(fragment) {
@@ -67,7 +67,26 @@ describe('Sudo Navigator Class -- PushState', function() {
 
   it('should parse query string', function() {
     var $a = nav.start(anchor);
-    expect(nav.get('query')).toEqual('query=someQuery');
+    expect(nav.get('query')).toEqual('query=bar');
+  });
+
+  it('puts together an N part path', function() {
+    expect(nav.buildPath('bar', 123)).toEqual('/bar/123');
+    expect(nav.buildPath('bar', 123, 'baz')).toEqual('/bar/123/baz');
+    expect(nav.buildPath('bar', 123, 'baz', 45)).toEqual('/bar/123/baz/45');
+  });
+
+  it('puts together an N part path with the relative root', function() {
+    nav.go('bar');
+    expect(nav.buildRelativePath('baz')).toEqual('/bar/baz');
+    expect(nav.buildRelativePath(123, 'baz')).toEqual('/bar/123/baz');
+    expect(nav.buildRelativePath(123, 'baz', 45)).toEqual('/bar/123/baz/45');
+  });
+
+  it('can serialize a params obj', function() {
+    expect(nav.buildPath('baz', {qom: 'vap'})).toEqual('/baz?qom=vap');
+    nav.go('baz');
+    expect(nav.buildRelativePath('dib', {gip: 'det'})).toEqual('/baz/dib?gip=det');
   });
 
 });
