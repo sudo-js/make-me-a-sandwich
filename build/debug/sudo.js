@@ -479,8 +479,10 @@ sudo.Container.prototype.removeChild = function removeChild(arg) {
 // rather than the default `remove` if truthy
 // `returns` {object} `this`
 sudo.Container.prototype.removeChildren = function removeChildren(keep) {
-  while(this.children.length) {
-    this.children.shift().removeFromParent(keep);
+  // use the child names hash to avoid loop modification errors
+  var keys = Object.keys(this.childNames), i;
+  for (i = 0; i < keys.length; i++) {
+    this.getChild(keys[i]).removeFromParent(keep);
   }
   return this;
 };
