@@ -59,7 +59,7 @@ sudo.delegates.infiniteScroll.prototype = {
   },
   // force the scroll to the bottom of the scrollable
   toBottom: function toBottom() {
-    this.$scrollable[0].scrollTop = this.$container.height();
+    this.$scrollable[0].scrollTop = this.$scrollable[0].scrollHeight;
     return this;
   },
   // force the scroll to the top of the scrollable
