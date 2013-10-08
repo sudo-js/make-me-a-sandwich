@@ -432,7 +432,7 @@ sudo.Container.prototype.getChild = function getChild(id) {
 };
 // ###_indexChildren_
 // Method is called with the `index` property of a subview that is being removed.
-// Beginning at <i> decrement subview indices.
+// Beginning at `i` decrement subview indices.
 // `param` {Number} `i`
 // `private`
 sudo.Container.prototype._indexChildren_ = function _indexChildren_(i) {
@@ -591,13 +591,15 @@ sudo.View.prototype.becomePremier = function becomePremier() {
 // the el needs to be normalized before use
 // `private`
 sudo.View.prototype._normalizedEl_ = function _normalizedEl_(el) {
-  if(typeof el === 'string') {
-    return $(el);
-  } else {
-    // Passed an already `querified` Element?
-    // It will have a length of 1 if so.
-    return el.length ? el : $(el);
-  }	
+  // Passed an already `querified` Element?
+  // It will have a length of 1 if so.
+  if(typeof el !== 'string' && el.length) return el;
+  // string or DOM node
+  var _el = $(el);
+  // if there is not a top level query returned the desired node may be 
+  // in a document fragment not in the DOM yet. We will check the parent's $el
+  // if available, or return the empty query
+  return _el.length ? _el : (this.parent ? this.parent.$(el) : _el);
 };
 // ### resignPremier
 // Resign premier status
