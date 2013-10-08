@@ -94,7 +94,7 @@ sudo.Container.prototype.getChild = function getChild(id) {
 };
 // ###_indexChildren_
 // Method is called with the `index` property of a subview that is being removed.
-// Beginning at <i> decrement subview indices.
+// Beginning at `i` decrement subview indices.
 // `param` {Number} `i`
 // `private`
 sudo.Container.prototype._indexChildren_ = function _indexChildren_(i) {
