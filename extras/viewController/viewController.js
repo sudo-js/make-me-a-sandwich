@@ -41,7 +41,6 @@ sudo.ViewController = function(el, data) {
     if('descriptor' in data) this.instantiateChildren([data.descriptor]);
     else if('descriptors' in data) this.instantiateChildren();
   }
-  if(this.role === 'viewController') this.init();
 };
 // ViewController inherits from View.
 // `private`

@@ -16,13 +16,12 @@ sudo.DataView = function(el, data) {
   sudo.View.call(this, el, data);
   // implements the listener extension
   $.extend(this, sudo.extensions.listener);
+  // dont autoRender on the setting of events,
+  this.autoRenderBlacklist = {event: true, events: true};
+  // autoRender types observe their own model
   if(this.model.data.autoRender) {
-    // dont autoRender on the setting of events,
-    this.autoRenderBlacklist = {event: true, events: true};
-    // autoRender types observe their own model
     if(!this.model.observe) $.extend(this.model, sudo.extensions.observable);
   }
-  if(this.role === 'dataview') this.init();
 };
 // `private`
 sudo.inherit(sudo.View, sudo.DataView);
