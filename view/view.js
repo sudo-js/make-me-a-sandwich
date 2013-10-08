@@ -25,7 +25,6 @@ sudo.View = function(el, data) {
       this.model = new sudo.Model(data);
   } 
   this.setEl(el);
-  if(this.role === 'view') this.init();
 };
 // View inherits from Container
 // `private`
@@ -47,10 +46,6 @@ sudo.View.prototype.becomePremier = function becomePremier() {
   } else f(); // no existing premier
   return this;
 };
-// ###init
-// A 'contruction-time' hook to call for further initialization needs in 
-// View objects (and their subclasses). A noop by default child classes should override.
-sudo.View.prototype.init = $.noop;
 // the el needs to be normalized before use
 // `private`
 sudo.View.prototype._normalizedEl_ = function _normalizedEl_(el) {
