@@ -217,8 +217,8 @@ sudo.extensions.observable = {
   unsets: function unsets(ary, hold) {
     var i;
     for(i = 0; i < ary.length; i++) {
-      ary[i].indexOf('.') === -1 ? this.unset(k[i], true) :
-        this.unsetPath(k[i], true);
+      ary[i].indexOf('.') === -1 ? this.unset(ary[i], true) :
+        this.unsetPath(ary[i], true);
     }
     if(hold) return this;
     return this.deliverChangeRecords();	
