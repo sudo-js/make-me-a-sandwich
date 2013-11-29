@@ -674,7 +674,7 @@ sudo.escapes = {};
     u2028: '\u2028',
     u2029: '\u2029'
   };
-  for (var key in e) s.escapes[e[key]] = key;
+  for (var key in e) if(e.hasOwnProperty(key)) s.escapes[e[key]] = key;
 }(sudo));
 // lookup hash for `escape`
 //
@@ -729,7 +729,7 @@ sudo.unescape = function unescape(str) {
 // `param` {string} `scope`. Optional context name of your `data object`, set to 'data' if falsy.
 sudo.template = function template(str, data, scope) {
   scope || (scope = 'data');
-  var settings = sudo.templateSettings, render, template,
+  var settings = sudo.templateSettings, render, tmpl,
   // Compile the template source, taking care to escape characters that
   // cannot be included in a string literal and then unescape them in code blocks.
   source = "_p+='" + str.replace(sudo.escaper, function(match) {
@@ -744,12 +744,12 @@ sudo.template = function template(str, data, scope) {
   source = "var _t,_p='';" + source + "return _p;\n";
   render = new Function(scope, source);
   if (data) return render(data);
-  template = function(data) {
+  tmpl = function(data) {
     return render.call(this, data);
   };
   // Provide the compiled function source as a convenience for reflection/compilation
-  template.source = 'function(' + scope + '){\n' + source + '}';
-  return template;
+  tmpl.source = 'function(' + scope + '){\n' + source + '}';
+  return tmpl;
 };
 // ##DataView Class Object
 
@@ -952,7 +952,7 @@ sudo.Navigator.prototype.go = function go(fragment) {
 // triggering change observers
 //
 // `returns` {*} call to `setData` or undefined
-sudo.Navigator.prototype.handleChange = function handleChange(e) {
+sudo.Navigator.prototype.handleChange = function handleChange() {
   if(this.urlChanged()) {
     return this.setData();
   }
@@ -1000,7 +1000,7 @@ sudo.Navigator.prototype.setData = function setData() {
 //
 // `returns` {object} `this`
 sudo.Navigator.prototype.start = function start() {
-  var hasPushState, atRoot, loc, tmp;
+  var hasPushState, atRoot, tmp;
   if(this.started) return;
   hasPushState = window.history && window.history.pushState;
   this.started = true;
@@ -1409,7 +1409,7 @@ sudo.extensions.persistable = {
     opts.global || (opts.global = false);
     // the default success callback is to set the data returned from the server
     // or just the status as `ajaxStatus` if no data was returned
-    opts.success || (opts.success = function(data, status, xhr) {
+    opts.success || (opts.success = function(data, status) {
       data ? this.sets((isJson && typeof data === 'string') ? JSON.parse(data) : data) : 
         this.set('ajaxStatus', status);
     }.bind(this));
@@ -1447,7 +1447,7 @@ sudo.extensions.persistable = {
   //
   // `returns` {object} Xhr
   _sendData_: function _sendData_(meth, params) {
-    opts = $.extend({}, this.data.ajax);
+    var opts = $.extend({}, this.data.ajax);
     opts.contentType || (opts.contentType = 'application/json');
     opts.data || (opts.data = this.data);
     // assure that, in the default json case, opts.data is json

@@ -58,7 +58,7 @@ sudo.extensions.persistable = {
     opts.global || (opts.global = false);
     // the default success callback is to set the data returned from the server
     // or just the status as `ajaxStatus` if no data was returned
-    opts.success || (opts.success = function(data, status, xhr) {
+    opts.success || (opts.success = function(data, status) {
       data ? this.sets((isJson && typeof data === 'string') ? JSON.parse(data) : data) : 
         this.set('ajaxStatus', status);
     }.bind(this));
@@ -96,7 +96,7 @@ sudo.extensions.persistable = {
   //
   // `returns` {object} Xhr
   _sendData_: function _sendData_(meth, params) {
-    opts = $.extend({}, this.data.ajax);
+    var opts = $.extend({}, this.data.ajax);
     opts.contentType || (opts.contentType = 'application/json');
     opts.data || (opts.data = this.data);
     // assure that, in the default json case, opts.data is json

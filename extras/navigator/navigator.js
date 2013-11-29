@@ -121,7 +121,7 @@ sudo.Navigator.prototype.go = function go(fragment) {
 // triggering change observers
 //
 // `returns` {*} call to `setData` or undefined
-sudo.Navigator.prototype.handleChange = function handleChange(e) {
+sudo.Navigator.prototype.handleChange = function handleChange() {
   if(this.urlChanged()) {
     return this.setData();
   }
@@ -169,7 +169,7 @@ sudo.Navigator.prototype.setData = function setData() {
 //
 // `returns` {object} `this`
 sudo.Navigator.prototype.start = function start() {
-  var hasPushState, atRoot, loc, tmp;
+  var hasPushState, atRoot, tmp;
   if(this.started) return;
   hasPushState = window.history && window.history.pushState;
   this.started = true;

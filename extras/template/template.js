@@ -24,7 +24,7 @@ sudo.escapes = {};
     u2028: '\u2028',
     u2029: '\u2029'
   };
-  for (var key in e) s.escapes[e[key]] = key;
+  for (var key in e) if(e.hasOwnProperty(key)) s.escapes[e[key]] = key;
 }(sudo));
 // lookup hash for `escape`
 //
@@ -79,7 +79,7 @@ sudo.unescape = function unescape(str) {
 // `param` {string} `scope`. Optional context name of your `data object`, set to 'data' if falsy.
 sudo.template = function template(str, data, scope) {
   scope || (scope = 'data');
-  var settings = sudo.templateSettings, render, template,
+  var settings = sudo.templateSettings, render, tmpl,
   // Compile the template source, taking care to escape characters that
   // cannot be included in a string literal and then unescape them in code blocks.
   source = "_p+='" + str.replace(sudo.escaper, function(match) {
@@ -94,10 +94,10 @@ sudo.template = function template(str, data, scope) {
   source = "var _t,_p='';" + source + "return _p;\n";
   render = new Function(scope, source);
   if (data) return render(data);
-  template = function(data) {
+  tmpl = function(data) {
     return render.call(this, data);
   };
   // Provide the compiled function source as a convenience for reflection/compilation
-  template.source = 'function(' + scope + '){\n' + source + '}';
-  return template;
+  tmpl.source = 'function(' + scope + '){\n' + source + '}';
+  return tmpl;
 };
