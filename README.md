@@ -106,10 +106,10 @@ establishing hierarchies of objects which have intrinsic knowledge of their resp
 ## Test Suite
 
 The `specRunner.html` file in `root` runs each individual module's specs. Load it as a file in your browser of
-choice or, if you have Node.js installed you can `npm install node-static` then `node staticServer.js` which will
-serve the spec runner at `localhost:5678/specRunner.html`. This is useful, for me at least, for x-platform
+choice or, if you have Node.js installed you can `npm install http-server` then execute `http-server` from the project root which will
+serve the spec runner at `localhost:8080/specRunner.html`. This is useful, for me at least, for x-platform
 testing as I can just point virtual machines at the host. Note that individual spec files can be run from here as well, just
-adjust the path accordingly. The `sudo.Base` module for example could be run at `localhost:5678/base/specRunner.html`
+adjust the path accordingly. The `sudo.Base` module for example could be run at `localhost:8080/base/specRunner.html`
 
 ## Node.js Module
 
@@ -122,16 +122,16 @@ the `Observable` extension. The `sudo.js` build tool is built with this.
 
 ## Build Tool
 
-The latest concatonated (but unminified) version of `sudo.js` (and `sudo-x.js` [sudo.js with added stuff]) is always
+The latest concatonated (but unminified) version of `sudo.js` is always
 located in `build/debug`. If you are making changes, adding new modules, or creating a custom build and need the `debug/`
 files to be rebuilt `cd` into the `build/lib` directory and run:
 
-    node run sudo.html [sudo-basic.html] [foo.html] ...
+    node build sudo.html [sudo-basic.html] [foo.html] ...
 
 Note that the `foo.html` above would represent an HTML configuration file you created for a custom build of sudo.js.
 
-You will need `Node.js` installed as well as the `sudoclass` module mentioned above. The arguments that follow the invocation of
-`run` are the html files that the build tool uses to load the 'modules'. If you are adding new 'modules'
+You will need `Node.js` installed as well as the `sudoclass` module mentioned above along with the `jsdom` and `walk` modules (both available via npm). The arguments that follow the invocation of
+`build` are the html files that the build tool uses to load the 'modules'. If you are adding new 'modules'
 be sure to add them to sudo.html (and/or other foo.html) config file(s) or they will not be added to the concatonated `debug/` file(s).
 
 ### Extras
