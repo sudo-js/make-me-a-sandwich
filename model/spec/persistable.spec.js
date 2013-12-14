@@ -116,4 +116,23 @@ describe('Sudo Model persistance', function() {
     expect(model.get('ajaxStatus')).toBe('DELETE sent to /camelot/47');
   });
 
+  it('Removes the items in the serverDataBlacklist', function() {
+    // now just return what showed up
+    $.ajax = function(opts) {return JSON.parse(opts.data);};
+    
+    model.sets({
+      template: '<section></section>',
+      renderTarget: '#camelot',
+      renderMethod: 'spanking'
+    });
+    
+    var res = model.save();
+    
+    expect(('name' in res)).toBe(true);    
+    expect(('occupation' in res)).toBe(true);
+    expect(('ajax' in res)).toBe(false);
+    expect(('renderTarget' in res)).toBe(false);
+    expect(('renderMethod' in res)).toBe(false);
+    expect(('template' in res)).toBe(false);
+  });
 });

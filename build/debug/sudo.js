@@ -754,7 +754,7 @@ sudo.template = function template(str, data, scope) {
 // ##DataView Class Object
 
 // Create an instance of an Object, inheriting from sudo.View that:
-// 1. Expects to have a template located in its internal data Store accessible via `this.get('template')`.
+// 1. Expects to have a template located in its internal data Store accessible via `this.model.get('template')`.
 // 2. Can have a `renderTarget` property in its data store. If so this will be the location
 //		the child injects itself into (if not already in) the DOM
 // 3. Can have a 'renderMethod' property in its data store. If so this is the jQuery method
@@ -1416,6 +1416,19 @@ sudo.extensions.persistable = {
     // allow the passed in params to override any set in this model's `ajax` options
     return params ? $.extend(opts, params) : opts;
   },
+  // ###_prepareData_
+  // In the default state, that is to data is explicitly passed to them, save
+  // type operations will pass this model's data hash here to be cloned and have
+  // the items in the blacklist removed
+  // `param` {object} `data`
+  // `returns` {object} A clone of this models data hash minus the blacklisted keys
+  _prepareData_: function _prepareData_(data) {
+    var keys = Object.keys(data), len = keys.length, res = {}, i;
+    for(i = 0; i < len; i++) {
+      if(!(keys[i] in this.serverDataBlacklist)) res[keys[i]] = data[keys[i]];
+    }
+    return res;
+  },
   // ###read
   //
   // Fetch this models state from the server and set it here. The 
@@ -1449,7 +1462,7 @@ sudo.extensions.persistable = {
   _sendData_: function _sendData_(meth, params) {
     var opts = $.extend({}, this.data.ajax);
     opts.contentType || (opts.contentType = 'application/json');
-    opts.data || (opts.data = this.data);
+    opts.data || (opts.data = this._prepareData_(this.data));
     // assure that, in the default json case, opts.data is json
     if(opts.contentType === 'application/json' && (typeof opts.data !== 'string')) {
       opts.data = JSON.stringify(opts.data); 
@@ -1457,6 +1470,15 @@ sudo.extensions.persistable = {
     // non GET requests do not 'processData'
     if(!('processData' in opts)) opts.processData = false;
     return $.ajax(this._normalizeParams_(meth, opts, params));
+  },
+  // ###serverDataBlacklist
+  // Keys present in this hash will be removed from the object sent to the server
+  // on a save type operation if no data was passed explicitly to that method
+  serverDataBlacklist: {
+    ajax: true,
+    renderMethod: true,
+    renderTarget: true,
+    template: true
   },
   // ###update
   //

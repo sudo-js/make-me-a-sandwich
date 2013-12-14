@@ -1,7 +1,7 @@
 // ##DataView Class Object
 
 // Create an instance of an Object, inheriting from sudo.View that:
-// 1. Expects to have a template located in its internal data Store accessible via `this.get('template')`.
+// 1. Expects to have a template located in its internal data Store accessible via `this.model.get('template')`.
 // 2. Can have a `renderTarget` property in its data store. If so this will be the location
 //		the child injects itself into (if not already in) the DOM
 // 3. Can have a 'renderMethod' property in its data store. If so this is the jQuery method
