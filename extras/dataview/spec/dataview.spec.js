@@ -1,3 +1,4 @@
+/*global spyOn*/
 describe('sudo.js Dataview Object', function() {
   
   var DV = function(el, data) {
@@ -16,7 +17,7 @@ describe('sudo.js Dataview Object', function() {
       'class': 'eggs'
     },
     renderTarget: '#testTarget',
-    autoRender: true, 
+    renderOnModelChange: true, 
     template: '' +
       '<div id="one">' +
         '<span>{{= data.sayingOne }}</span>' +
@@ -27,10 +28,15 @@ describe('sudo.js Dataview Object', function() {
         '<button class="second">{{= data.buttonTwoValue }}</button>' +
       '</div>'
   });
+  
+  it('has not rendered yet', function() {
+    expect($('#testTarget').html()).toBeFalsy();
+  });
 
   dv.addedToParent();
 
-  it('!exists with the inner content', function() {
+  it('exists, but without the inner content', function() {
+    expect($('#testTarget').html()).toBeFalsy();
     expect(dv.$el.html()).toBeFalsy();
   });
 
@@ -41,6 +47,8 @@ describe('sudo.js Dataview Object', function() {
       sayingTwo: "You were in terrible peril.",
       buttonTwoValue: "I bet you're gay"
     });
+    
+    expect($('#testTarget').html()).toBeTruthy();
 
     expect(dv.$('#one span').text()).toBe("Let's not bicker and argue over who killed who.");
     expect(dv.$('#one button').text()).toBe("I'm not worthy");
@@ -95,19 +103,57 @@ describe('sudo.js Dataview Object', function() {
     expect(spy.callCount).toBe(4);
   });
 
-  it('can remove itself from a parent View', function() {
-    // reset dv	
-    dv.$el.empty().remove();
-    expect($('#testTarget').html()).toBeFalsy();
+  it('can insert and remove itself from a parent View', function() {
+    var dv2 = new sudo.DataView(null, {
+      attributes: {
+        id: 'spam', 
+        'class': 'eggs'
+      },
+      renderTarget: '#testTarget', 
+      template: '<div id="two"></div>'
+    });
 
     var vc = new sudo.View('#testTarget');
+    vc.$el.empty();
+    
+    expect($('#testTarget').html()).toBeFalsy();
 
-    dv.model.set('renderTarget', vc.$el);
-    vc.addChild(dv);
+    dv2.model.sets({
+      renderTarget: vc.$el,
+      // test the auto render on added option
+      renderOnAddedToParent: true
+    });
+    
+    vc.addChild(dv2);
     expect($('#testTarget').html()).toBeTruthy();
 
-    dv.removeFromParent();
+    dv2.removeFromParent();
     expect($('#testTarget').html()).toBeFalsy();
+  });
+  
+  it('does no rendering in the default state', function() {
+    var dv2 = new sudo.DataView(null, {
+      attributes: {
+        id: 'spam', 
+        'class': 'eggs'
+      },
+      renderTarget: '#testTarget', 
+      template: '<div id="two"></div>'
+    });
+
+    var vc = new sudo.View('#testTarget');
+    vc.$el.empty();
+    
+    expect($('#testTarget').html()).toBeFalsy();
+
+    dv2.model.set('renderTarget', vc.$el);
+    
+    vc.addChild(dv2);
+    
+    expect($('#testTarget').html()).toBeFalsy();
+
+    dv2.render();
+    expect($('#testTarget').html()).toBeTruthy();
   });
   
 });
