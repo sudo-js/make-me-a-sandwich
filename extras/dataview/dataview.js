@@ -18,23 +18,31 @@ sudo.DataView = function(el, data) {
   $.extend(this, sudo.extensions.listener);
   // dont autoRender on the setting of events,
   this.autoRenderBlacklist = {event: true, events: true};
-  // autoRender types observe their own model
-  if(this.model.data.autoRender) {
+  // renderOnModelChange types observe their own model
+  if(this.model.data.renderOnModelChange) {
     if(!this.model.observe) $.extend(this.model, sudo.extensions.observable);
   }
 };
 // `private`
 sudo.inherit(sudo.View, sudo.DataView);
 // ###addedToParent
-// Container's will check for the presence of this method and call it if it is present
-// after adding a child - essentially, this will auto render the dataview when added to a parent
-// if not an autoRender (which will render on model change), as well as setup the events (in children too)
+// Container's will check for the presence of this method and call it if it is present.
+// Options affecting this method are: 
+// `renderOnModelChange`: render not called until this view's model is changed via
+// a `set`, `sets` or `unsets` operation.
+// `renderOnAddedToParent`: render is called from this method.
+// If neither is set in this view's model it is up to the developer to call render().
+// Regardless of the rendering options any events in the `event(s)` property are bound
+//
+// `param` {object} `parent` this view's parent
+// `returns` {object} `this`
 sudo.DataView.prototype.addedToParent = function(parent) {
   this.bindEvents();
-  // non-autoRender types should render now
-  if(!this.model.data.autoRender) return this.render();
-  // autoRender Dataviews should only render on model change
-  else this.observer = this.model.observe(this.render.bind(this));
+  if(this.model.data.renderOnAddedToParent) return this.render();
+  else if(this.model.data.renderOnModelChange) {
+    this.observer = this.model.observe(this.render.bind(this));
+    return this;
+  }
   return this;
 };
 // ###removeFromParent
@@ -46,7 +54,10 @@ sudo.DataView.prototype.removeFromParent = function removeFromParent() {
   this.parent.removeChild(this);
   this.unbindEvents().$el.remove();
   // in the case that this.model is 'foreign'
-  if(this.observer) this.model.unobserve(this.observer);
+  if(this.observer) {
+    this.model.unobserve(this.observer);
+    delete this.observer;
+  }
   return this;
 };
 // ###render

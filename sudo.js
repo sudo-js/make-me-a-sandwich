@@ -21,11 +21,8 @@ var sudo = {
     var key, p;
     p = path.split('.');
     for (key; p.length && (key = p.shift());) {
-      if(!p.length) {
-        return obj[key];
-      } else {
-        obj = obj[key] || {};
-      }
+      if(!p.length) return obj[key];
+      else obj = obj[key] || {};
     }
     return obj;
   },
@@ -74,13 +71,9 @@ var sudo = {
   setPath: function setPath(path, value, obj) {
     var p = path.split('.'), key;
     for (key; p.length && (key = p.shift());) {
-      if(!p.length) {
-        obj[key] = value;
-      } else if (obj[key]) {
-        obj = obj[key];
-      } else {
-        obj = obj[key] = {};
-      }
+      if(!p.length) obj[key] = value;
+      else if (obj[key]) obj = obj[key];
+      else obj = obj[key] = {};
     }
   },
   // ####uid
@@ -104,13 +97,10 @@ var sudo = {
   unsetPath: function unsetPath(path, obj) {
     var p = path.split('.'), key;
     for (key; p.length && (key = p.shift());) {
-      if(!p.length) {
-        delete obj[key];
-      } else {
-        // this can fail if a faulty path is passed.
-        // using getPath beforehand can prevent that
-        obj = obj[key];
-      }
+      if(!p.length) delete obj[key];
+      // this can fail if a faulty path is passed.
+      // using getPath beforehand can prevent that
+      else obj = obj[key];
     }
   }
 };
