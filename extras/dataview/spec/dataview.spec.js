@@ -1,3 +1,4 @@
+/*global spyOn*/
 describe('sudo.js Dataview Object', function() {
   
   var DV = function(el, data) {
@@ -31,7 +32,7 @@ describe('sudo.js Dataview Object', function() {
   dv.addedToParent();
 
   it('!exists with the inner content', function() {
-    expect(dv.$el.html()).toBeFalsy();
+    expect(dv.el.innerHTML).toBeFalsy();
   });
 
   it('renders correctly', function() {
@@ -42,10 +43,10 @@ describe('sudo.js Dataview Object', function() {
       buttonTwoValue: "I bet you're gay"
     });
 
-    expect(dv.$('#one span').text()).toBe("Let's not bicker and argue over who killed who.");
-    expect(dv.$('#one button').text()).toBe("I'm not worthy");
-    expect(dv.$('#two span').text()).toBe("You were in terrible peril.");
-    expect(dv.$('#two button').text()).toBe("I bet you're gay");
+    expect(dv.$('#one span').textContent).toBe("Let's not bicker and argue over who killed who.");
+    expect(dv.$('#one button').textContent).toBe("I'm not worthy");
+    expect(dv.$('#two span').textContent).toBe("You were in terrible peril.");
+    expect(dv.$('#two button').textContent).toBe("I bet you're gay");
   });
 
   it('deleted the renderTarget', function() {
@@ -53,61 +54,88 @@ describe('sudo.js Dataview Object', function() {
   });
 
   it('has not yet bound the click event', function() {
+    var evt = document.createEvent('MouseEvent');
+    evt.initMouseEvent("click", true, true, window,
+      0, 0, 0, 0, 0, false, false, false, false, 0, null);
     var spy = spyOn(dv, 'buttonClicked');
-    dv.$('button').trigger('click');
-    expect(spy.callCount).toBe(0);	
+    dv.$('button').dispatchEvent(evt);
+    expect(spy.callCount).toBe(0);
   });
 
   it('has delegated the event, maintaining it even when html is refreshed', function() {
-    var spy = spyOn(dv, 'buttonClicked').andCallThrough();
-    // set and bind after spy declaration or jasmine won't see it
-    dv.model.set('event', {
-      name: 'click',
-      sel: 'button',
-      fn: 'buttonClicked'
-    });
-    dv.bindEvents();
+    var ary, evt = document.createEvent('MouseEvent');
+      evt.initMouseEvent("click", true, true, window,
+        0, 0, 0, 0, 0, false, false, false, false, 0, null);
 
-    dv.$('button').trigger('click');
-    expect(spy.callCount).toBe(2);
+      var spy = spyOn(dv, 'buttonClicked').andCallThrough();
+      // set and bind after spy declaration or jasmine won't see it
+      dv.model.set('event', {
+        click: {
+          button: 'buttonClicked'
+        }
+      });
+      
+      dv.bindEvents();
+      
+      ary = Array.prototype.slice.call(dv.$$('button'));
 
-    dv.$el.empty();
-    expect(dv.$el.html()).toBeFalsy();
+      ary.forEach(function(el) {
+        el.dispatchEvent(evt);
+      });
 
-    dv.model.sets({
-      sayingOne:"You've got no arms left.",
-      buttonOneValue: "Yes I have",
-      sayingTwo: "Look!",
-      buttonTwoValue: "It's just a flesh wound"
-    });
+      expect(spy.callCount).toBe(2);
 
-    expect(dv.$('#one span').text()).toBe("You've got no arms left.");
-    expect(dv.$('#one button').text()).toBe("Yes I have");
-    expect(dv.$('#two span').text()).toBe("Look!");
-    expect(dv.$('#two button').text()).toBe("It's just a flesh wound");
+      dv.el.innerHTML = '';
+      expect(dv.el.innerHTML).toBeFalsy();
 
-    dv.$('button').trigger('click');
-    expect(spy.callCount).toBe(4);
+      dv.model.sets({
+        sayingOne:"You've got no arms left.",
+        buttonOneValue: "Yes I have",
+        sayingTwo: "Look!",
+        buttonTwoValue: "It's just a flesh wound"
+      });
+      
+      dv.rebindEvents();
 
-    // can unbind events as well
-    dv.unbindEvents();
-    dv.$('button').trigger('click');
-    expect(spy.callCount).toBe(4);
+      expect(dv.$('#one span').textContent).toBe("You've got no arms left.");
+      expect(dv.$('#one button').textContent).toBe("Yes I have");
+      expect(dv.$('#two span').textContent).toBe("Look!");
+      expect(dv.$('#two button').textContent).toBe("It's just a flesh wound");
+
+      ary = Array.prototype.slice.call(dv.$$('button'));
+
+      ary.forEach(function(el) {
+        el.dispatchEvent(evt);
+      });
+
+      expect(spy.callCount).toBe(4);
+
+      // can unbind events as well
+      dv.unbindEvents();
+
+      ary.forEach(function(el) {
+        el.dispatchEvent(evt);
+      });
+
+      expect(spy.callCount).toBe(4);
   });
 
   it('can remove itself from a parent View', function() {
-    // reset dv	
-    dv.$el.empty().remove();
-    expect($('#testTarget').html()).toBeFalsy();
+    // reset dv
+    var t = document.getElementById('testTarget');
+    t.innerHTML = '';
+    dv.el.innerHTML = '';
 
-    var vc = new sudo.View('#testTarget');
+    expect(t.innerHTML).toBeFalsy();
 
-    dv.model.set('renderTarget', vc.$el);
+    var vc = new sudo.View(t);
+
+    dv.model.set('renderTarget', vc.el);
     vc.addChild(dv);
-    expect($('#testTarget').html()).toBeTruthy();
+    expect(vc.el.innerHTML).toBeTruthy();
 
     dv.removeFromParent();
-    expect($('#testTarget').html()).toBeFalsy();
+    expect(vc.el.innerHTML).toBeFalsy();
   });
   
 });

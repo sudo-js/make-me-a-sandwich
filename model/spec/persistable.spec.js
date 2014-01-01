@@ -1,37 +1,58 @@
 describe('Sudo Model persistance', function() {
-  // stub the $.ajax fn to simply return the passed `data`
-  // to the passed `success`, or call `error` etc...
-  $.ajax = function(opts) {
-    // by this point all the data has been stringified
-    if(opts.data && (typeof opts.data === 'string')) opts.data = JSON.parse(opts.data);
 
-    switch(opts.type) {
-      case 'POST':
-        opts.data.id = 42;
-        opts.data.message = 'POST to ' + opts.url;
-        opts.success(opts.data, '200 OK', {});
-        break;
-      case 'PUT':
-        opts.data.message = 'PUT to ' + opts.url;
-        opts.success(opts.data, '200 OK', {});
-        break;
-      case 'PATCH':
-        opts.data.message = 'PATCH to ' + opts.url;
-        opts.success(opts.data, '200 OK', {});
-        break;
-      case 'GET':
-        opts.data = {};
-        opts.data.message = 'GET to ' + opts.url;
-        opts.data.isKing = true;
-        opts.success(opts.data, '200 OK', {});
-        break;
-      case 'DELETE':
-        opts.success(null, 'DELETE sent to ' + opts.url, {});
-        break;
-      default:
-        // code
-      break;
-    }
+  _.extensions.persistable._getXhr_ = function(params) {
+    // by this point all the data has been stringified
+    //if(opts.data && (typeof opts.data === 'string')) opts.data = JSON.parse(opts.data);
+    var _xhr = {
+      send: function(data) {
+        // the data has been stringified by this point
+        var parsed = data ? (typeof data === 'string' ? JSON.parse(data) : data) : {};
+        
+        switch(this.verb) {
+          case 'POST':
+            parsed.id = 42;
+            parsed.message = 'POST to ' + this.url;
+            this.status = 200;
+            this.responseText = JSON.stringify(parsed);
+            this.onload(this);
+            break;
+          case 'PUT':
+            parsed.message = 'PUT to ' + this.url;
+            this.status = 200;
+            this.responseText = JSON.stringify(parsed);
+            this.onload(this);
+            break;
+          case 'PATCH':
+            parsed.message = 'PATCH to ' + this.url;
+            this.status = 200;
+            this.responseText = JSON.stringify(parsed);
+            this.onload(this);
+            break;
+          case 'GET':
+            parsed.message = 'GET to ' + this.url;
+            this.status = 200;
+            parsed.isKing = true;
+            this.responseText = JSON.stringify(parsed);
+            this.onload(this);
+            break;
+          case 'DELETE':
+            this.status = 200;
+            this.statusText = this.status + ' OK';
+            this.onload(this);
+            break;
+          default:
+            // code
+          break;
+        }
+      },
+      onloadend: params.onloadend,
+      onerror: params.onerror,
+      onload: params.onload,
+      responseType: params.responseType,
+      url: params.url,
+      verb: params.verb
+    };    
+    return _xhr;
   };
 
   beforeEach(function() {
@@ -41,7 +62,7 @@ describe('Sudo Model persistance', function() {
       occupation: 'King of the Brittons'
     });
 
-    $.extend(model, _.extensions.persistable);
+    _.extend(model, _.extensions.persistable);
   });
 
   it('Uses POST for create', function() {
@@ -55,16 +76,16 @@ describe('Sudo Model persistance', function() {
   it('Will POST the passed in data vs the model itself', function() {
     model.set('onQuest', true).create({
       data: model.data,
-      success: function(data, status, xhr) {
+      onload: function(xhr) {
         this.sets({
-          ajaxStatus: status,
-          json: data
+          ajaxStatus: xhr.status,
+          json: xhr.responseText
         });
       }.bind(model)
     });
       
-    expect(typeof (model.get('json'))).toBe('object');
-    expect(model.get('ajaxStatus')).toBe('200 OK');
+    expect(typeof (model.get('json'))).toBe('string');
+    expect(model.get('ajaxStatus')).toBe(200);
   });
 
   it('Uses PUT for update by default, and adjusts the url', function() {
@@ -113,12 +134,11 @@ describe('Sudo Model persistance', function() {
 
   it('Uses DELETE for destroy', function() {
     model.set('id', 47).destroy();
-    expect(model.get('ajaxStatus')).toBe('DELETE sent to /camelot/47');
+    expect(model.get('ajaxStatusText')).toBe('200 OK');
   });
 
   it('Removes the items in the serverDataBlacklist', function() {
     // now just return what showed up
-    $.ajax = function(opts) {return JSON.parse(opts.data);};
     
     model.sets({
       template: '<section></section>',
@@ -126,7 +146,7 @@ describe('Sudo Model persistance', function() {
       renderMethod: 'spanking'
     });
     
-    var res = model.save();
+    var res = model._prepareData_(model.data);
     
     expect(('name' in res)).toBe(true);    
     expect(('occupation' in res)).toBe(true);

@@ -60,9 +60,7 @@ sudo.View.prototype.resignPremier = function resignPremier(cb) {
   var p;
   this.isPremier = false;
   // only remove the global premier if it is me
-  if((p = sudo.premier) && p.uid === this.uid) {
-    sudo.premier = null;
-  }
+  if((p = sudo.premier) && p.uid === this.uid) sudo.premier = null;
   // fire the cb if passed
   if(cb) cb();
   return this;
@@ -89,8 +87,7 @@ sudo.View.prototype.setEl = function setEl(el) {
         this.el.setAttribute(k[i], a[k[i]]);
       }
     }
-    else this.el = this._normalizedEl_(el);
-  }
+  } else this.el = this._normalizedEl_(el);
   return this;
 };
 // ###this.$

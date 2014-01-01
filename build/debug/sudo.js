@@ -6,6 +6,22 @@ var sudo = {
   //
   // `namespace`
   delegates: {},
+  // ###extend
+  // Copy the (non-inherited) key:value pairs from <n> source objects to a single target object.
+  //
+  // `params` {objects} A target object followed by <n> source objects
+  extend: function extend() {
+    var args = Array.prototype.slice.call(arguments),
+      targ = args.shift(), i, obj, keys;
+    // iterate over each passed in obj remaining
+    for(obj; args.length && (obj = args.shift());) {
+      keys = Object.keys(obj);
+      for(i = 0; i < keys.length; i++) {
+        targ[keys[i]] = obj[keys[i]];
+      }
+    }
+    return targ;
+  },
   // The sudo.extensions namespace holds the objects that are stand alone `modules` which
   // can be `implemented` (mixed-in) in sudo Class Objects
   //
@@ -59,6 +75,10 @@ var sudo = {
       this.setPath(path, {}, window);
     }
   },
+  // ###noop
+  // A blank function used as a placeholder for virtual methods meant to be 
+  // overridden by subclassing
+  noop: function(){},
   // ###premier
   // The premier object takes precedence over all others so define it at the topmost level.
   //
@@ -549,12 +569,7 @@ sudo.Container.prototype.send = function send(/*args*/) {
 // based on the `tagName` (`div` by default). Specify `className`, `id` (or other attributes if desired)
 // as an (optional) `attributes` object literal on the `data` arg.
 //
-// The view object uses zepto for dom manipulation
-// and event delegation etc... A querified `this` reference is located
-// at `this.$el` and `this.$` scopes queries to this objects `el`, i.e it's
-// a shortcut for `this.$el.find(selector)`
-//
-// `param` {string|element|Query} `el`. Otional el for the View instance.
+// `param` {string|element} `el`. Otional el for the View instance.
 // `param` {Object} `data`. Optional data object-literal which becomes the initial state
 // of a new model located at `this.model`. Also can be a reference to an existing sudo.Model instance
 //
@@ -591,15 +606,11 @@ sudo.View.prototype.becomePremier = function becomePremier() {
 // the el needs to be normalized before use
 // `private`
 sudo.View.prototype._normalizedEl_ = function _normalizedEl_(el) {
-  // Passed an already `querified` Element?
-  // It will have a length of 1 if so.
-  if(typeof el !== 'string' && el.length) return el;
-  // string or DOM node
-  var _el = $(el);
+  var _el = typeof el === 'string' ? document.querySelector(el) : el;
   // if there is not a top level query returned the desired node may be 
   // in a document fragment not in the DOM yet. We will check the parent's $el
   // if available, or return the empty query
-  return _el.length ? _el : (this.parent ? this.parent.$(el) : _el);
+  return _el ? _el : (this.parent ? this.parent.$(el) : _el);
 };
 // ### resignPremier
 // Resign premier status
@@ -611,9 +622,7 @@ sudo.View.prototype.resignPremier = function resignPremier(cb) {
   var p;
   this.isPremier = false;
   // only remove the global premier if it is me
-  if((p = sudo.premier) && p.uid === this.uid) {
-    sudo.premier = null;
-  }
+  if((p = sudo.premier) && p.uid === this.uid) sudo.premier = null;
   // fire the cb if passed
   if(cb) cb();
   return this;
@@ -628,25 +637,38 @@ sudo.View.prototype.role = 'view';
 // `param` {string=|element} `el`
 // `returns` {Object} `this`
 sudo.View.prototype.setEl = function setEl(el) {
-  var d = this.model && this.model.data, a, t;
+  var d = this.model && this.model.data, a, i, k, t;
   if(!el) {
     // normalize any relevant data
     t = d ? d.tagName || 'div': 'div';
-    this.$el = $(document.createElement(t));
-    if(d && (a = d.attributes)) this.$el.attr(a);
-  } else {
-    this.$el = this._normalizedEl_(el);
-  }
+    this.el = document.createElement(t);
+    if(d && (a = d.attributes)) {
+      // iterate and set the attributes
+      k = Object.keys(a);
+      for(i = 0; i < k.length; i++) {
+        this.el.setAttribute(k[i], a[k[i]]);
+      }
+    }
+  } else this.el = this._normalizedEl_(el);
   return this;
 };
 // ###this.$
 // Return a single Element matching `sel` scoped to this View's el.
-// This is an alias to `this.$el.find(sel)`.
+// This is an alias to `this.el.querySelector(sel)`.
 //
-// `param` {string} `sel`. A Query compatible selector
-// `returns` {Query} A 'querified' result matching the selector
+// `param` {string} `sel`. A querySelector compatible selector
+// `returns` {Element | undefined} A result matching the selector (or undefined if not)
 sudo.View.prototype.$ = function(sel) {
-  return this.$el.find(sel);
+  return this.el.querySelector(sel);
+};
+// ###this.$$
+// Return multiple Elements (a NodeList) matching `sel` scoped to this View's el.
+// This is an alias to `this.el.querySelectorAll(sel)`.
+//
+// `param` {string} `sel`. A querySelectorAll compatible selector
+// `returns` {Elements | undefined} Results matching the selector (or undefined if not)
+sudo.View.prototype.$$ = function(sel) {
+  return this.el.querySelectorAll(sel);
 };
 // ###Templating
 
@@ -768,12 +790,12 @@ sudo.template = function template(str, data, scope) {
 sudo.DataView = function(el, data) {
   sudo.View.call(this, el, data);
   // implements the listener extension
-  $.extend(this, sudo.extensions.listener);
+  _.extend(this, sudo.extensions.listener);
   // dont autoRender on the setting of events,
   this.autoRenderBlacklist = {event: true, events: true};
   // autoRender types observe their own model
   if(this.model.data.autoRender) {
-    if(!this.model.observe) $.extend(this.model, sudo.extensions.observable);
+    if(!this.model.observe) _.extend(this.model, sudo.extensions.observable);
   }
 };
 // `private`
@@ -796,8 +818,9 @@ sudo.DataView.prototype.addedToParent = function(parent) {
 //
 // `returns` {Object} `this`
 sudo.DataView.prototype.removeFromParent = function removeFromParent() {
+  this.unbindEvents();
+  this.parent.el.removeChild(this.el);
   this.parent.removeChild(this);
-  this.unbindEvents().$el.remove();
   // in the case that this.model is 'foreign'
   if(this.observer) this.model.unobserve(this.observer);
   return this;
@@ -819,10 +842,10 @@ sudo.DataView.prototype.render = function render(change) {
   var d = this.model.data;
   // (re)hydrate the innerHTML
   if(typeof d.template === 'string') d.template = sudo.template(d.template);
-  this.$el.html(d.template(d));
+  this.el.innerHTML = d.template(d);
   // am I in the dom yet?
   if(d.renderTarget) {
-    this._normalizedEl_(d.renderTarget)[d.renderMethod || 'append'](this.$el);
+    this._normalizedEl_(d.renderTarget)[d.renderMethod || 'appendChild'](this.el);
     delete d.renderTarget;
   }
   return this;
@@ -1281,82 +1304,180 @@ sudo.extensions.observable = {
 };
 // ##Listener Extension Object
 
-// Handles event binding/unbinding via an events array in the form:
-// events: [{
-//	name: `eventName`,
-//	sel: `an_optional_delegator`,
-//	data: an_optional_hash_of_data
-//	fn: `function name`
-// }, {...
-//	This array will be searched for via `this.get('events')`. There is a 
-//	single-event use case as well, pass a single object literal in the above form.
-//	with the key `event`:
-//	event: {...same as above}
-//	Details about the hashes in the array:
-//	A. name -> jQuery compatible event name
-//	B. sel -> Optional jQuery compatible selector used to delegate events
-//	C. data: A hash that will be passed as the custom jQuery Event.data object
-//	D. fn -> If a {String} bound to the named function on this object, if a 
-//		function assumed to be anonymous and called with no scope manipulation
+// Handles event binding/unbinding via an events hash in the form:
+// event(s): {
+//  type: 'methodName' (or function)
+//  type2: {
+//    sel: 'methodName',
+//    otherSel: function
+//  },
+//  type3: {
+//    sel: {
+//      fn: 'methodName' (or function),
+//      data: {...},
+//      capture: true
+//    }
+//  }
+// }
+//  This hash will be searched for via `this.get('event(s)')`.
+//  About the hash:
+//
+//  A. type -> Compatible DOM event type
+//  B. event(s)[type] === {string} || {function} (no delegation or data)
+//    1. If a {string}, name of a method on this object. Will be 
+//        converted to a reference to that method with scope bound to `this`.
+//    2. If a {function} left as is with no scope manipulation. 
+//  C. event(s)[type] === {object}
+//    1. sel -> Optional CSS selector used to delegate events
+//    2. type[sel] -> 
+//      a. If a {string}, name of a method on this object. Will be 
+//          converted to a reference to that method with scope bound to `this`.
+//      b. If a {function} left as is with no scope manipulation. 
+//      c. If an object, 'fn' key located and treated as 1 or 2 above,
+//          'data' key located and appended to the `Event` before being 
+//          passed to the callback
 sudo.extensions.listener = {
+  // ###_addOrRemove_
+  // All the relevant pieces have been accumulated, now either add or remove the 
+  // Listener to/from the element
+  //
+  // `private`
+  _addOrRemove_: function _addOrRemove_(which, type, handler, capture) {
+    this.el[which ? 'addEventListener' : 'removeEventListener'](type, handler, capture);
+  },
   // ###bindEvents
-  // Bind the events in the data store to this object's $el
+  // Bind the events in the data store to this object's el, observing the 
+  // options there
   //
   // `returns` {Object} `this`
   bindEvents: function bindEvents() {
-    var e;
-    if((e = this.model.data.event || this.model.data.events)) this._handleEvents_(e, 1);
+    var hash;
+    // because you must pass the same ref to `unbind`
+    if(!this._predicate_) this._predicate_ = this.predicate.bind(this);
+    if((hash = this.model.data.event || this.model.data.events)) this._handleEvents_(hash, 1);
     return this;
   },
-  // Use the jQuery `on` or 'off' method, optionally delegating to a selector if present
+  // ###_getNodes_
+  // Return an array of the nodes matching `this.querySelectorAll(selector)`.
+  // Used during event binding to store the targets of a delegated event
+  //
   // `private`
-  _handleEvents_: function _handleEvents_(e, which) {
-    var i;
-    if(Array.isArray(e)) {
-      for(i = 0; i < e.length; i++) {
-        this._handleEvent_(e[i], which);
-      }
-    } else {
-      this._handleEvent_(e, which);
+  _getNodes_: function _getNodes_(selector) {
+    return Array.prototype.slice.call(this.$$(selector));
+  },
+  // ###_handleEvents_
+  // Get each event type to be observed and pass them to _handleType_
+  // with their options
+  //
+  // `private`
+  _handleEvents_: function _handleEvents_(hash, which) {
+    var types = Object.keys(hash), i;
+    for(i = 0; i < types.length; i++) {
+      this._handleType_(types[i], hash, which);
     }
   },
-  // helper for binding and unbinding an individual event
-  // `param` {Object} e. An event descriptor
-  // `param` {String} which. `on` or `off`
+  // ###_handleType_
+  // Normalizes the various forms that event data may be in. Works
+  // in conjunction with `_addOrRemove_` and `predicate` to correctly
+  // prepare methods for adding **and removing** event Listeners.
+  //
   // `private`
-  _handleEvent_: function _handleEvent_(e, which) {
-    if(which) {
-      this.$el.on(e.name, e.sel, e.data, typeof e.fn === 'string' ? this[e.fn].bind(this) : e.fn);
-    } else {
-      // do not re-bind the fn going to off otherwise the unbind will fail
-      this.$el.off(e.name, e.sel);
+  _handleType_: function _handleEvent_(type, hash, which) {
+    var handler = hash[type], handlerType = typeof handler, 
+    selectors, selector, i, nHandler, nHandlerType;
+    // handler is already a function, (un)bind it
+    if(handlerType === 'function') this._addOrRemove_(which, type, handler);
+    else if(handlerType === 'string') {
+      // morph the name into a bound reference
+      hash[type] = this[handler].bind(this);
+      // bind it
+      this._addOrRemove_(which, type, hash[type]);
+    } else { // nested object(s)
+      selectors = Object.keys(handler);
+      // the fn still needs to be bound for the predicate
+      for (i = 0; i < selectors.length; i++) {
+        selector = selectors[i];
+        nHandler = handler[selector]; nHandlerType = typeof nHandler;
+        // type3 above - may have sel, data and 'capture'
+        if(nHandlerType === 'object') { 
+          if(typeof nHandler.fn === 'string') {
+            nHandler.fn = this[nHandler.fn].bind(this);
+          }
+          // set the list of possible targets
+          nHandler._nodes_ = this._getNodes_(selector);
+          this._addOrRemove_(which, type, this._predicate_, nHandler.capture);
+        } else {
+          // this form (type2 above) has a sel - but no data or 'capture'
+          // we are going to morph this into an obj - as we will store the _nodes_
+          if(nHandlerType === 'string') {
+            hash[type][selector] = {
+              fn: this[nHandler].bind(this),
+              _nodes_: this._getNodes_(selector)
+            };
+          }
+          // the predicate will call the fn if sel match is made
+          this._addOrRemove_(which, type, this._predicate_);
+        }
+      }
+    }
+  },
+  // ###predicate
+  // When binding events, if a a `selector` (or `data`) is found, the Listener
+  // will bind this method as the callback. Serving as the 'first step' in a process
+  // that will:
+  //   1. Appended the `data` to the `event` object if `data` is present. 
+  //   2. If `sel` is indicated, Compare the `event.target` to the item(s) returned fom
+  //      a querySelectorAll operation on this object's `el`, looking for a match.
+  // When complete, pass the `event` to the desired callback (or don't), as per `bindEvents`.
+  //
+  // **Notes**
+  // This method could be written (along with _handleType_)to create closures for the 
+  // needed data in the event hash rather than looking it up. This would not be
+  // without concerns however, such as memory leaks.
+  //
+  // `param` {event} `e`. The DOM event
+  // `returns` {*} call to the indicated method/function
+  predicate: function predicate(e) {
+    var hash = this.model.data.event || this.model.data.events,
+      type = hash[e.type], selectors, i, selector, handler;
+    if(type) {
+      selectors = Object.keys(type);
+      for(i = 0; i < selectors.length; i++) {
+        selector = selectors[i]; handler = type[selector];
+        // _nodes_ should be in place 
+        if(handler._nodes_.indexOf(e.target) !== -1) {
+          // time to call the methods
+          if(handler.data) e.data = handler.data;
+          return handler.fn(e);
+        }
+      }
     }
   },
   // ###rebindEvents
-  // Convenience method for `this.unbindEvents().bindEvents()`
+  // Convenience method to `unbind`, then `bind` the events stored in
+  // this object's model.
   //
-  // 'returns' {object} 'this'
+  // `returns` {object} `this`
   rebindEvents: function rebindEvents() {
-    return this.unbindEvents().bindEvents();
+    this.unbindEvents().bindEvents();
   },
   // ###unbindEvents
   // Unbind the events in the data store from this object's $el
   //
   // `returns` {Object} `this`
   unbindEvents: function unbindEvents() {
-    var e;
-    if((e = this.model.data.event || this.model.data.events)) this._handleEvents_(e);
+    var hash;
+    if((hash = this.model.data.event || this.model.data.events)) this._handleEvents_(hash);
     return this;
   }
-};
-// ##sudo persistable extension
+};// ##sudo persistable extension
 //
 // A mixin providing restful CRUD operations for a sudo.Model instance.
 //
-//	create : POST
-//	read : GET
-//	update : PUT or PATCH (configurable)
-//	destroy : DELETE
+//  create : POST
+//  read : GET
+//  update : PUT or PATCH (configurable)
+//  destroy : DELETE
 //
 // Before use be sure to set an `ajax` property {object} with at least
 // a `baseUrl: ...` key. The model's id (if present -- indicating a persisted model)
@@ -1365,9 +1486,9 @@ sudo.extensions.listener = {
 // calling any of the methods (or override the model.url() method).
 //
 // Place any other default options in the `ajax` hash
-// that you would want sent to a $.ajax({...}) call. Again, you can also override those
+// that you would want sent to an ajax call. Again, you can also override those
 // defaults by passing in a hash of options to any method:
-//	`this.model.update({patch: true})` etc...
+//  `this.model.update({patch: true})` etc...
 sudo.extensions.persistable = {
   // ###create 
   //
@@ -1387,34 +1508,45 @@ sudo.extensions.persistable = {
   //
   // `param` {object} `params` Optional hash of options for the XHR
   // `returns` {object} Xhr
-  destroy: function destroy(params) {
+  destroy: function _delete(params) {
     return this._sendData_('DELETE', params);
+  },
+  // XHRs are not reusable, therefore we never store them
+  // `params` {object} attributes for the request
+  // `returns` {object} the xhr object
+  // `private`
+  _getXhr_: function _getXhr_(params) {
+    var xhr =  new XMLHttpRequest();
+    xhr.open(params.verb, params.url, true);
+    xhr.responseType = params.responseType;
+    xhr.onload = params.onload;
+    if(params.onerror) xhr.onerror = params.onerror;
+    if(params.onloadend) xhr.onloadend = params.onloadend;
+    return xhr;
   },
   // ###_normalizeParams_
   // Abstracted logic for preparing the options object. This looks at 
   // the set `ajax` property, allowing any passed in params to override.
   //
-  // Sets defaults: JSON dataType and a success callback that simply `sets()` the 
-  // data returned from the server
+  // Sets defaults: `text` responseType and an onload callback that simply `sets()` the 
+  // parsed response returned from the server
   //
   // `returns` {object} A normalized params object for the XHR call
-  _normalizeParams_: function _normalizeParams_(meth, opts, params) {
-    opts || (opts = $.extend({}, this.data.ajax));
+  _normalizeParams_: function _normalizeParams_(verb, opts, params) {
+    var self = this;
+    opts || (opts = _.extend({}, this.data.ajax));
     opts.url || (opts.url = this.url(opts.baseUrl));
-    opts.type || (opts.type = meth);
-    opts.dataType || (opts.dataType = 'json');
-    var isJson = opts.dataType === 'json';
-    // by default turn off the global ajax triggers as all data
-    // should flow thru the models to their observers
-    opts.global || (opts.global = false);
+    opts.verb || (opts.verb = verb);
+    opts.responseType || (opts.responseType = 'text');
     // the default success callback is to set the data returned from the server
     // or just the status as `ajaxStatus` if no data was returned
-    opts.success || (opts.success = function(data, status) {
-      data ? this.sets((isJson && typeof data === 'string') ? JSON.parse(data) : data) : 
-        this.set('ajaxStatus', status);
-    }.bind(this));
+    opts.onload || (opts.onload = function() {
+      // try to json parse it by default, pass in an 'onload' to override
+      if(this.responseText) self.sets(JSON.parse(this.responseText));
+      else self.sets({ajaxStatus: this.status, ajaxStatusText: this.statusText});
+    });
     // allow the passed in params to override any set in this model's `ajax` options
-    return params ? $.extend(opts, params) : opts;
+    return params ? _.extend(opts, params) : opts;
   },
   // ###_prepareData_
   // In the default state, that is to data is explicitly passed to them, save
@@ -1441,8 +1573,11 @@ sudo.extensions.persistable = {
   // `param` {object} `params`. Optional info for the XHR call. If
   // present will override any set in this model's `ajax` options object.
   // `returns` {object} The XHR object
-  read: function read(params) {
-    return $.ajax(this._normalizeParams_('GET', null, params));
+  read: function post(params) {
+    var opts = this._normalizeParams_('GET', null, params),
+      xhr = this._getXhr_(opts);
+    xhr.send();
+    return xhr; 
   },
   // ###save
   //
@@ -1459,17 +1594,12 @@ sudo.extensions.persistable = {
   // varying only in their HTTP method. Abstracted logic is here.
   //
   // `returns` {object} Xhr
-  _sendData_: function _sendData_(meth, params) {
-    var opts = $.extend({}, this.data.ajax);
-    opts.contentType || (opts.contentType = 'application/json');
-    opts.data || (opts.data = this._prepareData_(this.data));
-    // assure that, in the default json case, opts.data is json
-    if(opts.contentType === 'application/json' && (typeof opts.data !== 'string')) {
-      opts.data = JSON.stringify(opts.data); 
-    }
-    // non GET requests do not 'processData'
-    if(!('processData' in opts)) opts.processData = false;
-    return $.ajax(this._normalizeParams_(meth, opts, params));
+  _sendData_: function _sendData_(verb, params) {
+    var opts = this._normalizeParams_(verb, null, params),
+      xhr = this._getXhr_(opts);
+    // TODO does this work as expected?
+    xhr.send(opts.data || JSON.stringify(this._prepareData_(this.data)));
+    return xhr;
   },
   // ###serverDataBlacklist
   // Keys present in this hash will be removed from the object sent to the server
@@ -1504,15 +1634,13 @@ sudo.extensions.persistable = {
   //
   // `param` {string} `base` the baseUrl set in this models ajax options
   url: function url(base) {
-    if(!base) return void 0;
     // could possibly be 0...
     if('id' in this.data) {
       return base + (base.charAt(base.length - 1) === '/' ? 
         '' : '/') + encodeURIComponent(this.data.id);
     } else return base;
   }
-};
-//##Filtered Delegate
+};//##Filtered Delegate
 
 // The base type for both the Data and Change delegates.
 //

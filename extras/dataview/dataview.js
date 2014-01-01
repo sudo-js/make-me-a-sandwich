@@ -15,12 +15,12 @@
 sudo.DataView = function(el, data) {
   sudo.View.call(this, el, data);
   // implements the listener extension
-  $.extend(this, sudo.extensions.listener);
+  _.extend(this, sudo.extensions.listener);
   // dont autoRender on the setting of events,
   this.autoRenderBlacklist = {event: true, events: true};
   // autoRender types observe their own model
   if(this.model.data.autoRender) {
-    if(!this.model.observe) $.extend(this.model, sudo.extensions.observable);
+    if(!this.model.observe) _.extend(this.model, sudo.extensions.observable);
   }
 };
 // `private`
@@ -43,8 +43,9 @@ sudo.DataView.prototype.addedToParent = function(parent) {
 //
 // `returns` {Object} `this`
 sudo.DataView.prototype.removeFromParent = function removeFromParent() {
+  this.unbindEvents();
+  this.parent.el.removeChild(this.el);
   this.parent.removeChild(this);
-  this.unbindEvents().$el.remove();
   // in the case that this.model is 'foreign'
   if(this.observer) this.model.unobserve(this.observer);
   return this;
@@ -66,10 +67,10 @@ sudo.DataView.prototype.render = function render(change) {
   var d = this.model.data;
   // (re)hydrate the innerHTML
   if(typeof d.template === 'string') d.template = sudo.template(d.template);
-  this.$el.html(d.template(d));
+  this.el.innerHTML = d.template(d);
   // am I in the dom yet?
   if(d.renderTarget) {
-    this._normalizedEl_(d.renderTarget)[d.renderMethod || 'append'](this.$el);
+    this._normalizedEl_(d.renderTarget)[d.renderMethod || 'appendChild'](this.el);
     delete d.renderTarget;
   }
   return this;
