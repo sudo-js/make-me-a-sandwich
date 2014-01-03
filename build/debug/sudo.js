@@ -608,7 +608,7 @@ sudo.View.prototype.becomePremier = function becomePremier() {
 sudo.View.prototype._normalizedEl_ = function _normalizedEl_(el) {
   var _el = typeof el === 'string' ? document.querySelector(el) : el;
   // if there is not a top level query returned the desired node may be 
-  // in a document fragment not in the DOM yet. We will check the parent's $el
+  // in a document fragment not in the DOM yet. We will check the parent's el
   // if available, or return the empty query
   return _el ? _el : (this.parent ? this.parent.$(el) : _el);
 };
@@ -631,8 +631,7 @@ sudo.View.prototype.resignPremier = function resignPremier(cb) {
 sudo.View.prototype.role = 'view';
 // ###setEl
 // A view must have an element, set that here.
-// Stores a querified object as `this.$el` the raw
-// node is always then available as `this.$el[0]`.
+// Node is always then available as `this.el`.
 //
 // `param` {string=|element} `el`
 // `returns` {Object} `this`
@@ -779,9 +778,9 @@ sudo.template = function template(str, data, scope) {
 // 1. Expects to have a template located in its internal data Store accessible via `this.model.get('template')`.
 // 2. Can have a `renderTarget` property in its data store. If so this will be the location
 //		the child injects itself into (if not already in) the DOM
-// 3. Can have a 'renderMethod' property in its data store. If so this is the jQuery method
+// 3. Can have a 'renderMethod' property in its data store. If so this is the method
 //		that the child will use to place itself in it's `renderTarget`.
-// 4. Has a `render` method that when called re-hydrates it's $el by passing its
+// 4. Has a `render` method that when called re-hydrates it's el by passing its
 //		internal data store to its template
 // 5. Handles event binding/unbinding by implementing the sudo.extensions.listener
 //		extension object
@@ -791,30 +790,38 @@ sudo.DataView = function(el, data) {
   sudo.View.call(this, el, data);
   // implements the listener extension
   _.extend(this, sudo.extensions.listener);
-  // dont autoRender on the setting of events,
-  this.autoRenderBlacklist = {event: true, events: true};
+  // dont re-render on the setting of events if observing model change
+  this.modelChangeBlacklist = {event: true, events: true};
   // autoRender types observe their own model
-  if(this.model.data.autoRender) {
+  if(this.model.data.renderOnModelChange) {
     if(!this.model.observe) _.extend(this.model, sudo.extensions.observable);
   }
 };
 // `private`
 sudo.inherit(sudo.View, sudo.DataView);
 // ###addedToParent
-// Container's will check for the presence of this method and call it if it is present
-// after adding a child - essentially, this will auto render the dataview when added to a parent
-// if not an autoRender (which will render on model change), as well as setup the events (in children too)
+// Container's will check for the presence of this method and call it if it is present.
+// Options affecting this method are: 
+// `renderOnModelChange`: render not called until this view's model is changed via
+// a `set`, `sets` or `unsets` operation.
+// `renderOnAddedToParent`: render is called from this method.
+// If neither is set in this view's model it is up to the developer to call render().
+// Regardless of the rendering options any events in the `event(s)` property are bound
+//
+// `param` {object} `parent` this view's parent
+// `returns` {object} `this`
 sudo.DataView.prototype.addedToParent = function(parent) {
   this.bindEvents();
-  // non-autoRender types should render now
-  if(!this.model.data.autoRender) return this.render();
-  // autoRender Dataviews should only render on model change
-  else this.observer = this.model.observe(this.render.bind(this));
+  if(this.model.data.renderOnAddedToParent) return this.render();
+  else if(this.model.data.renderOnModelChange) {
+    this.observer = this.model.observe(this.render.bind(this));
+    return this;
+  }
   return this;
 };
 // ###removeFromParent
 // Remove this object from the DOM and its parent's list of children.
-// Overrides `sudo.View.removeFromParent` to unbind events and `remove` its $el 
+// Overrides `sudo.View.removeFromParent` to unbind events and `remove` its el 
 //
 // `returns` {Object} `this`
 sudo.DataView.prototype.removeFromParent = function removeFromParent() {
@@ -822,13 +829,16 @@ sudo.DataView.prototype.removeFromParent = function removeFromParent() {
   this.parent.el.removeChild(this.el);
   this.parent.removeChild(this);
   // in the case that this.model is 'foreign'
-  if(this.observer) this.model.unobserve(this.observer);
+  if(this.observer) {
+    this.model.unobserve(this.observer);
+    delete this.observer;
+  }
   return this;
 };
 // ###render
 // (Re)hydrate the innerHTML of this object via its template and data store.
 // If a `renderTarget` is present this Object will inject itself into the target via
-// `this.get('renderMethod')` or defualt to `$.append`. After injection, the `renderTarget`
+// `this.get('renderMethod')` or defualt to `appendChild`. After injection, the `renderTarget`
 // is deleted from this Objects data store (to prevent multiple injection).
 // Event unbinding/rebinding is generally not necessary for the Objects innerHTML as all events from the
 // Object's list of events (`this.get('event(s)'))` are delegated to the $el when added to parent.
@@ -838,7 +848,7 @@ sudo.DataView.prototype.removeFromParent = function removeFromParent() {
 // `returns` {Object} `this`
 sudo.DataView.prototype.render = function render(change) {
   // return early if a `blacklisted` key is set to my model
-  if(change && this.autoRenderBlacklist[change.name]) return this;
+  if(change && this.modelChangeBlacklist[change.name]) return this;
   var d = this.model.data;
   // (re)hydrate the innerHTML
   if(typeof d.template === 'string') d.template = sudo.template(d.template);
@@ -924,13 +934,12 @@ sudo.Navigator.prototype.getHash = function getHash(fragment) {
   return match ? match[1] : '';
 };
 // ###getQuery
-// Take a hash and convert it to a `search` query. Reuse
-// Zepto|jQuery `param` method
+// Take a hash and convert it to a `search` query.
 //
 // `param` {object} `obj`
 // `returns` {string} the serialized query string
 sudo.Navigator.prototype.getQuery = function getQuery(obj) {
-  return '?' + ($.param(obj));
+  return '?' + (this.params(obj));
 };
 
 // ###getSearch
@@ -979,6 +988,17 @@ sudo.Navigator.prototype.handleChange = function handleChange() {
   if(this.urlChanged()) {
     return this.setData();
   }
+};
+// ###params
+// Take a passed in hash and return a serialized string in queryString format
+//
+// `param` {object} `obj`
+// `returns` {string} 
+sudo.Navigator.prototype.params = function(obj) {
+  var keys = Object.keys(obj), len = keys.length, params = [], i;
+  params.add = function(k, v) {this.push(window.escape(k) + '=' + window.escape(v));};
+  for (i = 0; i < len; i++) {params.add(keys[i], obj[keys[i]]);}
+  return params.join('&').replace(/%20/g, '+');
 };
 // ###parseQuery
 // Parse and return a hash of the key value pairs contained in 
@@ -1037,9 +1057,9 @@ sudo.Navigator.prototype.start = function start() {
   this.urlChanged();
   // monitor URL changes via popState or hashchange
   if (this.isPushState) {
-    $(window).on('popstate', this.handleChange.bind(this));
+    window.addEventListener('popstate', this.handleChange.bind(this));
   } else if (this.isHashChange) {
-    $(window).on('hashchange', this.handleChange.bind(this));
+    window.addEventListener('hashchange', this.handleChange.bind(this));
   } else return;
   atRoot = window.location.pathname.replace(/[^\/]$/, '$&/') === this.data.root;
   // somehow a URL got here not in my 'format', unless explicitly told not too, correct this

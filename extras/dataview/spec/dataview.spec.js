@@ -17,7 +17,7 @@ describe('sudo.js Dataview Object', function() {
       'class': 'eggs'
     },
     renderTarget: '#testTarget',
-    autoRender: true, 
+    renderOnModelChange: true, 
     template: '' +
       '<div id="one">' +
         '<span>{{= data.sayingOne }}</span>' +

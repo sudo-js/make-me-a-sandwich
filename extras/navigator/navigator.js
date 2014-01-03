@@ -70,13 +70,12 @@ sudo.Navigator.prototype.getHash = function getHash(fragment) {
   return match ? match[1] : '';
 };
 // ###getQuery
-// Take a hash and convert it to a `search` query. Reuse
-// Zepto|jQuery `param` method
+// Take a hash and convert it to a `search` query.
 //
 // `param` {object} `obj`
 // `returns` {string} the serialized query string
 sudo.Navigator.prototype.getQuery = function getQuery(obj) {
-  return '?' + ($.param(obj));
+  return '?' + (this.params(obj));
 };
 
 // ###getSearch
@@ -125,6 +124,17 @@ sudo.Navigator.prototype.handleChange = function handleChange() {
   if(this.urlChanged()) {
     return this.setData();
   }
+};
+// ###params
+// Take a passed in hash and return a serialized string in queryString format
+//
+// `param` {object} `obj`
+// `returns` {string} 
+sudo.Navigator.prototype.params = function(obj) {
+  var keys = Object.keys(obj), len = keys.length, params = [], i;
+  params.add = function(k, v) {this.push(window.escape(k) + '=' + window.escape(v));};
+  for (i = 0; i < len; i++) {params.add(keys[i], obj[keys[i]]);}
+  return params.join('&').replace(/%20/g, '+');
 };
 // ###parseQuery
 // Parse and return a hash of the key value pairs contained in 
@@ -183,9 +193,9 @@ sudo.Navigator.prototype.start = function start() {
   this.urlChanged();
   // monitor URL changes via popState or hashchange
   if (this.isPushState) {
-    $(window).on('popstate', this.handleChange.bind(this));
+    window.addEventListener('popstate', this.handleChange.bind(this));
   } else if (this.isHashChange) {
-    $(window).on('hashchange', this.handleChange.bind(this));
+    window.addEventListener('hashchange', this.handleChange.bind(this));
   } else return;
   atRoot = window.location.pathname.replace(/[^\/]$/, '$&/') === this.data.root;
   // somehow a URL got here not in my 'format', unless explicitly told not too, correct this

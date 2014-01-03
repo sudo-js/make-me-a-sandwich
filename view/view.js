@@ -46,7 +46,7 @@ sudo.View.prototype.becomePremier = function becomePremier() {
 sudo.View.prototype._normalizedEl_ = function _normalizedEl_(el) {
   var _el = typeof el === 'string' ? document.querySelector(el) : el;
   // if there is not a top level query returned the desired node may be 
-  // in a document fragment not in the DOM yet. We will check the parent's $el
+  // in a document fragment not in the DOM yet. We will check the parent's el
   // if available, or return the empty query
   return _el ? _el : (this.parent ? this.parent.$(el) : _el);
 };
@@ -69,8 +69,7 @@ sudo.View.prototype.resignPremier = function resignPremier(cb) {
 sudo.View.prototype.role = 'view';
 // ###setEl
 // A view must have an element, set that here.
-// Stores a querified object as `this.$el` the raw
-// node is always then available as `this.$el[0]`.
+// Node is always then available as `this.el`.
 //
 // `param` {string=|element} `el`
 // `returns` {Object} `this`
