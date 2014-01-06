@@ -760,7 +760,7 @@ sudo.DataView = function(el, data) {
   // implements the listener extension
   $.extend(this, sudo.extensions.listener);
   // dont autoRender on the setting of events,
-  this.autoRenderBlacklist = {event: true, events: true};
+  this.modelChangeBlacklist = {event: true, events: true};
   // renderOnModelChange types observe their own model
   if(this.model.data.renderOnModelChange) {
     if(!this.model.observe) $.extend(this.model, sudo.extensions.observable);
@@ -781,11 +781,9 @@ sudo.inherit(sudo.View, sudo.DataView);
 // `returns` {object} `this`
 sudo.DataView.prototype.addedToParent = function(parent) {
   this.bindEvents();
+  // these two are not necessarily exclusive
+  if(this.model.data.renderOnModelChange) this.observer = this.model.observe(this.render.bind(this));
   if(this.model.data.renderOnAddedToParent) return this.render();
-  else if(this.model.data.renderOnModelChange) {
-    this.observer = this.model.observe(this.render.bind(this));
-    return this;
-  }
   return this;
 };
 // ###removeFromParent
@@ -797,7 +795,10 @@ sudo.DataView.prototype.removeFromParent = function removeFromParent() {
   this.parent.removeChild(this);
   this.unbindEvents().$el.remove();
   // in the case that this.model is 'foreign'
-  if(this.observer) this.model.unobserve(this.observer);
+  if(this.observer) {
+    this.model.unobserve(this.observer);
+    delete this.observer;
+  }
   return this;
 };
 // ###render
@@ -808,12 +809,12 @@ sudo.DataView.prototype.removeFromParent = function removeFromParent() {
 // Event unbinding/rebinding is generally not necessary for the Objects innerHTML as all events from the
 // Object's list of events (`this.get('event(s)'))` are delegated to the $el when added to parent.
 //
-// `param` {object} `change` dataviews may be observing their model if `autoRender: true`
+// `param` {object} `change` dataviews may be observing their model if `renderOnModelChange: true`
 //
 // `returns` {Object} `this`
 sudo.DataView.prototype.render = function render(change) {
   // return early if a `blacklisted` key is set to my model
-  if(change && this.autoRenderBlacklist[change.name]) return this;
+  if(change && this.modelChangeBlacklist[change.name]) return this;
   var d = this.model.data;
   // (re)hydrate the innerHTML
   if(typeof d.template === 'string') d.template = sudo.template(d.template);
