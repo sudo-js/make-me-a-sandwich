@@ -39,19 +39,6 @@ sudo.extensions.persistable = {
   destroy: function _delete(params) {
     return this._sendData_('DELETE', params);
   },
-  // XHRs are not reusable, therefore we never store them
-  // `params` {object} attributes for the request
-  // `returns` {object} the xhr object
-  // `private`
-  _getXhr_: function _getXhr_(params) {
-    var xhr =  new XMLHttpRequest();
-    xhr.open(params.verb, params.url, true);
-    xhr.responseType = params.responseType;
-    xhr.onload = params.onload;
-    if(params.onerror) xhr.onerror = params.onerror;
-    if(params.onloadend) xhr.onloadend = params.onloadend;
-    return xhr;
-  },
   // ###_normalizeParams_
   // Abstracted logic for preparing the options object. This looks at 
   // the set `ajax` property, allowing any passed in params to override.
@@ -103,9 +90,9 @@ sudo.extensions.persistable = {
   // `returns` {object} The XHR object
   read: function post(params) {
     var opts = this._normalizeParams_('GET', null, params),
-      xhr = this._getXhr_(opts);
+      xhr = sudo.getXhr(opts);
     xhr.send();
-    return xhr; 
+    return xhr;
   },
   // ###save
   //
@@ -124,7 +111,7 @@ sudo.extensions.persistable = {
   // `returns` {object} Xhr
   _sendData_: function _sendData_(verb, params) {
     var opts = this._normalizeParams_(verb, null, params),
-      xhr = this._getXhr_(opts);
+      xhr = sudo.getXhr(opts);
     // TODO does this work as expected?
     xhr.send(opts.data || JSON.stringify(this._prepareData_(this.data)));
     return xhr;

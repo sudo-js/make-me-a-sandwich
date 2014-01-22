@@ -1,4 +1,75 @@
 (function(window) {
+// ###serialize
+// Placed on the Object Object to allow a hash of data to be turned into a 
+// 'paramaterized' string and returned.
+//
+// `param` {object} `obj`
+// `returns` {string}
+Object.serialize = function serialize(obj) {
+  var keys = Object.keys(obj), len = keys.length, params = [], i;
+  params.add = function(k, v) {this.push(window.escape(k) + '=' + window.escape(v));};
+  for (i = 0; i < len; i++) {params.add(keys[i], obj[keys[i]]);}
+  return params.join('&').replace(/%20/g, '+');
+};
+// ###deserialize
+// Placed on the Object Object to allow a 'paramaterized' string to be turned
+// into a hash and returned
+//
+// `param` {string} `str`
+// `returns` {object}
+Object.deserialize = function deserialize(str) {
+  var obj = {}, seg = str.split('&'), i, s;
+  for(i = 0; i < seg.length; i++) {
+    if(!seg[i]) continue;
+    s = seg[i].split('=');
+    obj[s[0]] = s[1];
+  }
+  return obj;
+};// ###escape
+// Placed on the String Object to Escape a string for HTML interpolation
+//
+// `param` {string}
+// `returns` {string}
+String.escape = function strescape(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/\//g,'&#x2F;');
+};
+// ###expand
+// placed this on the String Object as a class method
+// designed to be used with the "${}" placeholders like the upcoming
+// native string interpolation (ES6).
+// Uses the sudo.expandExpression
+//
+// `param` {string} `str`
+// `param` {object} `data`
+// `returns` {string}
+String.expand = function expand(str, data) {
+  return str.replace(sudo.expandExpression,
+    function(match, key) {return data[key];});
+};// ###debounce
+// Thanks to http://underscorejs.org/
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+//
+// `param` {function} `fn`
+// `param` {number} `wait`
+// `param` {*} `immediate`
+// `returns` {function}
+Function.debounce = function debounce(fn, wait, immediate) {
+  var timeout;
+  return function() {
+    var context = this, args = arguments;
+    var later = function() {
+      timeout = null;
+      if(!immediate) fn.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+    window.clearTimeout(timeout);
+    timeout = window.setTimeout(later, wait);
+    if(callNow) fn.apply(context, args);
+  };
+}; 
 // #Sudo Namespace
 var sudo = {
   // Namespace for `Delegate` Class Objects used to delegate functionality
@@ -6,6 +77,10 @@ var sudo = {
   //
   // `namespace`
   delegates: {},
+  // ###expandExpression
+  // The regular expression used by String.expand as delimiters
+  // exposed here so it can be overridden to taste.
+  expandExpression: /\$\{(.+?)\}/g,
   // ###extend
   // Copy the (non-inherited) key:value pairs from <n> source objects to a single target object.
   //
@@ -135,7 +210,53 @@ var sudo = {
     }
   }
 };
-// ##Base Class Object
+// ###xhrHeaders
+// Any 'global' headers that should go out with every XHR request 
+sudo.xhrHeaders = {};
+// ###getXhr
+// While getting a new XMLHttpRequest is standardized now, we are still going 
+// to provide this syntactic sugar to allow the setting of global headers (will
+// be set on each request) as well as the onload, onerrer, and onloadend callbacks
+// to be set with one call.
+// Does not have a default for params.url all others are:
+//   {
+//     verb: 'GET',
+//     responseType: 'text',
+//     url: mandatory,
+//     params: optional,
+//     onload: _.noop,
+//     onerrer: optional,
+//     onloadend: optional,
+//     user: optional,
+//     password: optional
+//   }
+// If the verb is 'GET' and params is truthy it will be appended to the url as a 
+// queryString (after being serialized if a hash -- assumed to be a string if not).
+// This method does not call send() so do that once you have the xhr back, remember
+// to set any pertinant MIME types if sending data via setRequestHeader (unless its 
+// already in the sudo.xhrHeaders).
+//
+// `param` {object} attributes for the XHR
+// `returns` {object} the xhr object
+sudo.getXhr = function getXhr(params) {
+  var xhr =  new XMLHttpRequest(), keys = Object.keys(sudo.xhrHeaders),
+    len = keys.length, i;
+  // set any custom headers
+  if(len) for(i = 0; i < len; i++) xhr.setRequestHeader(keys[i], sudo.xhrHeaders[keys[i]]);
+  params.verb || (params.verb = 'GET');
+  // check if we need a QS
+  if(params.verb === 'GET' && params.params) {
+    // assumed to be an object literal
+    if(typeof params.params !== 'string') params.params = Object.serialize(params.params);
+    params.url += ('?' + params.params);
+  }
+  xhr.open(params.verb, params.url, true, params.user, params.password);
+  xhr.responseType = params.responseType || 'text';
+  xhr.onload = params.onload || sudo.noop;
+  if(params.onerror) xhr.onerror = params.onerror;
+  if(params.onloadend) xhr.onloadend = params.onloadend;
+  return xhr;
+};// ##Base Class Object
 //
 // All sudo.js objects inherit base, giving the ability
 // to utilize delegation, the `base` function and the 
@@ -935,11 +1056,12 @@ sudo.Navigator.prototype.getHash = function getHash(fragment) {
 };
 // ###getQuery
 // Take a hash and convert it to a `search` query.
+// Uses the Object.serialize 'addOn'
 //
 // `param` {object} `obj`
 // `returns` {string} the serialized query string
 sudo.Navigator.prototype.getQuery = function getQuery(obj) {
-  return '?' + (this.params(obj));
+  return '?' + (Object.serialize(obj));
 };
 
 // ###getSearch
@@ -958,7 +1080,6 @@ sudo.Navigator.prototype.getSearch = function getSearch(fragment) {
 //
 // `returns` {String}
 sudo.Navigator.prototype.getUrl = function getUrl() {
-  // note that delegate(_role_) returns the deleagte
   return this.data.root + this.data.fragment;
 };
 // ###go
@@ -989,34 +1110,13 @@ sudo.Navigator.prototype.handleChange = function handleChange() {
     return this.setData();
   }
 };
-// ###params
-// Take a passed in hash and return a serialized string in queryString format
-//
-// `param` {object} `obj`
-// `returns` {string} 
-sudo.Navigator.prototype.params = function(obj) {
-  var keys = Object.keys(obj), len = keys.length, params = [], i;
-  params.add = function(k, v) {this.push(window.escape(k) + '=' + window.escape(v));};
-  for (i = 0; i < len; i++) {params.add(keys[i], obj[keys[i]]);}
-  return params.join('&').replace(/%20/g, '+');
-};
 // ###parseQuery
 // Parse and return a hash of the key value pairs contained in 
-// the current `query`
+// the current `query` -- uses the Object.deserialize addOn
 //
 // `returns` {object}
 sudo.Navigator.prototype.parseQuery = function parseQuery() {
-  var obj = {}, seg = this.data.query,
-    i, s;
-  if(seg) {
-    seg = seg.split('&');
-    for(i = 0; i < seg.length; i++) {
-      if(!seg[i]) continue;
-      s = seg[i].split('=');
-      obj[s[0]] = s[1];
-    }
-    return obj;
-  }
+  if(this.data.query) return Object.deserialize(this.data.query);
 };
 // ###setData
 // Using the current `fragment` (minus any search or hash data) as a key,
@@ -1531,19 +1631,6 @@ sudo.extensions.persistable = {
   destroy: function _delete(params) {
     return this._sendData_('DELETE', params);
   },
-  // XHRs are not reusable, therefore we never store them
-  // `params` {object} attributes for the request
-  // `returns` {object} the xhr object
-  // `private`
-  _getXhr_: function _getXhr_(params) {
-    var xhr =  new XMLHttpRequest();
-    xhr.open(params.verb, params.url, true);
-    xhr.responseType = params.responseType;
-    xhr.onload = params.onload;
-    if(params.onerror) xhr.onerror = params.onerror;
-    if(params.onloadend) xhr.onloadend = params.onloadend;
-    return xhr;
-  },
   // ###_normalizeParams_
   // Abstracted logic for preparing the options object. This looks at 
   // the set `ajax` property, allowing any passed in params to override.
@@ -1595,9 +1682,9 @@ sudo.extensions.persistable = {
   // `returns` {object} The XHR object
   read: function post(params) {
     var opts = this._normalizeParams_('GET', null, params),
-      xhr = this._getXhr_(opts);
+      xhr = sudo.getXhr(opts);
     xhr.send();
-    return xhr; 
+    return xhr;
   },
   // ###save
   //
@@ -1616,7 +1703,7 @@ sudo.extensions.persistable = {
   // `returns` {object} Xhr
   _sendData_: function _sendData_(verb, params) {
     var opts = this._normalizeParams_(verb, null, params),
-      xhr = this._getXhr_(opts);
+      xhr = sudo.getXhr(opts);
     // TODO does this work as expected?
     xhr.send(opts.data || JSON.stringify(this._prepareData_(this.data)));
     return xhr;
@@ -1777,7 +1864,7 @@ sudo.delegates.Data.prototype.filter = function(obj) {
 // `private`
 sudo.delegates.Data.prototype.role = 'data';
 
-sudo.version = "0.9.7";
+sudo.version = "0.9.8";
 window.sudo = sudo;
 if(typeof window._ === "undefined") window._ = sudo;
 }).call(this, this);

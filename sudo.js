@@ -5,6 +5,10 @@ var sudo = {
   //
   // `namespace`
   delegates: {},
+  // ###expandExpression
+  // The regular expression used by String.expand as delimiters
+  // exposed here so it can be overridden to taste.
+  expandExpression: /\$\{(.+?)\}/g,
   // ###extend
   // Copy the (non-inherited) key:value pairs from <n> source objects to a single target object.
   //

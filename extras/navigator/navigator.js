@@ -71,11 +71,12 @@ sudo.Navigator.prototype.getHash = function getHash(fragment) {
 };
 // ###getQuery
 // Take a hash and convert it to a `search` query.
+// Uses the Object.serialize 'addOn'
 //
 // `param` {object} `obj`
 // `returns` {string} the serialized query string
 sudo.Navigator.prototype.getQuery = function getQuery(obj) {
-  return '?' + (this.params(obj));
+  return '?' + (Object.serialize(obj));
 };
 
 // ###getSearch
@@ -94,7 +95,6 @@ sudo.Navigator.prototype.getSearch = function getSearch(fragment) {
 //
 // `returns` {String}
 sudo.Navigator.prototype.getUrl = function getUrl() {
-  // note that delegate(_role_) returns the deleagte
   return this.data.root + this.data.fragment;
 };
 // ###go
@@ -125,34 +125,13 @@ sudo.Navigator.prototype.handleChange = function handleChange() {
     return this.setData();
   }
 };
-// ###params
-// Take a passed in hash and return a serialized string in queryString format
-//
-// `param` {object} `obj`
-// `returns` {string} 
-sudo.Navigator.prototype.params = function(obj) {
-  var keys = Object.keys(obj), len = keys.length, params = [], i;
-  params.add = function(k, v) {this.push(window.escape(k) + '=' + window.escape(v));};
-  for (i = 0; i < len; i++) {params.add(keys[i], obj[keys[i]]);}
-  return params.join('&').replace(/%20/g, '+');
-};
 // ###parseQuery
 // Parse and return a hash of the key value pairs contained in 
-// the current `query`
+// the current `query` -- uses the Object.deserialize addOn
 //
 // `returns` {object}
 sudo.Navigator.prototype.parseQuery = function parseQuery() {
-  var obj = {}, seg = this.data.query,
-    i, s;
-  if(seg) {
-    seg = seg.split('&');
-    for(i = 0; i < seg.length; i++) {
-      if(!seg[i]) continue;
-      s = seg[i].split('=');
-      obj[s[0]] = s[1];
-    }
-    return obj;
-  }
+  if(this.data.query) return Object.deserialize(this.data.query);
 };
 // ###setData
 // Using the current `fragment` (minus any search or hash data) as a key,
