@@ -53,14 +53,6 @@ sudo.extensions.listener = {
     if((hash = this.model.data.event || this.model.data.events)) this._handleEvents_(hash, 1);
     return this;
   },
-  // ###_getNodes_
-  // Return an array of the nodes matching `this.querySelectorAll(selector)`.
-  // Used during event binding to store the targets of a delegated event
-  //
-  // `private`
-  _getNodes_: function _getNodes_(selector) {
-    return Array.prototype.slice.call(this.$$(selector));
-  },
   // ###_handleEvents_
   // Get each event type to be observed and pass them to _handleType_
   // with their options
@@ -99,16 +91,12 @@ sudo.extensions.listener = {
           if(typeof nHandler.fn === 'string') {
             nHandler.fn = this[nHandler.fn].bind(this);
           }
-          // set the list of possible targets
-          nHandler._nodes_ = this._getNodes_(selector);
           this._addOrRemove_(which, type, this._predicate_, nHandler.capture);
         } else {
           // this form (type2 above) has a sel - but no data or 'capture'
-          // we are going to morph this into an obj - as we will store the _nodes_
           if(nHandlerType === 'string') {
             hash[type][selector] = {
               fn: this[nHandler].bind(this),
-              _nodes_: this._getNodes_(selector)
             };
           }
           // the predicate will call the fn if sel match is made
@@ -122,14 +110,9 @@ sudo.extensions.listener = {
   // will bind this method as the callback. Serving as the 'first step' in a process
   // that will:
   //   1. Appended the `data` to the `event` object if `data` is present. 
-  //   2. If `sel` is indicated, Compare the `event.target` to the item(s) returned fom
-  //      a querySelectorAll operation on this object's `el`, looking for a match.
+  //   2. If `sel` is indicated, Compare the `event.target` to the selector
+  //      using the browser native matesSelector.
   // When complete, pass the `event` to the desired callback (or don't), as per `bindEvents`.
-  //
-  // **Notes**
-  // This method could be written (along with _handleType_)to create closures for the 
-  // needed data in the event hash rather than looking it up. This would not be
-  // without concerns however, such as memory leaks.
   //
   // `param` {event} `e`. The DOM event
   // `returns` {*} call to the indicated method/function
@@ -140,8 +123,8 @@ sudo.extensions.listener = {
       selectors = Object.keys(type);
       for(i = 0; i < selectors.length; i++) {
         selector = selectors[i]; handler = type[selector];
-        // _nodes_ should be in place 
-        if(handler._nodes_.indexOf(e.target) !== -1) {
+        // using the 'addOn' which abstracts out the prefixes
+        if(Element.matches(e.target, selector)) {
           // time to call the methods
           if(handler.data) e.data = handler.data;
           return handler.fn(e);

@@ -25,6 +25,46 @@ Object.deserialize = function deserialize(str) {
     obj[s[0]] = s[1];
   }
   return obj;
+};// ###matches (Element)
+// Unfortunately the matchesSelector methods are all hidden behind prefixes ATM.
+// set the useable one, if not, then return the bool.
+//
+// `param` {element} `el`. A DOM 1 nodetype
+// `param` {string}  `sel`. A CSS selector
+// `returns` {bool}
+Element.matches = function matches(el, sel) {
+  if (el.nodeType !== 1) return false;
+  // normalize the native selector match fn
+  if(!sudo.matchesSelector) {
+    sudo.matchesSelector = el.webkitMatchesSelector || el.mozMatchesSelector ||
+    el.oMatchesSelector || el.msMatchesSelector || el.matchesSelector;
+  }
+  return sudo.matchesSelector.call(el, sel);
+};// ###closestParent
+// Traverse the DOM upwards in heirarchy from a given DOM node checking if
+// a match to a given selector is found.
+//
+// `param` {node} `node`
+// `param` {str} `sel`. A CSS selector
+// `returns` {node}
+Node.closestParent = function closestParent(node, sel) {
+  while(node && !(Element.matches(node, sel))) {
+    node = node.parentNode;
+  }
+  return node;
+};// ###forEach
+// This is a, hopefully, shortlived bit of syntactic sugar for the fact that,
+// pre-ES6, there isn't a succinct way to iterate over a NodeList. This method
+// will simply construct a for loop around the passed in NodeList and call the
+// provided function with each item in it
+//
+// `param` {nodeList} `list`
+// `param` {function} `fn` 
+NodeList.forEach = function nlforEach(list, fn) {
+  var len = list.length, i;
+  for (i = 0; i < len; i++) {
+    fn(list[i]);
+  }
 };// ###escape
 // Placed on the String Object to Escape a string for HTML interpolation
 //
@@ -1477,14 +1517,6 @@ sudo.extensions.listener = {
     if((hash = this.model.data.event || this.model.data.events)) this._handleEvents_(hash, 1);
     return this;
   },
-  // ###_getNodes_
-  // Return an array of the nodes matching `this.querySelectorAll(selector)`.
-  // Used during event binding to store the targets of a delegated event
-  //
-  // `private`
-  _getNodes_: function _getNodes_(selector) {
-    return Array.prototype.slice.call(this.$$(selector));
-  },
   // ###_handleEvents_
   // Get each event type to be observed and pass them to _handleType_
   // with their options
@@ -1523,16 +1555,12 @@ sudo.extensions.listener = {
           if(typeof nHandler.fn === 'string') {
             nHandler.fn = this[nHandler.fn].bind(this);
           }
-          // set the list of possible targets
-          nHandler._nodes_ = this._getNodes_(selector);
           this._addOrRemove_(which, type, this._predicate_, nHandler.capture);
         } else {
           // this form (type2 above) has a sel - but no data or 'capture'
-          // we are going to morph this into an obj - as we will store the _nodes_
           if(nHandlerType === 'string') {
             hash[type][selector] = {
               fn: this[nHandler].bind(this),
-              _nodes_: this._getNodes_(selector)
             };
           }
           // the predicate will call the fn if sel match is made
@@ -1546,14 +1574,9 @@ sudo.extensions.listener = {
   // will bind this method as the callback. Serving as the 'first step' in a process
   // that will:
   //   1. Appended the `data` to the `event` object if `data` is present. 
-  //   2. If `sel` is indicated, Compare the `event.target` to the item(s) returned fom
-  //      a querySelectorAll operation on this object's `el`, looking for a match.
+  //   2. If `sel` is indicated, Compare the `event.target` to the selector
+  //      using the browser native matesSelector.
   // When complete, pass the `event` to the desired callback (or don't), as per `bindEvents`.
-  //
-  // **Notes**
-  // This method could be written (along with _handleType_)to create closures for the 
-  // needed data in the event hash rather than looking it up. This would not be
-  // without concerns however, such as memory leaks.
   //
   // `param` {event} `e`. The DOM event
   // `returns` {*} call to the indicated method/function
@@ -1564,8 +1587,8 @@ sudo.extensions.listener = {
       selectors = Object.keys(type);
       for(i = 0; i < selectors.length; i++) {
         selector = selectors[i]; handler = type[selector];
-        // _nodes_ should be in place 
-        if(handler._nodes_.indexOf(e.target) !== -1) {
+        // using the 'addOn' which abstracts out the prefixes
+        if(Element.matches(e.target, selector)) {
           // time to call the methods
           if(handler.data) e.data = handler.data;
           return handler.fn(e);
