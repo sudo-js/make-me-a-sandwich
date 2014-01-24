@@ -1,10 +1,11 @@
 // ###closestParent
 // Traverse the DOM upwards in heirarchy from a given DOM node checking if
-// a match to a given selector is found.
+// a match to a given selector is found. The matching node is returned or 
+// falsey if nothing found.
 //
 // `param` {node} `node`
 // `param` {str} `sel`. A CSS selector
-// `returns` {node}
+// `returns` {node|bool}
 Node.closestParent = function closestParent(node, sel) {
   while(node && !(Element.matches(node, sel))) {
     node = !Node.isDocument(node) && node.parentNode;

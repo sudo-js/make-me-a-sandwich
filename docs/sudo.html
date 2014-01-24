@@ -133,10 +133,11 @@ set the useable one, if not, then return the bool.</p>
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>Traverse the DOM upwards in heirarchy from a given DOM node checking if
-a match to a given selector is found.</p>
+a match to a given selector is found. The matching node is returned or 
+falsey if nothing found.</p>
 <p><code>param</code> {node} <code>node</code>
 <code>param</code> {str} <code>sel</code>. A CSS selector
-<code>returns</code> {node}</p>
+<code>returns</code> {node|bool}</p>
 
             </div>
             
