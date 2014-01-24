@@ -1,6 +1,25 @@
-// ###xhrHeaders
-// Any 'global' headers that should go out with every XHR request 
-sudo.xhrHeaders = {};
+// ###getHeight
+// As there as no unified way to measure the height of an
+// element/node/document/window we abstract that here.
+//
+// `param` {*} `arg`
+// `returns`{number}
+sudo.getHeight = function getHeight(arg) {
+  if(arg === window) return arg.innerHeight;
+  if(Node.isDocument(arg)) return arg.documentElement.scrollHeight;
+  return arg.offsetHeight;
+};
+// ###getWidth
+// As there as no unified way to measure the width of an
+// element/node/document/window we abstract that here.
+//
+// `param` {*} `arg`
+// `returns`{number}
+sudo.getWidth = function getWidth(arg) {
+  if(arg === window) return arg.innerHeight;
+  if(Node.isDocument(arg)) return arg.documentElement.scrollHeight;
+  return arg.offsetWidth;
+};
 // ###getXhr
 // While getting a new XMLHttpRequest is standardized now, we are still going 
 // to provide this syntactic sugar to allow the setting of global headers (will
@@ -45,3 +64,6 @@ sudo.getXhr = function getXhr(params) {
   if(params.onloadend) xhr.onloadend = params.onloadend;
   return xhr;
 };
+// ###xhrHeaders
+// Any 'global' headers that should go out with every XHR request 
+sudo.xhrHeaders = {};

@@ -49,9 +49,18 @@ Element.matches = function matches(el, sel) {
 // `returns` {node}
 Node.closestParent = function closestParent(node, sel) {
   while(node && !(Element.matches(node, sel))) {
-    node = node.parentNode;
+    node = !Node.isDocument(node) && node.parentNode;
   }
   return node;
+};
+// ###isDocument
+// Return truthy is the passed in node is the document object. Placed here on
+// the Node Class Object as `document` is a `Node` type.
+//
+// `param` {node} `node`
+// `returns` {bool}
+Node.isDocument = function isDocument(node) {
+  return node.nodeType === node.DOCUMENT_NODE;
 };// ###forEach (NodeList)
 // This is a, hopefully, shortlived bit of syntactic sugar for the fact that,
 // at the moment, there isn't a succinct way to iterate over a NodeList such as `Array.forEach`. 
@@ -270,9 +279,28 @@ var sudo = {
     }
   }
 };
-// ###xhrHeaders
-// Any 'global' headers that should go out with every XHR request 
-sudo.xhrHeaders = {};
+// ###getHeight
+// As there as no unified way to measure the height of an
+// element/node/document/window we abstract that here.
+//
+// `param` {*} `arg`
+// `returns`{number}
+sudo.getHeight = function getHeight(arg) {
+  if(arg === window) return arg.innerHeight;
+  if(Node.isDocument(arg)) return arg.documentElement.scrollHeight;
+  return arg.offsetHeight;
+};
+// ###getWidth
+// As there as no unified way to measure the width of an
+// element/node/document/window we abstract that here.
+//
+// `param` {*} `arg`
+// `returns`{number}
+sudo.getWidth = function getWidth(arg) {
+  if(arg === window) return arg.innerHeight;
+  if(Node.isDocument(arg)) return arg.documentElement.scrollHeight;
+  return arg.offsetWidth;
+};
 // ###getXhr
 // While getting a new XMLHttpRequest is standardized now, we are still going 
 // to provide this syntactic sugar to allow the setting of global headers (will
@@ -316,7 +344,10 @@ sudo.getXhr = function getXhr(params) {
   if(params.onerror) xhr.onerror = params.onerror;
   if(params.onloadend) xhr.onloadend = params.onloadend;
   return xhr;
-};// ##Base Class Object
+};
+// ###xhrHeaders
+// Any 'global' headers that should go out with every XHR request 
+sudo.xhrHeaders = {};// ##Base Class Object
 //
 // All sudo.js objects inherit base, giving the ability
 // to utilize delegation, the `base` function and the 
@@ -1292,10 +1323,10 @@ sudo.extensions.observable = {
   // property on the observable's data store is set, changed or deleted 
   // via set, unset, setPath or unsetPath with an object containing:
   //     {
-  //	     type: <new, updated, deleted>,
-  //	     object: <the object being observed>,
-  //	     name: <the key that was modified>,
-  //	     oldValue: <if a previous value existed for this key>
+  //       type: <new, updated, deleted>,
+  //       object: <the object being observed>,
+  //       name: <the key that was modified>,
+  //       oldValue: <if a previous value existed for this key>
   //     }
   // For ease of 'unobserving' the same Function passed in is returned.
   //

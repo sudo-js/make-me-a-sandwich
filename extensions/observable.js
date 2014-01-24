@@ -34,10 +34,10 @@ sudo.extensions.observable = {
   // property on the observable's data store is set, changed or deleted 
   // via set, unset, setPath or unsetPath with an object containing:
   //     {
-  //	     type: <new, updated, deleted>,
-  //	     object: <the object being observed>,
-  //	     name: <the key that was modified>,
-  //	     oldValue: <if a previous value existed for this key>
+  //       type: <new, updated, deleted>,
+  //       object: <the object being observed>,
+  //       name: <the key that was modified>,
+  //       oldValue: <if a previous value existed for this key>
   //     }
   // For ease of 'unobserving' the same Function passed in is returned.
   //
