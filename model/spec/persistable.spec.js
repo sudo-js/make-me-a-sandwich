@@ -62,7 +62,7 @@ describe('Sudo Model persistance', function() {
       occupation: 'King of the Brittons'
     });
 
-    _.extend(model, _.extensions.persistable);
+    Object.extend(model, _.extensions.persistable);
   });
 
   it('Uses POST for create', function() {

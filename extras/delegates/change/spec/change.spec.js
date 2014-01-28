@@ -1,7 +1,7 @@
 describe('Sudo Change Delegate', function() {
 
   beforeEach(function(){
-    model = _.extend(new _.Model(), _.extensions.observable);
+    model = Object.extend(new _.Model(), _.extensions.observable);
     view = new _.View();
     view.denyDivinity = function(obj) {};
     view.addDelegate(new _.delegates.Change({

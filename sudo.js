@@ -5,26 +5,6 @@ var sudo = {
   //
   // `namespace`
   delegates: {},
-  // ###expandExpression
-  // The regular expression used by String.expand as delimiters
-  // exposed here so it can be overridden to taste.
-  expandExpression: /\$\{(.+?)\}/g,
-  // ###extend
-  // Copy the (non-inherited) key:value pairs from <n> source objects to a single target object.
-  //
-  // `params` {objects} A target object followed by <n> source objects
-  extend: function extend() {
-    var args = Array.prototype.slice.call(arguments),
-      targ = args.shift(), i, obj, keys;
-    // iterate over each passed in obj remaining
-    for(obj; args.length && (obj = args.shift());) {
-      keys = Object.keys(obj);
-      for(i = 0; i < keys.length; i++) {
-        targ[keys[i]] = obj[keys[i]];
-      }
-    }
-    return targ;
-  },
   // The sudo.extensions namespace holds the objects that are stand alone `modules` which
   // can be `implemented` (mixed-in) in sudo Class Objects
   //

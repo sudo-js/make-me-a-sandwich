@@ -1,5 +1,5 @@
 describe('Sudo Navigator Class -- PushState', function() {
-  var model = _.extend(new _.Model(), _.extensions.observable),
+  var model = Object.extend(new _.Model(), _.extensions.observable),
     nav = new _.Navigator({
       root: '/',
       observable: model

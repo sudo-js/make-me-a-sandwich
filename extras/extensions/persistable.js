@@ -49,7 +49,7 @@ sudo.extensions.persistable = {
   // `returns` {object} A normalized params object for the XHR call
   _normalizeParams_: function _normalizeParams_(verb, opts, params) {
     var self = this;
-    opts || (opts = _.extend({}, this.data.ajax));
+    opts || (opts = Object.extend({}, this.data.ajax));
     opts.url || (opts.url = this.url(opts.baseUrl));
     opts.verb || (opts.verb = verb);
     opts.responseType || (opts.responseType = 'text');
@@ -61,7 +61,7 @@ sudo.extensions.persistable = {
       else self.sets({ajaxStatus: this.status, ajaxStatusText: this.statusText});
     });
     // allow the passed in params to override any set in this model's `ajax` options
-    return params ? _.extend(opts, params) : opts;
+    return params ? Object.extend(opts, params) : opts;
   },
   // ###_prepareData_
   // In the default state, that is to data is explicitly passed to them, save

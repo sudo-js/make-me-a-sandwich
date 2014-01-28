@@ -15,12 +15,12 @@
 sudo.DataView = function(el, data) {
   sudo.View.call(this, el, data);
   // implements the listener extension
-  _.extend(this, sudo.extensions.listener);
+  Object.extend(this, sudo.extensions.listener);
   // dont re-render on the setting of events if observing model change
   this.modelChangeBlacklist = {event: true, events: true};
   // autoRender types observe their own model
   if(this.model.data.renderOnModelChange) {
-    if(!this.model.observe) _.extend(this.model, sudo.extensions.observable);
+    if(!this.model.observe) Object.extend(this.model, sudo.extensions.observable);
   }
 };
 // `private`

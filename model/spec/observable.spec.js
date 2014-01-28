@@ -1,6 +1,6 @@
 describe('Sudo Observable Model', function() {
   beforeEach(function() {
-    model = _.extend(new _.Model(), _.extensions.observable);
+    model = Object.extend(new _.Model(), _.extensions.observable);
   });
 
   it('registers a callback', function() {	
