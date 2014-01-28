@@ -10,9 +10,8 @@ sudo.delegates.infiniteScroll = function(opts) {
   // normalized further in the addedAsDelegate method. In a mobile scenario
   // this shourd be falsey
   this.scrollable = opts.scrollable || window;
-  // the element that contains the scrollable, defalts to the outer wrapper,
-  // same rules as the scrollable
-  this.container = opts.container || document.querySelector('.main-content');
+  // the element that contains the scrollable, defalts to 'body'
+  this.container = opts.container || document.querySelector('body');
   // we must retain a ref to the bound function so we can remove it
   this._boundScroll = this.scrolled.bind(this);
   // normalize the correct operations for measuring height
@@ -23,6 +22,12 @@ sudo.delegates.infiniteScroll.prototype = {
     // normalize the passed in scrollable and container if present
     if(typeof this.scrollable === 'string') this.scrollable = delegator.$(this.scrollable);
     if(typeof this.container === 'string') this.container = delegator.$(this.container);
+    // it's important to know when scrollable is window
+    this.scrollableIsWindow = this.scrollable === window;
+    // depending on what the scrollable is, set the proper height attr
+    this.scrollTopAttr = this.scrollableIsWindow ? 'pageYOffset' : 'scrollTop';
+    // if its the document, assure its the documentElement
+    if(Node.isDocument(this.scrollable)) this.scrollable = this.scrollable.documentElement;
     // in the inverted case, do not setup until called. this is because unless the 
     // scrollable has been moved to the bottom, any scroll would trigger the call to infiniteScrollAction
     if(!this.inverted) this.setUp();
@@ -41,10 +46,13 @@ sudo.delegates.infiniteScroll.prototype = {
   }, 300, true),
   // ---
   scrolled: function scrolled(e) {
+    var scrollableHeight = this.scrollableIsWindow ? this.scrollable.innerHeight :
+      Node.getHeight(this.scrollable);
     if(this.inverted) {
-      if(this.scrollable.scrollTop <= this.trigger) this.scroll();
+      if(this.scrollable[this.scrollTopAttr] <= this.trigger) this.scroll();
     } else {
-      if(this.scrollable.scrollTop + this.trigger >= (sudo.getHeight(this.container) - sudo.getHeight(this.scrollable))) this.scroll();
+      if(this.scrollable[this.scrollTopAttr] + this.trigger >= 
+        (Node.getHeight(this.container) - scrollableHeight)) this.scroll();
     }
   },
   // sets up the scroll listening
@@ -63,12 +71,23 @@ sudo.delegates.infiniteScroll.prototype = {
   },
   // force the scroll to the bottom of the scrollable
   toBottom: function toBottom() {
-    this.scrollable.scrollTop = this.scrollable.scrollHeight;
+    var scr;
+    // if the scrollable is window (or document) you are gonna have to set the scrolltop on body as
+    // setting the pageYOffset || scrollTop will not have the desired effect
+    if(this.scrollableIsWindow || Node.isDocument(this.scrollable)) {
+      scr = document.querySelector('body');
+      scr.scrollTop = scr.scrollHeight;
+    } else this.scrollable.scrollTop = this.scrollable.scrollHeight;
     return this;
   },
   // force the scroll to the top of the scrollable
   toTop: function toTop() {
-    this.scrollable.scrollTop = 0;
+    var scr;
+    // same as toBottom...
+    if(this.scrollableIsWindow || Node.isDocument(this.scrollable)) {
+      scr = document.querySelector('body');
+      scr.scrollTop = 0;
+    } else this.scrollable.scrollTop = 0;
     return this;
   }
 };
