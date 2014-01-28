@@ -1,3 +1,4 @@
+// Be sure to get the Function.debounce method in your Static.js build if using this.
 sudo.delegates.infiniteScroll = function(opts) {
   opts || (opts = {});
   // how far from the bottom until calling scroll action?
