@@ -361,7 +361,8 @@ already in the sudo.xhrHeaders).</p>
             
             <div class="content"><div class='highlight'><pre>sudo.getXhr = <span class="function"><span class="keyword">function</span> <span class="title">getXhr</span><span class="params">(params)</span> {</span>
   <span class="keyword">var</span> xhr =  <span class="keyword">new</span> XMLHttpRequest(), keys = Object.keys(sudo.xhrHeaders),
-    len = keys.length, i;</pre></div></div>
+    len = keys.length, i;
+  params.verb || (params.verb = <span class="string">'GET'</span>);</pre></div></div>
             
         </li>
         
@@ -372,12 +373,11 @@ already in the sudo.xhrHeaders).</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <p>set any custom headers</p>
+              <p>check if we need a QS</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span>(len) <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; len; i++) xhr.setRequestHeader(keys[i], sudo.xhrHeaders[keys[i]]);
-  params.verb || (params.verb = <span class="string">'GET'</span>);</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span>(params.verb === <span class="string">'GET'</span> &amp;&amp; params.params) {</pre></div></div>
             
         </li>
         
@@ -388,11 +388,14 @@ already in the sudo.xhrHeaders).</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <p>check if we need a QS</p>
+              <p>assumed to be an object literal</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span>(params.verb === <span class="string">'GET'</span> &amp;&amp; params.params) {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span>(<span class="keyword">typeof</span> params.params !== <span class="string">'string'</span>) params.params = Object.serialize(params.params);
+    params.url += (<span class="string">'?'</span> + params.params);
+  }
+  xhr.open(params.verb, params.url, <span class="literal">true</span>, params.user, params.password);</pre></div></div>
             
         </li>
         
@@ -403,14 +406,26 @@ already in the sudo.xhrHeaders).</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <p>assumed to be an object literal</p>
+              <p>TODO possibly implement the mime type song and dance in the xhr2 world</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span>(<span class="keyword">typeof</span> params.params !== <span class="string">'string'</span>) params.params = Object.serialize(params.params);
-    params.url += (<span class="string">'?'</span> + params.params);
-  }
-  xhr.open(params.verb, params.url, <span class="literal">true</span>, params.user, params.password);
+            <div class="content"><div class='highlight'><pre>  xhr.setRequestHeader(<span class="string">'Accept'</span>, <span class="string">'*/*'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>set any custom headers</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span>(len) <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; len; i++) xhr.setRequestHeader(keys[i], sudo.xhrHeaders[keys[i]]);
   xhr.responseType = params.responseType || <span class="string">'text'</span>;
   xhr.onload = params.onload || sudo.noop;
   <span class="keyword">if</span>(params.onerror) xhr.onerror = params.onerror;
@@ -421,11 +436,11 @@ already in the sudo.xhrHeaders).</p>
         </li>
         
         
-        <li id="section-20">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <h3 id="xhrheaders">xhrHeaders</h3>
 <p>Any &#39;global&#39; headers that should go out with every XHR request </p>
@@ -437,11 +452,11 @@ already in the sudo.xhrHeaders).</p>
         </li>
         
         
-        <li id="section-21">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>All sudo.js objects inherit base, giving the ability
 to utilize delegation, the <code>base</code> function and the 
@@ -455,11 +470,11 @@ to utilize delegation, the <code>base</code> function and the
         </li>
         
         
-        <li id="section-22">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>can delegate</p>
 
@@ -470,11 +485,11 @@ to utilize delegation, the <code>base</code> function and the
         </li>
         
         
-        <li id="section-23">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>a beautiful and unique snowflake</p>
 
@@ -486,11 +501,11 @@ to utilize delegation, the <code>base</code> function and the
         </li>
         
         
-        <li id="section-24">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <h3 id="adddelegate">addDelegate</h3>
 <p>Push an instance of a Class Object into this object&#39;s <code>_delegates_</code> list.</p>
@@ -509,11 +524,11 @@ to utilize delegation, the <code>base</code> function and the
         </li>
         
         
-        <li id="section-25">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <h3 id="base">base</h3>
 <p>Lookup the function matching the name passed in  and call it with
@@ -535,11 +550,11 @@ along with the initial method name</p>
         </li>
         
         
-        <li id="section-26">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>find method on the prototype, excluding the caller</p>
 
@@ -552,11 +567,11 @@ along with the initial method name</p>
         </li>
         
         
-        <li id="section-27">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>keep digging</p>
 
@@ -570,11 +585,11 @@ along with the initial method name</p>
         </li>
         
         
-        <li id="section-28">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <h3 id="construct">construct</h3>
 <p>A convenience method that alleviates the need to place:
@@ -590,11 +605,11 @@ in every constructor</p>
         </li>
         
         
-        <li id="section-29">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <h3 id="delegate">delegate</h3>
 <p>From this object&#39;s list of delegates find the object whose <code>_role_</code> matches
@@ -622,11 +637,11 @@ the passed <code>name</code> and:</p>
         </li>
         
         
-        <li id="section-30">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <h3 id="getdelegate">getDelegate</h3>
 <p>Fetch a delegate whose role property matches the passed in argument.
@@ -644,11 +659,11 @@ API consistency</p>
         </li>
         
         
-        <li id="section-31">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <h3 id="removedelegate">removeDelegate</h3>
 <p>From this objects <code>delegates</code> list remove the object (there should only ever be 1)
@@ -666,11 +681,11 @@ whose role matches the passed in argument</p>
         </li>
         
         
-        <li id="section-32">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>no <em>delegator</em> for you</p>
 
@@ -687,11 +702,11 @@ whose role matches the passed in argument</p>
         </li>
         
         
-        <li id="section-33">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p><code>private</code></p>
 
@@ -702,11 +717,11 @@ whose role matches the passed in argument</p>
         </li>
         
         
-        <li id="section-34">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <h2 id="model-class-object">Model Class Object</h2>
 <p>Model Objects expose methods for setting and getting data, and
@@ -723,11 +738,11 @@ can be observed if implementing the <code>Observable Extension</code></p>
         </li>
         
         
-        <li id="section-35">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>only models are <code>observable</code></p>
 
@@ -740,11 +755,11 @@ can be observed if implementing the <code>Observable Extension</code></p>
         </li>
         
         
-        <li id="section-36">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>Model inherits from sudo.Base
 <code>private</code></p>
@@ -756,11 +771,11 @@ can be observed if implementing the <code>Observable Extension</code></p>
         </li>
         
         
-        <li id="section-37">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <h3 id="get">get</h3>
 <p>Returns the value associated with a key.</p>
@@ -776,11 +791,11 @@ can be observed if implementing the <code>Observable Extension</code></p>
         </li>
         
         
-        <li id="section-38">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <h3 id="getpath">getPath</h3>
 <p>Uses the sudo namespace&#39;s getpath function operating on the model&#39;s
@@ -796,11 +811,11 @@ data hash.</p>
         </li>
         
         
-        <li id="section-39">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <h3 id="gets">gets</h3>
 <p>Assembles and returns an object of key:value pairs for each key
@@ -822,11 +837,11 @@ contained in the passed in Array.</p>
         </li>
         
         
-        <li id="section-40">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p><code>private</code></p>
 
@@ -837,11 +852,11 @@ contained in the passed in Array.</p>
         </li>
         
         
-        <li id="section-41">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <h3 id="set">set</h3>
 <p>Set a key:value pair.</p>
@@ -856,11 +871,11 @@ contained in the passed in Array.</p>
         </li>
         
         
-        <li id="section-42">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p><em>NOTE: intentional possibilty of setting a falsy value</em></p>
 
@@ -873,11 +888,11 @@ contained in the passed in Array.</p>
         </li>
         
         
-        <li id="section-43">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <h3 id="setpath">setPath</h3>
 <p>Uses the sudo namespace&#39;s setpath function operating on the model&#39;s
@@ -896,11 +911,11 @@ data hash.</p>
         </li>
         
         
-        <li id="section-44">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <h3 id="sets">sets</h3>
 <p>Invokes <code>set()</code> or <code>setPath()</code> for each key value pair in <code>obj</code>.
@@ -922,11 +937,11 @@ Any listeners for those keys or paths will be called.</p>
         </li>
         
         
-        <li id="section-45">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <h3 id="unset">unset</h3>
 <p>Remove a key:value pair from this object&#39;s data store</p>
@@ -943,11 +958,11 @@ Any listeners for those keys or paths will be called.</p>
         </li>
         
         
-        <li id="section-46">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <h3 id="unsetpath">unsetPath</h3>
 <p>Uses <code>sudo.unsetPath</code> operating on this models data hash</p>
@@ -964,11 +979,11 @@ Any listeners for those keys or paths will be called.</p>
         </li>
         
         
-        <li id="section-47">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <h3 id="unsets">unsets</h3>
 <p>Deletes a number of keys or paths from this object&#39;s data store</p>
@@ -989,11 +1004,11 @@ Any listeners for those keys or paths will be called.</p>
         </li>
         
         
-        <li id="section-48">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <h2 id="container-class-object">Container Class Object</h2>
 <p>A container is any object that can both contain other objects and
@@ -1015,11 +1030,11 @@ via <code>addChildren</code></p>
         </li>
         
         
-        <li id="section-49">
+        <li id="section-50">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <p>Container is a subclass of sudo.Base</p>
 
@@ -1030,11 +1045,11 @@ via <code>addChildren</code></p>
         </li>
         
         
-        <li id="section-50">
+        <li id="section-51">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
               <h3 id="addchild">addChild</h3>
 <p>Adds a View to this container&#39;s list of children.
@@ -1062,11 +1077,11 @@ If <code>addedToParent</code> if found on the child, call it, sending <code>this
         </li>
         
         
-        <li id="section-51">
+        <li id="section-52">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
               <h3 id="addchildren">addChildren</h3>
 <p>Allows for multiple children to be added to this Container by passing
@@ -1084,11 +1099,11 @@ Object literal in the form {name: child}
         </li>
         
         
-        <li id="section-52">
+        <li id="section-53">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
+                <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
               <p>Array?</p>
 
@@ -1110,11 +1125,11 @@ Object literal in the form {name: child}
         </li>
         
         
-        <li id="section-53">
+        <li id="section-54">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-53">&#182;</a>
+                <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
               <h3 id="bubble">bubble</h3>
 <p>By default, <code>bubble</code> returns the current view&#39;s parent (if it has one)</p>
@@ -1127,11 +1142,11 @@ Object literal in the form {name: child}
         </li>
         
         
-        <li id="section-54">
+        <li id="section-55">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-54">&#182;</a>
+                <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
               <h3 id="eachchild">eachChild</h3>
 <p>Call a named method and pass any args to each child in a container&#39;s
@@ -1155,11 +1170,11 @@ The named method to look for and call. Other args are passed through
         </li>
         
         
-        <li id="section-55">
+        <li id="section-56">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-55">&#182;</a>
+                <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
               <h3 id="getchild">getChild</h3>
 <p>If a child was added with a name, via <code>addChild</code>,
@@ -1178,11 +1193,11 @@ containers children by index. That is possible however, though not preferred.</p
         </li>
         
         
-        <li id="section-56">
+        <li id="section-57">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-56">&#182;</a>
+                <a class="pilcrow" href="#section-57">&#182;</a>
               </div>
               <h3 id="_indexchildren_"><em>indexChildren</em></h3>
 <p>Method is called with the <code>index</code> property of a subview that is being removed.
@@ -1200,11 +1215,11 @@ Beginning at <code>i</code> decrement subview indices.
         </li>
         
         
-        <li id="section-57">
+        <li id="section-58">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-57">&#182;</a>
+                <a class="pilcrow" href="#section-58">&#182;</a>
               </div>
               <p>adjust any entries in childNames</p>
 
@@ -1217,11 +1232,11 @@ Beginning at <code>i</code> decrement subview indices.
         </li>
         
         
-        <li id="section-58">
+        <li id="section-59">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-58">&#182;</a>
+                <a class="pilcrow" href="#section-59">&#182;</a>
               </div>
               <h3 id="removechild">removeChild</h3>
 <p>Find the intended child from my list of children and remove it, removing the name reference and re-indexing
@@ -1240,11 +1255,11 @@ An object will be assumed to be an actual sudo Class Object.
         </li>
         
         
-        <li id="section-59">
+        <li id="section-60">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-59">&#182;</a>
+                <a class="pilcrow" href="#section-60">&#182;</a>
               </div>
               <p>normalize the input</p>
 
@@ -1257,11 +1272,11 @@ An object will be assumed to be an actual sudo Class Object.
         </li>
         
         
-        <li id="section-60">
+        <li id="section-61">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-60">&#182;</a>
+                <a class="pilcrow" href="#section-61">&#182;</a>
               </div>
               <p>remove from the children Array</p>
 
@@ -1272,11 +1287,11 @@ An object will be assumed to be an actual sudo Class Object.
         </li>
         
         
-        <li id="section-61">
+        <li id="section-62">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-61">&#182;</a>
+                <a class="pilcrow" href="#section-62">&#182;</a>
               </div>
               <p>remove from the named child hash if present</p>
 
@@ -1287,11 +1302,11 @@ An object will be assumed to be an actual sudo Class Object.
         </li>
         
         
-        <li id="section-62">
+        <li id="section-63">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-62">&#182;</a>
+                <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
               <p>child is now an <code>orphan</code></p>
 
@@ -1307,11 +1322,11 @@ An object will be assumed to be an actual sudo Class Object.
         </li>
         
         
-        <li id="section-63">
+        <li id="section-64">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-63">&#182;</a>
+                <a class="pilcrow" href="#section-64">&#182;</a>
               </div>
               <h3 id="removechildren">removeChildren</h3>
 <p>Remove all children, name references and adjust indexes accordingly.
@@ -1328,11 +1343,11 @@ rather than the default <code>remove</code> if truthy
         </li>
         
         
-        <li id="section-64">
+        <li id="section-65">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-64">&#182;</a>
+                <a class="pilcrow" href="#section-65">&#182;</a>
               </div>
               <p>use the child names hash to avoid loop modification errors</p>
 
@@ -1348,11 +1363,11 @@ rather than the default <code>remove</code> if truthy
         </li>
         
         
-        <li id="section-65">
+        <li id="section-66">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
+                <a class="pilcrow" href="#section-66">&#182;</a>
               </div>
               <h3 id="removefromparent">removeFromParent</h3>
 <p>Remove this object from its parents list of children.
@@ -1366,11 +1381,11 @@ or chaining method calls</p>
         </li>
         
         
-        <li id="section-66">
+        <li id="section-67">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-66">&#182;</a>
+                <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
               <p>will error without a parent, but that would be your fault...</p>
 
@@ -1384,11 +1399,11 @@ sudo.Container.prototype.role = <span class="string">'container'</span>;</pre></
         </li>
         
         
-        <li id="section-67">
+        <li id="section-68">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
+                <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
               <h3 id="send">send</h3>
 <p>The call to the specific method on a (un)specified target happens here.
@@ -1417,11 +1432,11 @@ Any other args will be passed to the sendMethod after <code>this</code>
         </li>
         
         
-        <li id="section-68">
+        <li id="section-69">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-68">&#182;</a>
+                <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
               <p>normalize the input, common use cases first</p>
 
@@ -1433,11 +1448,11 @@ Any other args will be passed to the sendMethod after <code>this</code>
         </li>
         
         
-        <li id="section-69">
+        <li id="section-70">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
+                <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
               <p>less common but viable options</p>
 
@@ -1448,11 +1463,11 @@ Any other args will be passed to the sendMethod after <code>this</code>
         </li>
         
         
-        <li id="section-70">
+        <li id="section-71">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-71">&#182;</a>
               </div>
               <p>passed as a custom data attr bound in events</p>
 
@@ -1463,11 +1478,11 @@ Any other args will be passed to the sendMethod after <code>this</code>
         </li>
         
         
-        <li id="section-71">
+        <li id="section-72">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
+                <a class="pilcrow" href="#section-72">&#182;</a>
               </div>
               <p>passed in a hash from something or not passed at all</p>
 
@@ -1479,11 +1494,11 @@ Any other args will be passed to the sendMethod after <code>this</code>
         </li>
         
         
-        <li id="section-72">
+        <li id="section-73">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-72">&#182;</a>
+                <a class="pilcrow" href="#section-73">&#182;</a>
               </div>
               <p>target is either specified or my parent</p>
 
@@ -1494,11 +1509,11 @@ Any other args will be passed to the sendMethod after <code>this</code>
         </li>
         
         
-        <li id="section-73">
+        <li id="section-74">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-73">&#182;</a>
+                <a class="pilcrow" href="#section-74">&#182;</a>
               </div>
               <p>obvious chance for errors here, don&#39;t be dumb</p>
 
@@ -1512,11 +1527,11 @@ Any other args will be passed to the sendMethod after <code>this</code>
         </li>
         
         
-        <li id="section-74">
+        <li id="section-75">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-74">&#182;</a>
+                <a class="pilcrow" href="#section-75">&#182;</a>
               </div>
               <p>sendMethods expect a signature (sender, ...)</p>
 
@@ -1532,11 +1547,11 @@ Any other args will be passed to the sendMethod after <code>this</code>
         </li>
         
         
-        <li id="section-75">
+        <li id="section-76">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-76">&#182;</a>
               </div>
               <h2 id="view-class-object">View Class Object</h2>
 <p>Create an instance of a sudo.View object. A view is any object
@@ -1558,11 +1573,11 @@ of a new model located at <code>this.model</code>. Also can be a reference to an
         </li>
         
         
-        <li id="section-76">
+        <li id="section-77">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-76">&#182;</a>
+                <a class="pilcrow" href="#section-77">&#182;</a>
               </div>
               <p>allow model instance to be passed in as well</p>
 
@@ -1578,11 +1593,11 @@ of a new model located at <code>this.model</code>. Also can be a reference to an
         </li>
         
         
-        <li id="section-77">
+        <li id="section-78">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-77">&#182;</a>
+                <a class="pilcrow" href="#section-78">&#182;</a>
               </div>
               <p>View inherits from Container
 <code>private</code></p>
@@ -1594,11 +1609,11 @@ of a new model located at <code>this.model</code>. Also can be a reference to an
         </li>
         
         
-        <li id="section-78">
+        <li id="section-79">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-78">&#182;</a>
+                <a class="pilcrow" href="#section-79">&#182;</a>
               </div>
               <h3 id="becomepremier">becomePremier</h3>
 <p>Premier functionality provides hooks for behavioral differentiation
@@ -1616,11 +1631,11 @@ among elements or class objects.</p>
         </li>
         
         
-        <li id="section-79">
+        <li id="section-80">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-79">&#182;</a>
+                <a class="pilcrow" href="#section-80">&#182;</a>
               </div>
               <p>is there an existing premier that isn&#39;t me?</p>
 
@@ -1631,11 +1646,11 @@ among elements or class objects.</p>
         </li>
         
         
-        <li id="section-80">
+        <li id="section-81">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-80">&#182;</a>
+                <a class="pilcrow" href="#section-81">&#182;</a>
               </div>
               <p>ask it to resign and call the cb</p>
 
@@ -1649,11 +1664,11 @@ among elements or class objects.</p>
         </li>
         
         
-        <li id="section-81">
+        <li id="section-82">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-81">&#182;</a>
+                <a class="pilcrow" href="#section-82">&#182;</a>
               </div>
               <p>the el needs to be normalized before use
 <code>private</code></p>
@@ -1666,11 +1681,11 @@ among elements or class objects.</p>
         </li>
         
         
-        <li id="section-82">
+        <li id="section-83">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-82">&#182;</a>
+                <a class="pilcrow" href="#section-83">&#182;</a>
               </div>
               <p>if there is not a top level query returned the desired node may be 
 in a document fragment not in the DOM yet. We will check the parent&#39;s el
@@ -1684,11 +1699,11 @@ if available, or return the empty query</p>
         </li>
         
         
-        <li id="section-83">
+        <li id="section-84">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-83">&#182;</a>
+                <a class="pilcrow" href="#section-84">&#182;</a>
               </div>
               <h3 id="resignpremier">resignPremier</h3>
 <p>Resign premier status</p>
@@ -1705,11 +1720,11 @@ after resigning premier status.
         </li>
         
         
-        <li id="section-84">
+        <li id="section-85">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-84">&#182;</a>
+                <a class="pilcrow" href="#section-85">&#182;</a>
               </div>
               <p>only remove the global premier if it is me</p>
 
@@ -1720,11 +1735,11 @@ after resigning premier status.
         </li>
         
         
-        <li id="section-85">
+        <li id="section-86">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-85">&#182;</a>
+                <a class="pilcrow" href="#section-86">&#182;</a>
               </div>
               <p>fire the cb if passed</p>
 
@@ -1737,11 +1752,11 @@ after resigning premier status.
         </li>
         
         
-        <li id="section-86">
+        <li id="section-87">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-86">&#182;</a>
+                <a class="pilcrow" href="#section-87">&#182;</a>
               </div>
               <p><code>private</code></p>
 
@@ -1752,11 +1767,11 @@ after resigning premier status.
         </li>
         
         
-        <li id="section-87">
+        <li id="section-88">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-87">&#182;</a>
+                <a class="pilcrow" href="#section-88">&#182;</a>
               </div>
               <h3 id="setel">setEl</h3>
 <p>A view must have an element, set that here.
@@ -1773,11 +1788,11 @@ Node is always then available as <code>this.el</code>.</p>
         </li>
         
         
-        <li id="section-88">
+        <li id="section-89">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-88">&#182;</a>
+                <a class="pilcrow" href="#section-89">&#182;</a>
               </div>
               <p>normalize any relevant data</p>
 
@@ -1790,11 +1805,11 @@ Node is always then available as <code>this.el</code>.</p>
         </li>
         
         
-        <li id="section-89">
+        <li id="section-90">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-89">&#182;</a>
+                <a class="pilcrow" href="#section-90">&#182;</a>
               </div>
               <p>iterate and set the attributes</p>
 
@@ -1812,11 +1827,11 @@ Node is always then available as <code>this.el</code>.</p>
         </li>
         
         
-        <li id="section-90">
+        <li id="section-91">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-90">&#182;</a>
+                <a class="pilcrow" href="#section-91">&#182;</a>
               </div>
               <h3 id="this-">this.$</h3>
 <p>Return a single Element matching <code>sel</code> scoped to this View&#39;s el.
@@ -1833,11 +1848,11 @@ This is an alias to <code>this.el.querySelector(sel)</code>.</p>
         </li>
         
         
-        <li id="section-91">
+        <li id="section-92">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-91">&#182;</a>
+                <a class="pilcrow" href="#section-92">&#182;</a>
               </div>
               <h3 id="this-">this.$$</h3>
 <p>Return multiple Elements (a NodeList) matching <code>sel</code> scoped to this View&#39;s el.
@@ -1854,11 +1869,11 @@ This is an alias to <code>this.el.querySelectorAll(sel)</code>.</p>
         </li>
         
         
-        <li id="section-92">
+        <li id="section-93">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-92">&#182;</a>
+                <a class="pilcrow" href="#section-93">&#182;</a>
               </div>
               <h3 id="templating">Templating</h3>
 <p>Allow the default {{ js code }}, {{= key }}, and {{- escape stuff }} 
@@ -1876,11 +1891,11 @@ micro templating delimiters to be overridden if desired</p>
         </li>
         
         
-        <li id="section-93">
+        <li id="section-94">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-93">&#182;</a>
+                <a class="pilcrow" href="#section-94">&#182;</a>
               </div>
               <p>Certain characters need to be escaped so that they can be put 
 into a string literal when templating.</p>
@@ -1905,11 +1920,11 @@ into a string literal when templating.</p>
         </li>
         
         
-        <li id="section-94">
+        <li id="section-95">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-94">&#182;</a>
+                <a class="pilcrow" href="#section-95">&#182;</a>
               </div>
               <p>lookup hash for <code>escape</code></p>
 <p><code>type</code> {Object}</p>
@@ -1928,11 +1943,11 @@ into a string literal when templating.</p>
         </li>
         
         
-        <li id="section-95">
+        <li id="section-96">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-95">&#182;</a>
+                <a class="pilcrow" href="#section-96">&#182;</a>
               </div>
               <p>Escapes certain characters for templating</p>
 <p><code>type</code> {regexp}</p>
@@ -1944,11 +1959,11 @@ into a string literal when templating.</p>
         </li>
         
         
-        <li id="section-96">
+        <li id="section-97">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-96">&#182;</a>
+                <a class="pilcrow" href="#section-97">&#182;</a>
               </div>
               <p>Escape unsafe HTML</p>
 <p><code>type</code> {regexp}</p>
@@ -1960,11 +1975,11 @@ into a string literal when templating.</p>
         </li>
         
         
-        <li id="section-97">
+        <li id="section-98">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-97">&#182;</a>
+                <a class="pilcrow" href="#section-98">&#182;</a>
               </div>
               <p>Unescapes certain characters for templating</p>
 <p><code>type</code> {regexp}</p>
@@ -1976,11 +1991,11 @@ into a string literal when templating.</p>
         </li>
         
         
-        <li id="section-98">
+        <li id="section-99">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-98">&#182;</a>
+                <a class="pilcrow" href="#section-99">&#182;</a>
               </div>
               <h3 id="escape">escape</h3>
 <p>Remove unsafe characters from a string</p>
@@ -1997,11 +2012,11 @@ into a string literal when templating.</p>
         </li>
         
         
-        <li id="section-99">
+        <li id="section-100">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-99">&#182;</a>
+                <a class="pilcrow" href="#section-100">&#182;</a>
               </div>
               <h3 id="unescape">unescape</h3>
 <p>Within an interpolation, evaluation, or escaping,
@@ -2019,11 +2034,11 @@ remove HTML escaping that had been previously added.</p>
         </li>
         
         
-        <li id="section-100">
+        <li id="section-101">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-100">&#182;</a>
+                <a class="pilcrow" href="#section-101">&#182;</a>
               </div>
               <h3 id="template">template</h3>
 <p>JavaScript micro-templating, similar to John Resig&#39;s (and it&#39;s offspring) implementation.
@@ -2043,11 +2058,11 @@ if it is not present.</p>
         </li>
         
         
-        <li id="section-101">
+        <li id="section-102">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-101">&#182;</a>
+                <a class="pilcrow" href="#section-102">&#182;</a>
               </div>
               <p>Compile the template source, taking care to escape characters that
 cannot be included in a string literal and then unescape them in code blocks.</p>
@@ -2073,11 +2088,11 @@ cannot be included in a string literal and then unescape them in code blocks.</p
         </li>
         
         
-        <li id="section-102">
+        <li id="section-103">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-102">&#182;</a>
+                <a class="pilcrow" href="#section-103">&#182;</a>
               </div>
               <p>Provide the compiled function source as a convenience for reflection/compilation</p>
 
@@ -2090,11 +2105,11 @@ cannot be included in a string literal and then unescape them in code blocks.</p
         </li>
         
         
-        <li id="section-103">
+        <li id="section-104">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-103">&#182;</a>
+                <a class="pilcrow" href="#section-104">&#182;</a>
               </div>
               <h2 id="dataview-class-object">DataView Class Object</h2>
 <p>Create an instance of an Object, inheriting from sudo.View that:</p>
@@ -2119,11 +2134,11 @@ cannot be included in a string literal and then unescape them in code blocks.</p
         </li>
         
         
-        <li id="section-104">
+        <li id="section-105">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-104">&#182;</a>
+                <a class="pilcrow" href="#section-105">&#182;</a>
               </div>
               <p>implements the listener extension</p>
 
@@ -2134,11 +2149,11 @@ cannot be included in a string literal and then unescape them in code blocks.</p
         </li>
         
         
-        <li id="section-105">
+        <li id="section-106">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-105">&#182;</a>
+                <a class="pilcrow" href="#section-106">&#182;</a>
               </div>
               <p>dont re-render on the setting of events if observing model change</p>
 
@@ -2149,11 +2164,11 @@ cannot be included in a string literal and then unescape them in code blocks.</p
         </li>
         
         
-        <li id="section-106">
+        <li id="section-107">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-106">&#182;</a>
+                <a class="pilcrow" href="#section-107">&#182;</a>
               </div>
               <p>autoRender types observe their own model</p>
 
@@ -2167,11 +2182,11 @@ cannot be included in a string literal and then unescape them in code blocks.</p
         </li>
         
         
-        <li id="section-107">
+        <li id="section-108">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-107">&#182;</a>
+                <a class="pilcrow" href="#section-108">&#182;</a>
               </div>
               <p><code>private</code></p>
 
@@ -2182,11 +2197,11 @@ cannot be included in a string literal and then unescape them in code blocks.</p
         </li>
         
         
-        <li id="section-108">
+        <li id="section-109">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-108">&#182;</a>
+                <a class="pilcrow" href="#section-109">&#182;</a>
               </div>
               <h3 id="addedtoparent">addedToParent</h3>
 <p>Container&#39;s will check for the presence of this method and call it if it is present.
@@ -2214,11 +2229,11 @@ Regardless of the rendering options any events in the <code>event(s)</code> prop
         </li>
         
         
-        <li id="section-109">
+        <li id="section-110">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-109">&#182;</a>
+                <a class="pilcrow" href="#section-110">&#182;</a>
               </div>
               <h3 id="removefromparent">removeFromParent</h3>
 <p>Remove this object from the DOM and its parent&#39;s list of children.
@@ -2235,11 +2250,11 @@ Overrides <code>sudo.View.removeFromParent</code> to unbind events and <code>rem
         </li>
         
         
-        <li id="section-110">
+        <li id="section-111">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-110">&#182;</a>
+                <a class="pilcrow" href="#section-111">&#182;</a>
               </div>
               <p>in the case that this.model is &#39;foreign&#39;</p>
 
@@ -2255,11 +2270,11 @@ Overrides <code>sudo.View.removeFromParent</code> to unbind events and <code>rem
         </li>
         
         
-        <li id="section-111">
+        <li id="section-112">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-111">&#182;</a>
+                <a class="pilcrow" href="#section-112">&#182;</a>
               </div>
               <h3 id="render">render</h3>
 <p>(Re)hydrate the innerHTML of this object via its template and data store.
@@ -2278,11 +2293,11 @@ Object&#39;s list of events (<code>this.get(&#39;event(s)&#39;))</code> are dele
         </li>
         
         
-        <li id="section-112">
+        <li id="section-113">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-112">&#182;</a>
+                <a class="pilcrow" href="#section-113">&#182;</a>
               </div>
               <p>return early if a <code>blacklisted</code> key is set to my model</p>
 
@@ -2294,11 +2309,11 @@ Object&#39;s list of events (<code>this.get(&#39;event(s)&#39;))</code> are dele
         </li>
         
         
-        <li id="section-113">
+        <li id="section-114">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-113">&#182;</a>
+                <a class="pilcrow" href="#section-114">&#182;</a>
               </div>
               <p>(re)hydrate the innerHTML</p>
 
@@ -2310,11 +2325,11 @@ Object&#39;s list of events (<code>this.get(&#39;event(s)&#39;))</code> are dele
         </li>
         
         
-        <li id="section-114">
+        <li id="section-115">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-114">&#182;</a>
+                <a class="pilcrow" href="#section-115">&#182;</a>
               </div>
               <p>am I in the dom yet?</p>
 
@@ -2330,11 +2345,11 @@ Object&#39;s list of events (<code>this.get(&#39;event(s)&#39;))</code> are dele
         </li>
         
         
-        <li id="section-115">
+        <li id="section-116">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-115">&#182;</a>
+                <a class="pilcrow" href="#section-116">&#182;</a>
               </div>
               <p><code>private</code></p>
 
@@ -2345,11 +2360,11 @@ Object&#39;s list of events (<code>this.get(&#39;event(s)&#39;))</code> are dele
         </li>
         
         
-        <li id="section-116">
+        <li id="section-117">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-116">&#182;</a>
+                <a class="pilcrow" href="#section-117">&#182;</a>
               </div>
               <h2 id="navigator-class-object">Navigator Class Object</h2>
 <p>Abstracts location and history events, parsing their information into a 
@@ -2369,11 +2384,11 @@ normalized object that is then set to an Observable class instance</p>
         </li>
         
         
-        <li id="section-117">
+        <li id="section-118">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-117">&#182;</a>
+                <a class="pilcrow" href="#section-118">&#182;</a>
               </div>
               <p>Navigator inherits from <code>sudo.Model</code></p>
 
@@ -2384,11 +2399,11 @@ normalized object that is then set to an Observable class instance</p>
         </li>
         
         
-        <li id="section-118">
+        <li id="section-119">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-118">&#182;</a>
+                <a class="pilcrow" href="#section-119">&#182;</a>
               </div>
               <h3 id="buildpath">buildPath</h3>
 <p>Put together a path from the arguments passed in.
@@ -2404,11 +2419,11 @@ If you want a hash paramaterized pass it as the last arg.</p>
         </li>
         
         
-        <li id="section-119">
+        <li id="section-120">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-119">&#182;</a>
+                <a class="pilcrow" href="#section-120">&#182;</a>
               </div>
               <p>check if the last arg is a hash</p>
 
@@ -2423,11 +2438,11 @@ If you want a hash paramaterized pass it as the last arg.</p>
         </li>
         
         
-        <li id="section-120">
+        <li id="section-121">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-120">&#182;</a>
+                <a class="pilcrow" href="#section-121">&#182;</a>
               </div>
               <h3 id="buildrelativepath">buildRelativePath</h3>
 <p>Extend the already existing getUrl type functionality with the ability to append
@@ -2446,11 +2461,11 @@ to that path as well as paramaterize a hash</p>
         </li>
         
         
-        <li id="section-121">
+        <li id="section-122">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-121">&#182;</a>
+                <a class="pilcrow" href="#section-122">&#182;</a>
               </div>
               <h3 id="getfragment">getFragment</h3>
 <p>&#39;Fragment&#39; is defined as any URL information after the &#39;root&#39; path
@@ -2467,11 +2482,11 @@ including the <code>search</code> or <code>hash</code></p>
         </li>
         
         
-        <li id="section-122">
+        <li id="section-123">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-122">&#182;</a>
+                <a class="pilcrow" href="#section-123">&#182;</a>
               </div>
               <p>intentional use of coersion</p>
 
@@ -2491,11 +2506,11 @@ including the <code>search</code> or <code>hash</code></p>
         </li>
         
         
-        <li id="section-123">
+        <li id="section-124">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-123">&#182;</a>
+                <a class="pilcrow" href="#section-124">&#182;</a>
               </div>
               <h3 id="gethash">getHash</h3>
 <p>Check either the passed in fragment, or the full location.href
@@ -2514,11 +2529,11 @@ for a <code>hash</code> value</p>
         </li>
         
         
-        <li id="section-124">
+        <li id="section-125">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-124">&#182;</a>
+                <a class="pilcrow" href="#section-125">&#182;</a>
               </div>
               <h3 id="getquery">getQuery</h3>
 <p>Take a hash and convert it to a <code>search</code> query.
@@ -2535,11 +2550,11 @@ Uses the Object.serialize &#39;addOn&#39;</p>
         </li>
         
         
-        <li id="section-125">
+        <li id="section-126">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-125">&#182;</a>
+                <a class="pilcrow" href="#section-126">&#182;</a>
               </div>
               <h3 id="getsearch">getSearch</h3>
 <p>Check either the passed in fragment, or the full location.href
@@ -2558,11 +2573,11 @@ for a <code>search</code> value</p>
         </li>
         
         
-        <li id="section-126">
+        <li id="section-127">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-126">&#182;</a>
+                <a class="pilcrow" href="#section-127">&#182;</a>
               </div>
               <h3 id="geturl">getUrl</h3>
 <p>fetch the URL in the form <root + fragment></p>
@@ -2577,11 +2592,11 @@ for a <code>search</code> value</p>
         </li>
         
         
-        <li id="section-127">
+        <li id="section-128">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-127">&#182;</a>
+                <a class="pilcrow" href="#section-128">&#182;</a>
               </div>
               <h3 id="go">go</h3>
 <p>If the passed in &#39;fragment&#39; is different than the currently stored one,
@@ -2598,11 +2613,11 @@ push a new state entry / hash event and set the data where specified</p>
         </li>
         
         
-        <li id="section-128">
+        <li id="section-129">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-128">&#182;</a>
+                <a class="pilcrow" href="#section-129">&#182;</a>
               </div>
               <p>TODO ever use replaceState?</p>
 
@@ -2619,11 +2634,11 @@ push a new state entry / hash event and set the data where specified</p>
         </li>
         
         
-        <li id="section-129">
+        <li id="section-130">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-129">&#182;</a>
+                <a class="pilcrow" href="#section-130">&#182;</a>
               </div>
               <h3 id="handlechange">handleChange</h3>
 <p>Bound to either the <code>popstate</code> or <code>hashchange</code> events, if the
@@ -2642,11 +2657,11 @@ triggering change observers</p>
         </li>
         
         
-        <li id="section-130">
+        <li id="section-131">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-130">&#182;</a>
+                <a class="pilcrow" href="#section-131">&#182;</a>
               </div>
               <h3 id="parsequery">parseQuery</h3>
 <p>Parse and return a hash of the key value pairs contained in 
@@ -2662,11 +2677,11 @@ the current <code>query</code> -- uses the Object.deserialize addOn</p>
         </li>
         
         
-        <li id="section-131">
+        <li id="section-132">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-131">&#182;</a>
+                <a class="pilcrow" href="#section-132">&#182;</a>
               </div>
               <h3 id="setdata">setData</h3>
 <p>Using the current <code>fragment</code> (minus any search or hash data) as a key,
@@ -2682,11 +2697,11 @@ model (a stated <code>Observable</code> or <code>this.data</code>)</p>
         </li>
         
         
-        <li id="section-132">
+        <li id="section-133">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-132">&#182;</a>
+                <a class="pilcrow" href="#section-133">&#182;</a>
               </div>
               <p>data is set in a specified model or in self</p>
 
@@ -2698,11 +2713,11 @@ model (a stated <code>Observable</code> or <code>this.data</code>)</p>
         </li>
         
         
-        <li id="section-133">
+        <li id="section-134">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-133">&#182;</a>
+                <a class="pilcrow" href="#section-134">&#182;</a>
               </div>
               <p>we want to set the key minus any search/hash</p>
 
@@ -2717,11 +2732,11 @@ model (a stated <code>Observable</code> or <code>this.data</code>)</p>
         </li>
         
         
-        <li id="section-134">
+        <li id="section-135">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-134">&#182;</a>
+                <a class="pilcrow" href="#section-135">&#182;</a>
               </div>
               <h3 id="start">start</h3>
 <p>Gather the necessary information about the current environment and 
@@ -2741,11 +2756,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-135">
+        <li id="section-136">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-135">&#182;</a>
+                <a class="pilcrow" href="#section-136">&#182;</a>
               </div>
               <p>setup the initial configuration</p>
 
@@ -2758,11 +2773,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-136">
+        <li id="section-137">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-136">&#182;</a>
+                <a class="pilcrow" href="#section-137">&#182;</a>
               </div>
               <p>normalize the root to always contain a leading and trailing slash</p>
 
@@ -2773,11 +2788,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-137">
+        <li id="section-138">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-137">&#182;</a>
+                <a class="pilcrow" href="#section-138">&#182;</a>
               </div>
               <p>Get a snapshot of the current fragment</p>
 
@@ -2788,11 +2803,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-138">
+        <li id="section-139">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-138">&#182;</a>
+                <a class="pilcrow" href="#section-139">&#182;</a>
               </div>
               <p>monitor URL changes via popState or hashchange</p>
 
@@ -2808,11 +2823,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-139">
+        <li id="section-140">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-139">&#182;</a>
+                <a class="pilcrow" href="#section-140">&#182;</a>
               </div>
               <p>somehow a URL got here not in my &#39;format&#39;, unless explicitly told not too, correct this</p>
 
@@ -2826,11 +2841,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-140">
+        <li id="section-141">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-140">&#182;</a>
+                <a class="pilcrow" href="#section-141">&#182;</a>
               </div>
               <p>return early as browser will redirect</p>
 
@@ -2841,11 +2856,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-141">
+        <li id="section-142">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-141">&#182;</a>
+                <a class="pilcrow" href="#section-142">&#182;</a>
               </div>
               <p>the converse of the above</p>
 
@@ -2861,11 +2876,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-142">
+        <li id="section-143">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-142">&#182;</a>
+                <a class="pilcrow" href="#section-143">&#182;</a>
               </div>
               <p>TODO provide option to <code>go</code> from inital <code>start</code> state?</p>
 
@@ -2877,11 +2892,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-143">
+        <li id="section-144">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-143">&#182;</a>
+                <a class="pilcrow" href="#section-144">&#182;</a>
               </div>
               <h3 id="urlchanged">urlChanged</h3>
 <p>Is a passed in fragment different from the one currently set at <code>this.get(&#39;fragment&#39;)</code>?
@@ -2898,11 +2913,11 @@ simply return false</p>
         </li>
         
         
-        <li id="section-144">
+        <li id="section-145">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-144">&#182;</a>
+                <a class="pilcrow" href="#section-145">&#182;</a>
               </div>
               <p>nothing has changed</p>
 
@@ -2914,11 +2929,11 @@ simply return false</p>
         </li>
         
         
-        <li id="section-145">
+        <li id="section-146">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-145">&#182;</a>
+                <a class="pilcrow" href="#section-146">&#182;</a>
               </div>
               <p>the fragment and the href need to checked here, optimized for the &#39;go&#39; scenario</p>
 
@@ -2932,11 +2947,11 @@ simply return false</p>
         </li>
         
         
-        <li id="section-146">
+        <li id="section-147">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-146">&#182;</a>
+                <a class="pilcrow" href="#section-147">&#182;</a>
               </div>
               <h2 id="observable-extension-object">Observable Extension Object</h2>
 <p>Implementaion of the ES6 Harmony Observer pattern.
@@ -2950,11 +2965,11 @@ data-mutation-observation is required</p>
         </li>
         
         
-        <li id="section-147">
+        <li id="section-148">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-147">&#182;</a>
+                <a class="pilcrow" href="#section-148">&#182;</a>
               </div>
               <h3 id="_deliver_"><em>deliver</em></h3>
 <p>Called from deliverChangeRecords when ready to send
@@ -2973,11 +2988,11 @@ changeRecords to observers.</p>
         </li>
         
         
-        <li id="section-148">
+        <li id="section-149">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-148">&#182;</a>
+                <a class="pilcrow" href="#section-149">&#182;</a>
               </div>
               <h3 id="deliverchangerecords">deliverChangeRecords</h3>
 <p>Iterate through the changeRecords array(emptying it as you go), delivering them to the
@@ -2992,11 +3007,11 @@ observers. You can override this method to change the standard delivery behavior
         </li>
         
         
-        <li id="section-149">
+        <li id="section-150">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-149">&#182;</a>
+                <a class="pilcrow" href="#section-150">&#182;</a>
               </div>
               <p>FIFO</p>
 
@@ -3011,11 +3026,11 @@ observers. You can override this method to change the standard delivery behavior
         </li>
         
         
-        <li id="section-150">
+        <li id="section-151">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-150">&#182;</a>
+                <a class="pilcrow" href="#section-151">&#182;</a>
               </div>
               <h3 id="observe">observe</h3>
 <p>In a quasi-ES6 Object.observe pattern, calling observe on an <code>observable</code> and 
@@ -3039,11 +3054,11 @@ For ease of &#39;unobserving&#39; the same Function passed in is returned.</p>
         </li>
         
         
-        <li id="section-151">
+        <li id="section-152">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-151">&#182;</a>
+                <a class="pilcrow" href="#section-152">&#182;</a>
               </div>
               <p>this will fail if mixed-in and no <code>callbacks</code> created so don&#39;t do that.
 Per the spec, do not allow the same callback to be added</p>
@@ -3058,11 +3073,11 @@ Per the spec, do not allow the same callback to be added</p>
         </li>
         
         
-        <li id="section-152">
+        <li id="section-153">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-152">&#182;</a>
+                <a class="pilcrow" href="#section-153">&#182;</a>
               </div>
               <h3 id="observes">observes</h3>
 <p>Allow an array of callbacks to be registered as changeRecord recipients</p>
@@ -3082,11 +3097,11 @@ Per the spec, do not allow the same callback to be added</p>
         </li>
         
         
-        <li id="section-153">
+        <li id="section-154">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-153">&#182;</a>
+                <a class="pilcrow" href="#section-154">&#182;</a>
               </div>
               <h3 id="set">set</h3>
 <p>Overrides sudo.Base.set to check for observers</p>
@@ -3104,11 +3119,11 @@ to be delivered upon a call to deliverChangeRecords (truthy)</p>
         </li>
         
         
-        <li id="section-154">
+        <li id="section-155">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-154">&#182;</a>
+                <a class="pilcrow" href="#section-155">&#182;</a>
               </div>
               <p>did this key exist already</p>
 
@@ -3120,11 +3135,11 @@ to be delivered upon a call to deliverChangeRecords (truthy)</p>
         </li>
         
         
-        <li id="section-155">
+        <li id="section-156">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-155">&#182;</a>
+                <a class="pilcrow" href="#section-156">&#182;</a>
               </div>
               <p>then there is an oldValue</p>
 
@@ -3136,11 +3151,11 @@ to be delivered upon a call to deliverChangeRecords (truthy)</p>
         </li>
         
         
-        <li id="section-156">
+        <li id="section-157">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-156">&#182;</a>
+                <a class="pilcrow" href="#section-157">&#182;</a>
               </div>
               <p>now actually set the value</p>
 
@@ -3152,11 +3167,11 @@ to be delivered upon a call to deliverChangeRecords (truthy)</p>
         </li>
         
         
-        <li id="section-157">
+        <li id="section-158">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-157">&#182;</a>
+                <a class="pilcrow" href="#section-158">&#182;</a>
               </div>
               <p>call the observers or not</p>
 
@@ -3169,11 +3184,11 @@ to be delivered upon a call to deliverChangeRecords (truthy)</p>
         </li>
         
         
-        <li id="section-158">
+        <li id="section-159">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-158">&#182;</a>
+                <a class="pilcrow" href="#section-159">&#182;</a>
               </div>
               <h3 id="setpath">setPath</h3>
 <p>Overrides sudo.Base.setPath to check for observers.
@@ -3199,11 +3214,11 @@ to be delivered upon a call to deliverChangeRecords (truthy)
         </li>
         
         
-        <li id="section-159">
+        <li id="section-160">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-159">&#182;</a>
+                <a class="pilcrow" href="#section-160">&#182;</a>
               </div>
               <p>reached the last refinement, pre-existing?</p>
 
@@ -3225,11 +3240,11 @@ to be delivered upon a call to deliverChangeRecords (truthy)
         </li>
         
         
-        <li id="section-160">
+        <li id="section-161">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-160">&#182;</a>
+                <a class="pilcrow" href="#section-161">&#182;</a>
               </div>
               <p>call all observers or not</p>
 
@@ -3242,11 +3257,11 @@ to be delivered upon a call to deliverChangeRecords (truthy)
         </li>
         
         
-        <li id="section-161">
+        <li id="section-162">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-161">&#182;</a>
+                <a class="pilcrow" href="#section-162">&#182;</a>
               </div>
               <h3 id="sets">sets</h3>
 <p>Overrides Base.sets to hold the call to <em>deliver</em> until
@@ -3268,11 +3283,11 @@ all operations are done</p>
         </li>
         
         
-        <li id="section-162">
+        <li id="section-163">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-162">&#182;</a>
+                <a class="pilcrow" href="#section-163">&#182;</a>
               </div>
               <h3 id="unobserve">unobserve</h3>
 <p>Remove a particular callback from this observable</p>
@@ -3290,11 +3305,11 @@ all operations are done</p>
         </li>
         
         
-        <li id="section-163">
+        <li id="section-164">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-163">&#182;</a>
+                <a class="pilcrow" href="#section-164">&#182;</a>
               </div>
               <h3 id="unobserves">unobserves</h3>
 <p>Allow an array of callbacks to be unregistered as changeRecord recipients</p>
@@ -3314,11 +3329,11 @@ all operations are done</p>
         </li>
         
         
-        <li id="section-164">
+        <li id="section-165">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-164">&#182;</a>
+                <a class="pilcrow" href="#section-165">&#182;</a>
               </div>
               <h3 id="unset">unset</h3>
 <p>Overrides sudo.Base.unset to check for observers</p>
@@ -3336,11 +3351,11 @@ all operations are done</p>
         </li>
         
         
-        <li id="section-165">
+        <li id="section-166">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-165">&#182;</a>
+                <a class="pilcrow" href="#section-166">&#182;</a>
               </div>
               <p>call the observers if there was a val to delete</p>
 
@@ -3352,11 +3367,11 @@ all operations are done</p>
         </li>
         
         
-        <li id="section-166">
+        <li id="section-167">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-166">&#182;</a>
+                <a class="pilcrow" href="#section-167">&#182;</a>
               </div>
               <h3 id="_unset_"><em>unset</em></h3>
 <p>Helper for the unset functions</p>
@@ -3376,11 +3391,11 @@ all operations are done</p>
         </li>
         
         
-        <li id="section-167">
+        <li id="section-168">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-167">&#182;</a>
+                <a class="pilcrow" href="#section-168">&#182;</a>
               </div>
               <h3 id="setpath">setPath</h3>
 <p>Overrides sudo.Base.unsetPath to check for observers</p>
@@ -3401,11 +3416,11 @@ all operations are done</p>
         </li>
         
         
-        <li id="section-168">
+        <li id="section-169">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-168">&#182;</a>
+                <a class="pilcrow" href="#section-169">&#182;</a>
               </div>
               <p>reached the last refinement</p>
 
@@ -3418,11 +3433,11 @@ all operations are done</p>
         </li>
         
         
-        <li id="section-169">
+        <li id="section-170">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-169">&#182;</a>
+                <a class="pilcrow" href="#section-170">&#182;</a>
               </div>
               <p>this can obviously fail, but can be prevented by checking
 with <code>getPath</code> first.</p>
@@ -3438,11 +3453,11 @@ with <code>getPath</code> first.</p>
         </li>
         
         
-        <li id="section-170">
+        <li id="section-171">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-170">&#182;</a>
+                <a class="pilcrow" href="#section-171">&#182;</a>
               </div>
               <h3 id="unsets">unsets</h3>
 <p>Override of Base.unsets to hold the call to <em>deliver</em> until done</p>
@@ -3466,11 +3481,11 @@ with <code>getPath</code> first.</p>
         </li>
         
         
-        <li id="section-171">
+        <li id="section-172">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-171">&#182;</a>
+                <a class="pilcrow" href="#section-172">&#182;</a>
               </div>
               <h2 id="listener-extension-object">Listener Extension Object</h2>
 <p>Handles event binding/unbinding via an events hash in the form:
@@ -3514,11 +3529,11 @@ c. If an object, &#39;fn&#39; key located and treated as 1 or 2 above,
         </li>
         
         
-        <li id="section-172">
+        <li id="section-173">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-172">&#182;</a>
+                <a class="pilcrow" href="#section-173">&#182;</a>
               </div>
               <h3 id="_addorremove_"><em>addOrRemove</em></h3>
 <p>All the relevant pieces have been accumulated, now either add or remove the 
@@ -3534,11 +3549,11 @@ Listener to/from the element</p>
         </li>
         
         
-        <li id="section-173">
+        <li id="section-174">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-173">&#182;</a>
+                <a class="pilcrow" href="#section-174">&#182;</a>
               </div>
               <h3 id="bindevents">bindEvents</h3>
 <p>Bind the events in the data store to this object&#39;s el, observing the 
@@ -3553,11 +3568,11 @@ options there</p>
         </li>
         
         
-        <li id="section-174">
+        <li id="section-175">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-174">&#182;</a>
+                <a class="pilcrow" href="#section-175">&#182;</a>
               </div>
               <p>because you must pass the same ref to <code>unbind</code></p>
 
@@ -3571,11 +3586,11 @@ options there</p>
         </li>
         
         
-        <li id="section-175">
+        <li id="section-176">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-175">&#182;</a>
+                <a class="pilcrow" href="#section-176">&#182;</a>
               </div>
               <h3 id="_handleevents_"><em>handleEvents</em></h3>
 <p>Get each event type to be observed and pass them to <em>handleType</em>
@@ -3594,11 +3609,11 @@ with their options</p>
         </li>
         
         
-        <li id="section-176">
+        <li id="section-177">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-176">&#182;</a>
+                <a class="pilcrow" href="#section-177">&#182;</a>
               </div>
               <h3 id="_handletype_"><em>handleType</em></h3>
 <p>Normalizes the various forms that event data may be in. Works
@@ -3615,11 +3630,11 @@ prepare methods for adding <strong>and removing</strong> event Listeners.</p>
         </li>
         
         
-        <li id="section-177">
+        <li id="section-178">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-177">&#182;</a>
+                <a class="pilcrow" href="#section-178">&#182;</a>
               </div>
               <p>handler is already a function, (un)bind it</p>
 
@@ -3631,11 +3646,11 @@ prepare methods for adding <strong>and removing</strong> event Listeners.</p>
         </li>
         
         
-        <li id="section-178">
+        <li id="section-179">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-178">&#182;</a>
+                <a class="pilcrow" href="#section-179">&#182;</a>
               </div>
               <p>morph the name into a bound reference</p>
 
@@ -3646,11 +3661,11 @@ prepare methods for adding <strong>and removing</strong> event Listeners.</p>
         </li>
         
         
-        <li id="section-179">
+        <li id="section-180">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-179">&#182;</a>
+                <a class="pilcrow" href="#section-180">&#182;</a>
               </div>
               <p>bind it</p>
 
@@ -3663,11 +3678,11 @@ prepare methods for adding <strong>and removing</strong> event Listeners.</p>
         </li>
         
         
-        <li id="section-180">
+        <li id="section-181">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-180">&#182;</a>
+                <a class="pilcrow" href="#section-181">&#182;</a>
               </div>
               <p>the fn still needs to be bound for the predicate</p>
 
@@ -3680,11 +3695,11 @@ prepare methods for adding <strong>and removing</strong> event Listeners.</p>
         </li>
         
         
-        <li id="section-181">
+        <li id="section-182">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-181">&#182;</a>
+                <a class="pilcrow" href="#section-182">&#182;</a>
               </div>
               <p>type3 above - may have sel, data and &#39;capture&#39;</p>
 
@@ -3700,11 +3715,11 @@ prepare methods for adding <strong>and removing</strong> event Listeners.</p>
         </li>
         
         
-        <li id="section-182">
+        <li id="section-183">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-182">&#182;</a>
+                <a class="pilcrow" href="#section-183">&#182;</a>
               </div>
               <p>this form (type2 above) has a sel - but no data or &#39;capture&#39;</p>
 
@@ -3719,11 +3734,11 @@ prepare methods for adding <strong>and removing</strong> event Listeners.</p>
         </li>
         
         
-        <li id="section-183">
+        <li id="section-184">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-183">&#182;</a>
+                <a class="pilcrow" href="#section-184">&#182;</a>
               </div>
               <p>the predicate will call the fn if sel match is made</p>
 
@@ -3738,11 +3753,11 @@ prepare methods for adding <strong>and removing</strong> event Listeners.</p>
         </li>
         
         
-        <li id="section-184">
+        <li id="section-185">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-184">&#182;</a>
+                <a class="pilcrow" href="#section-185">&#182;</a>
               </div>
               <h3 id="predicate">predicate</h3>
 <p>When binding events, if a a <code>selector</code> (or <code>data</code>) is found, the Listener
@@ -3770,11 +3785,11 @@ When complete, pass the <code>event</code> to the desired callback (or don&#39;t
         </li>
         
         
-        <li id="section-185">
+        <li id="section-186">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-185">&#182;</a>
+                <a class="pilcrow" href="#section-186">&#182;</a>
               </div>
               <p>using the &#39;addOn&#39; which abstracts out the prefixes</p>
 
@@ -3785,11 +3800,11 @@ When complete, pass the <code>event</code> to the desired callback (or don&#39;t
         </li>
         
         
-        <li id="section-186">
+        <li id="section-187">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-186">&#182;</a>
+                <a class="pilcrow" href="#section-187">&#182;</a>
               </div>
               <p>time to call the methods</p>
 
@@ -3805,11 +3820,11 @@ When complete, pass the <code>event</code> to the desired callback (or don&#39;t
         </li>
         
         
-        <li id="section-187">
+        <li id="section-188">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-187">&#182;</a>
+                <a class="pilcrow" href="#section-188">&#182;</a>
               </div>
               <h3 id="rebindevents">rebindEvents</h3>
 <p>Convenience method to <code>unbind</code>, then <code>bind</code> the events stored in
@@ -3825,11 +3840,11 @@ this object&#39;s model.</p>
         </li>
         
         
-        <li id="section-188">
+        <li id="section-189">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-188">&#182;</a>
+                <a class="pilcrow" href="#section-189">&#182;</a>
               </div>
               <h3 id="unbindevents">unbindEvents</h3>
 <p>Unbind the events in the data store from this object&#39;s $el</p>
@@ -3847,11 +3862,11 @@ this object&#39;s model.</p>
         </li>
         
         
-        <li id="section-189">
+        <li id="section-190">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-189">&#182;</a>
+                <a class="pilcrow" href="#section-190">&#182;</a>
               </div>
               <p>A mixin providing restful CRUD operations for a sudo.Model instance.</p>
 <p> create : POST
@@ -3875,11 +3890,11 @@ defaults by passing in a hash of options to any method:
         </li>
         
         
-        <li id="section-190">
+        <li id="section-191">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-190">&#182;</a>
+                <a class="pilcrow" href="#section-191">&#182;</a>
               </div>
               <h3 id="create">create</h3>
 <p>Save this model on the server. If a subset of this model&#39;s attributes
@@ -3898,11 +3913,11 @@ state of the model on the server and set it here (via a success callback).</p>
         </li>
         
         
-        <li id="section-191">
+        <li id="section-192">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-191">&#182;</a>
+                <a class="pilcrow" href="#section-192">&#182;</a>
               </div>
               <h3 id="destroy">destroy</h3>
 <p>Delete this model on the server</p>
@@ -3918,11 +3933,11 @@ state of the model on the server and set it here (via a success callback).</p>
         </li>
         
         
-        <li id="section-192">
+        <li id="section-193">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-192">&#182;</a>
+                <a class="pilcrow" href="#section-193">&#182;</a>
               </div>
               <h3 id="_normalizeparams_"><em>normalizeParams</em></h3>
 <p>Abstracted logic for preparing the options object. This looks at 
@@ -3943,11 +3958,26 @@ parsed response returned from the server</p>
         </li>
         
         
-        <li id="section-193">
+        <li id="section-194">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-193">&#182;</a>
+                <a class="pilcrow" href="#section-194">&#182;</a>
+              </div>
+              <p>used in the <em>sendData</em> to determine a Content-Type header</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    opts.contentType || (opts.contentType = <span class="string">'json'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-195">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-195">&#182;</a>
               </div>
               <p>the default success callback is to set the data returned from the server
 or just the status as <code>ajaxStatus</code> if no data was returned</p>
@@ -3959,11 +3989,11 @@ or just the status as <code>ajaxStatus</code> if no data was returned</p>
         </li>
         
         
-        <li id="section-194">
+        <li id="section-196">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-194">&#182;</a>
+                <a class="pilcrow" href="#section-196">&#182;</a>
               </div>
               <p>try to json parse it by default, pass in an &#39;onload&#39; to override</p>
 
@@ -3976,11 +4006,11 @@ or just the status as <code>ajaxStatus</code> if no data was returned</p>
         </li>
         
         
-        <li id="section-195">
+        <li id="section-197">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-195">&#182;</a>
+                <a class="pilcrow" href="#section-197">&#182;</a>
               </div>
               <p>allow the passed in params to override any set in this model&#39;s <code>ajax</code> options</p>
 
@@ -3992,11 +4022,11 @@ or just the status as <code>ajaxStatus</code> if no data was returned</p>
         </li>
         
         
-        <li id="section-196">
+        <li id="section-198">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-196">&#182;</a>
+                <a class="pilcrow" href="#section-198">&#182;</a>
               </div>
               <h3 id="_preparedata_"><em>prepareData</em></h3>
 <p>In the default state, that is to data is explicitly passed to them, save
@@ -4018,11 +4048,11 @@ the items in the blacklist removed
         </li>
         
         
-        <li id="section-197">
+        <li id="section-199">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-197">&#182;</a>
+                <a class="pilcrow" href="#section-199">&#182;</a>
               </div>
               <h3 id="read">read</h3>
 <p>Fetch this models state from the server and set it here. The 
@@ -4046,11 +4076,11 @@ present will override any set in this model&#39;s <code>ajax</code> options obje
         </li>
         
         
-        <li id="section-198">
+        <li id="section-200">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-198">&#182;</a>
+                <a class="pilcrow" href="#section-200">&#182;</a>
               </div>
               <h3 id="save">save</h3>
 <p>Convenience method removing the need to know if a model is new (not yet persisted)
@@ -4067,11 +4097,11 @@ or has been loaded/refreshed from the server. </p>
         </li>
         
         
-        <li id="section-199">
+        <li id="section-201">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-199">&#182;</a>
+                <a class="pilcrow" href="#section-201">&#182;</a>
               </div>
               <h3 id="_senddata_"><em>sendData</em></h3>
 <p>The Create, Update and Patch methods all send data to the server,
@@ -4087,11 +4117,26 @@ varying only in their HTTP method. Abstracted logic is here.</p>
         </li>
         
         
-        <li id="section-200">
+        <li id="section-202">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-200">&#182;</a>
+                <a class="pilcrow" href="#section-202">&#182;</a>
+              </div>
+              <p>we only account for the &#39;json&#39; contentType ATM in models, override to change</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span>(opts.contentType &amp;&amp; opts.contentType === <span class="string">'json'</span>) xhr.setRequestHeader(<span class="string">'Content-Type'</span>, <span class="string">'application/json'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-203">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-203">&#182;</a>
               </div>
               <p>TODO does this work as expected?</p>
 
@@ -4104,11 +4149,11 @@ varying only in their HTTP method. Abstracted logic is here.</p>
         </li>
         
         
-        <li id="section-201">
+        <li id="section-204">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-201">&#182;</a>
+                <a class="pilcrow" href="#section-204">&#182;</a>
               </div>
               <h3 id="serverdatablacklist">serverDataBlacklist</h3>
 <p>Keys present in this hash will be removed from the object sent to the server
@@ -4126,11 +4171,11 @@ on a save type operation if no data was passed explicitly to that method</p>
         </li>
         
         
-        <li id="section-202">
+        <li id="section-205">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-202">&#182;</a>
+                <a class="pilcrow" href="#section-205">&#182;</a>
               </div>
               <h3 id="update">update</h3>
 <p>If this model has been persisted to/from the server (it has an <code>id</code> attribute)
@@ -4152,11 +4197,11 @@ or use the <code>save()</code> method (that does check).</p>
         </li>
         
         
-        <li id="section-203">
+        <li id="section-206">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-203">&#182;</a>
+                <a class="pilcrow" href="#section-206">&#182;</a>
               </div>
               <h3 id="url">url</h3>
 <p>Takes the base url and appends this models id if present
@@ -4171,11 +4216,11 @@ Override if you need to change the format of the calculated url.</p>
         </li>
         
         
-        <li id="section-204">
+        <li id="section-207">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-204">&#182;</a>
+                <a class="pilcrow" href="#section-207">&#182;</a>
               </div>
               <p>could possibly be 0...</p>
 
@@ -4191,11 +4236,11 @@ Override if you need to change the format of the calculated url.</p>
         </li>
         
         
-        <li id="section-205">
+        <li id="section-208">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-205">&#182;</a>
+                <a class="pilcrow" href="#section-208">&#182;</a>
               </div>
               <p>The base type for both the Data and Change delegates.</p>
 <p><code>param</code> {Object} data</p>
@@ -4209,11 +4254,11 @@ Override if you need to change the format of the calculated url.</p>
         </li>
         
         
-        <li id="section-206">
+        <li id="section-209">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-206">&#182;</a>
+                <a class="pilcrow" href="#section-209">&#182;</a>
               </div>
               <p>The filtered delegate</p>
 
@@ -4224,11 +4269,11 @@ Override if you need to change the format of the calculated url.</p>
         </li>
         
         
-        <li id="section-207">
+        <li id="section-210">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-207">&#182;</a>
+                <a class="pilcrow" href="#section-210">&#182;</a>
               </div>
               <h3 id="addfilter">addFilter</h3>
 <p>Place an entry into this object&#39;s hash of filters</p>
@@ -4246,11 +4291,11 @@ Override if you need to change the format of the calculated url.</p>
         </li>
         
         
-        <li id="section-208">
+        <li id="section-211">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-208">&#182;</a>
+                <a class="pilcrow" href="#section-211">&#182;</a>
               </div>
               <h3 id="removefilter">removeFilter</h3>
 <p>Remove an entry from this object&#39;s hash of filters</p>
@@ -4267,11 +4312,11 @@ Override if you need to change the format of the calculated url.</p>
         </li>
         
         
-        <li id="section-209">
+        <li id="section-212">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-209">&#182;</a>
+                <a class="pilcrow" href="#section-212">&#182;</a>
               </div>
               <p><code>private</code></p>
 
@@ -4282,11 +4327,11 @@ Override if you need to change the format of the calculated url.</p>
         </li>
         
         
-        <li id="section-210">
+        <li id="section-213">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-210">&#182;</a>
+                <a class="pilcrow" href="#section-213">&#182;</a>
               </div>
               <h2 id="change-delegate">Change Delegate</h2>
 <p>Delegates, if present, can override or extend the behavior
@@ -4306,11 +4351,11 @@ on the delegates <code>delegator</code> (bound to the <em>delegator</em> scope)<
         </li>
         
         
-        <li id="section-211">
+        <li id="section-214">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-211">&#182;</a>
+                <a class="pilcrow" href="#section-214">&#182;</a>
               </div>
               <p>Delegates inherit from the Filtered Delegate</p>
 
@@ -4321,11 +4366,11 @@ on the delegates <code>delegator</code> (bound to the <em>delegator</em> scope)<
         </li>
         
         
-        <li id="section-212">
+        <li id="section-215">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-212">&#182;</a>
+                <a class="pilcrow" href="#section-215">&#182;</a>
               </div>
               <h3 id="filter">filter</h3>
 <p>Change records are delivered here and filtered, calling any matching
@@ -4348,11 +4393,11 @@ a hash containing:</p>
         </li>
         
         
-        <li id="section-213">
+        <li id="section-216">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-213">&#182;</a>
+                <a class="pilcrow" href="#section-216">&#182;</a>
               </div>
               <p>does my delegator care about this?</p>
 
@@ -4363,11 +4408,11 @@ a hash containing:</p>
         </li>
         
         
-        <li id="section-214">
+        <li id="section-217">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-214">&#182;</a>
+                <a class="pilcrow" href="#section-217">&#182;</a>
               </div>
               <p>assemble the object to return to the method</p>
 
@@ -4380,11 +4425,11 @@ a hash containing:</p>
         </li>
         
         
-        <li id="section-215">
+        <li id="section-218">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-215">&#182;</a>
+                <a class="pilcrow" href="#section-218">&#182;</a>
               </div>
               <p>delete operations will not have any value so no need to look</p>
 
@@ -4401,11 +4446,11 @@ a hash containing:</p>
         </li>
         
         
-        <li id="section-216">
+        <li id="section-219">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-216">&#182;</a>
+                <a class="pilcrow" href="#section-219">&#182;</a>
               </div>
               <p><code>private</code></p>
 
@@ -4416,11 +4461,11 @@ a hash containing:</p>
         </li>
         
         
-        <li id="section-217">
+        <li id="section-220">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-217">&#182;</a>
+                <a class="pilcrow" href="#section-220">&#182;</a>
               </div>
               <h2 id="data-delegate">Data Delegate</h2>
 <p>Delegates, if present, can extend the behavior
@@ -4440,11 +4485,11 @@ and returning values for those if found</p>
         </li>
         
         
-        <li id="section-218">
+        <li id="section-221">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-218">&#182;</a>
+                <a class="pilcrow" href="#section-221">&#182;</a>
               </div>
               <p>inherits from the Filtered Delegate</p>
 
@@ -4455,11 +4500,11 @@ and returning values for those if found</p>
         </li>
         
         
-        <li id="section-219">
+        <li id="section-222">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-219">&#182;</a>
+                <a class="pilcrow" href="#section-222">&#182;</a>
               </div>
               <h3 id="filter">filter</h3>
 <p>iterates over a given object literal and returns a value (if present)
@@ -4477,11 +4522,11 @@ located at a given key or path</p>
         </li>
         
         
-        <li id="section-220">
+        <li id="section-223">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-220">&#182;</a>
+                <a class="pilcrow" href="#section-223">&#182;</a>
               </div>
               <p>keys and paths need different handling</p>
 
@@ -4495,11 +4540,11 @@ located at a given key or path</p>
         </li>
         
         
-        <li id="section-221">
+        <li id="section-224">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-221">&#182;</a>
+                <a class="pilcrow" href="#section-224">&#182;</a>
               </div>
               <p>the chars after the last refinement are the key we need to check for</p>
 
@@ -4510,11 +4555,11 @@ located at a given key or path</p>
         </li>
         
         
-        <li id="section-222">
+        <li id="section-225">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-222">&#182;</a>
+                <a class="pilcrow" href="#section-225">&#182;</a>
               </div>
               <p>and the ones prior are the object</p>
 
@@ -4530,11 +4575,11 @@ located at a given key or path</p>
         </li>
         
         
-        <li id="section-223">
+        <li id="section-226">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-223">&#182;</a>
+                <a class="pilcrow" href="#section-226">&#182;</a>
               </div>
               <p><code>private</code></p>
 

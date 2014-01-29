@@ -147,8 +147,6 @@ var sudo = {
 sudo.getXhr = function getXhr(params) {
   var xhr =  new XMLHttpRequest(), keys = Object.keys(sudo.xhrHeaders),
     len = keys.length, i;
-  // set any custom headers
-  if(len) for(i = 0; i < len; i++) xhr.setRequestHeader(keys[i], sudo.xhrHeaders[keys[i]]);
   params.verb || (params.verb = 'GET');
   // check if we need a QS
   if(params.verb === 'GET' && params.params) {
@@ -157,6 +155,10 @@ sudo.getXhr = function getXhr(params) {
     params.url += ('?' + params.params);
   }
   xhr.open(params.verb, params.url, true, params.user, params.password);
+  // TODO possibly implement the mime type song and dance in the xhr2 world
+  xhr.setRequestHeader('Accept', '*/*');
+  // set any custom headers
+  if(len) for(i = 0; i < len; i++) xhr.setRequestHeader(keys[i], sudo.xhrHeaders[keys[i]]);
   xhr.responseType = params.responseType || 'text';
   xhr.onload = params.onload || sudo.noop;
   if(params.onerror) xhr.onerror = params.onerror;
@@ -1537,6 +1539,8 @@ sudo.extensions.persistable = {
     opts.url || (opts.url = this.url(opts.baseUrl));
     opts.verb || (opts.verb = verb);
     opts.responseType || (opts.responseType = 'text');
+    // used in the _sendData_ to determine a Content-Type header
+    opts.contentType || (opts.contentType = 'json');
     // the default success callback is to set the data returned from the server
     // or just the status as `ajaxStatus` if no data was returned
     opts.onload || (opts.onload = function() {
@@ -1596,6 +1600,8 @@ sudo.extensions.persistable = {
   _sendData_: function _sendData_(verb, params) {
     var opts = this._normalizeParams_(verb, null, params),
       xhr = sudo.getXhr(opts);
+    // we only account for the 'json' contentType ATM in models, override to change
+    if(opts.contentType && opts.contentType === 'json') xhr.setRequestHeader('Content-Type', 'application/json');  
     // TODO does this work as expected?
     xhr.send(opts.data || JSON.stringify(this._prepareData_(this.data)));
     return xhr;
