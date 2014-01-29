@@ -45,6 +45,7 @@ describe('Sudo Model persistance', function() {
           break;
         }
       },
+      setRequestHeader: sudo.noop,
       onloadend: params.onloadend,
       onerror: params.onerror,
       onload: params.onload,
