@@ -26,8 +26,6 @@
 sudo.getXhr = function getXhr(params) {
   var xhr =  new XMLHttpRequest(), keys = Object.keys(sudo.xhrHeaders),
     len = keys.length, i;
-  // set any custom headers
-  if(len) for(i = 0; i < len; i++) xhr.setRequestHeader(keys[i], sudo.xhrHeaders[keys[i]]);
   params.verb || (params.verb = 'GET');
   // check if we need a QS
   if(params.verb === 'GET' && params.params) {
@@ -36,6 +34,10 @@ sudo.getXhr = function getXhr(params) {
     params.url += ('?' + params.params);
   }
   xhr.open(params.verb, params.url, true, params.user, params.password);
+  // TODO possibly implement the mime type song and dance in the xhr2 world
+  xhr.setRequestHeader('Accept', '*/*');
+  // set any custom headers
+  if(len) for(i = 0; i < len; i++) xhr.setRequestHeader(keys[i], sudo.xhrHeaders[keys[i]]);
   xhr.responseType = params.responseType || 'text';
   xhr.onload = params.onload || sudo.noop;
   if(params.onerror) xhr.onerror = params.onerror;
