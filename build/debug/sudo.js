@@ -155,11 +155,22 @@ sudo.getXhr = function getXhr(params) {
     params.url += ('?' + params.params);
   }
   xhr.open(params.verb, params.url, true, params.user, params.password);
-  // TODO possibly implement the mime type song and dance in the xhr2 world
-  xhr.setRequestHeader('Accept', '*/*');
+  xhr.responseType = params.responseType || 'text';
+  // so that some common use-case request headers can be set automagically, for blob, 
+  // document, buffer and others handle manually after getting the xhr back.
+  if(xhr.responseType === 'text') {
+    // could be json or plain string TODO expand this to a hash lookup for other types later
+    if(params.contentType && params.contentType === 'json') {
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      // TODO does this work as expected?
+    } else {
+      xhr.setRequestHeader('Accept', 'text/plain');
+      xhr.setRequestHeader('Content-Type', 'text/plain');
+    }
+  }
   // set any custom headers
   if(len) for(i = 0; i < len; i++) xhr.setRequestHeader(keys[i], sudo.xhrHeaders[keys[i]]);
-  xhr.responseType = params.responseType || 'text';
   xhr.onload = params.onload || sudo.noop;
   if(params.onerror) xhr.onerror = params.onerror;
   if(params.onloadend) xhr.onloadend = params.onloadend;
@@ -1600,9 +1611,6 @@ sudo.extensions.persistable = {
   _sendData_: function _sendData_(verb, params) {
     var opts = this._normalizeParams_(verb, null, params),
       xhr = sudo.getXhr(opts);
-    // we only account for the 'json' contentType ATM in models, override to change
-    if(opts.contentType && opts.contentType === 'json') xhr.setRequestHeader('Content-Type', 'application/json');  
-    // TODO does this work as expected?
     xhr.send(opts.data || JSON.stringify(this._prepareData_(this.data)));
     return xhr;
   },

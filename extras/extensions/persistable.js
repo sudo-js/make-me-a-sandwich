@@ -114,9 +114,6 @@ sudo.extensions.persistable = {
   _sendData_: function _sendData_(verb, params) {
     var opts = this._normalizeParams_(verb, null, params),
       xhr = sudo.getXhr(opts);
-    // we only account for the 'json' contentType ATM in models, override to change
-    if(opts.contentType && opts.contentType === 'json') xhr.setRequestHeader('Content-Type', 'application/json');  
-    // TODO does this work as expected?
     xhr.send(opts.data || JSON.stringify(this._prepareData_(this.data)));
     return xhr;
   },
