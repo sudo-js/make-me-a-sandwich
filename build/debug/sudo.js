@@ -173,9 +173,9 @@ sudo.getXhr = function getXhr(params) {
   if(len) for(i = 0; i < len; i++) xhr.setRequestHeader(keys[i], sudo.xhrHeaders[keys[i]]);
   // The native xhr considers many status codes a success that we do not, wrap the onload
   // so that we can call success or error based on code
-  xhr.onload = function() {
-    if(this.status >= 200 && this.status < 300 || this.status === 304) this._onload_();
-    else this.onerror();
+  xhr.onload = function(e) {
+    if(this.status >= 200 && this.status < 300 || this.status === 304) this._onload_(e);
+    else this.onerror(e);
   };
   xhr._onload_ = params.onload || sudo.noop;
   xhr.onerror = params.onerror || sudo.noop;
