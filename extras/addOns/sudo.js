@@ -50,8 +50,14 @@ sudo.getXhr = function getXhr(params) {
   }
   // set any custom headers
   if(len) for(i = 0; i < len; i++) xhr.setRequestHeader(keys[i], sudo.xhrHeaders[keys[i]]);
-  xhr.onload = params.onload || sudo.noop;
-  if(params.onerror) xhr.onerror = params.onerror;
+  // The native xhr considers many status codes a success that we do not, wrap the onload
+  // so that we can call success or error based on code
+  xhr.onload = function(e) {
+    if(this.status >= 200 && this.status < 300 || this.status === 304) this._onload_(e);
+    else this.onerror(e);
+  };
+  xhr._onload_ = params.onload || sudo.noop;
+  xhr.onerror = params.onerror || sudo.noop;
   if(params.onloadend) xhr.onloadend = params.onloadend;
   return xhr;
 };

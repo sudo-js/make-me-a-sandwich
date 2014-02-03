@@ -111,24 +111,34 @@ sudo.extensions.listener = {
   // that will:
   //   1. Appended the `data` to the `event` object if `data` is present. 
   //   2. If `sel` is indicated, Compare the `event.target` to the selector
-  //      using the browser native matesSelector.
+  //      using the browser native matesSelector (bubbling up if necessary)
   // When complete, pass the `event` to the desired callback (or don't), as per `bindEvents`.
   //
   // `param` {event} `e`. The DOM event
   // `returns` {*} call to the indicated method/function
   predicate: function predicate(e) {
     var hash = this.model.data.event || this.model.data.events,
-      type = hash[e.type], selectors, i, selector, handler;
+      type = hash[e.type], 
+      matchFn = function(selectors, target, fn) {
+        var i, selector;
+        for(i = 0; i < selectors.length; i++) {
+          selector = selectors[i], match = fn(target, selector) ? selector : void 0;
+          // bail if we find a match
+          if(match) return match; 
+        }
+        return void 0;
+      },
+      selectors, handler, match;
     if(type) {
       selectors = Object.keys(type);
-      for(i = 0; i < selectors.length; i++) {
-        selector = selectors[i]; handler = type[selector];
-        // using the 'addOn' which abstracts out the prefixes
-        if(Element.matches(e.target, selector)) {
-          // time to call the methods
-          if(handler.data) e.data = handler.data;
-          return handler.fn(e);
-        }
+      // look for a match against e.target first
+      match = matchFn(selectors, e.target, Element.matches);
+      // no immediate match, bubble upwards looking for a match on the a parent
+      if(!match) match = matchFn(selectors, e.target, Node.closestParent);
+      if(match) {
+        handler = type[match];
+        if(handler.data) e.data = handler.data;
+        return handler.fn(e);
       }
     }
   },
