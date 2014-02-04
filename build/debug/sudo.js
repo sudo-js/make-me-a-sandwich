@@ -1364,8 +1364,8 @@ sudo.extensions.observable = {
 //	with the key `event`:
 //	event: {...same as above}
 //	Details about the hashes in the array:
-//	A. name -> jQuery compatible event name
-//	B. sel -> Optional jQuery compatible selector used to delegate events
+//	A. name -> DOM compatible event name
+//	B. sel -> Optional DOM compatible selector used to delegate events
 //	D. fn -> If a {String} bound to the named function on this object, if a 
 //		function assumed to be anonymous and called with no scope manipulation
 sudo.extensions.listener = {
@@ -1398,8 +1398,10 @@ sudo.extensions.listener = {
     if(which) {
       $(this.el).on(e.name, e.sel, typeof e.fn === 'string' ? this[e.fn].bind(this) : e.fn);
     } else {
-      // do not re-bind the fn going to off otherwise the unbind will fail
-      $(this.el).off(e.name, e.sel);
+      // do not send the fn going to off otherwise the unbind will fail
+      // because of how we bind the string names, if this is ever an issue we
+      // can hash them and look it up, but I don't see that as necessary atm
+      $(this.el).off(e.name);
     }
   },
   // ###rebindEvents
@@ -1694,7 +1696,7 @@ sudo.delegates.Data.prototype.filter = function(obj) {
 // `private`
 sudo.delegates.Data.prototype.role = 'data';
 
-sudo.version = "0.9.7";
+sudo.version = "0.9.8";
 window.sudo = sudo;
 if(typeof window._ === "undefined") window._ = sudo;
 }).call(this, this);
