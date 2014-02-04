@@ -37,7 +37,7 @@ var sudo = {
   //     responseType: 'text',
   //     url: mandatory,
   //     params: optional,
-  //     onload: _.noop,
+  //     onload: $.noop,
   //     onerrer: optional,
   //     onloadend: optional,
   //     user: optional,
@@ -85,8 +85,10 @@ var sudo = {
       if(this.status >= 200 && this.status < 300 || this.status === 304) this._onload_(e);
       else this.onerror(e);
     };
-    xhr._onload_ = params.onload || sudo.noop;
-    xhr.onerror = params.onerror || sudo.noop;
+    xhr._onload_ = params.onload || $.noop;
+    xhr.onerror = params.onerror || $.noop;
+    if(params.timeout) xhr.timeout = params.timeout;
+    if(params.ontimeout) xhr.ontimeout = params.ontimeout;
     if(params.onloadend) xhr.onloadend = params.onloadend;
     return xhr;
   },
