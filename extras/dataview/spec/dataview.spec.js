@@ -37,7 +37,7 @@ describe('sudo.js Dataview Object', function() {
 
   it('exists, but without the inner content', function() {
     expect($('#testTarget').html()).toBeFalsy();
-    expect(dv.$el.html()).toBeFalsy();
+    expect(dv.el.innerHTML).toBeFalsy();
   });
 
   it('renders correctly', function() {
@@ -50,10 +50,10 @@ describe('sudo.js Dataview Object', function() {
     
     expect($('#testTarget').html()).toBeTruthy();
 
-    expect(dv.$('#one span').text()).toBe("Let's not bicker and argue over who killed who.");
-    expect(dv.$('#one button').text()).toBe("I'm not worthy");
-    expect(dv.$('#two span').text()).toBe("You were in terrible peril.");
-    expect(dv.$('#two button').text()).toBe("I bet you're gay");
+    expect(dv.qs('#one span').textContent).toBe("Let's not bicker and argue over who killed who.");
+    expect(dv.qs('#one button').textContent).toBe("I'm not worthy");
+    expect(dv.qs('#two span').textContent).toBe("You were in terrible peril.");
+    expect(dv.qs('#two button').textContent).toBe("I bet you're gay");
   });
 
   it('deleted the renderTarget', function() {
@@ -62,7 +62,7 @@ describe('sudo.js Dataview Object', function() {
 
   it('has not yet bound the click event', function() {
     var spy = spyOn(dv, 'buttonClicked');
-    dv.$('button').trigger('click');
+    $(dv.el).find('button').trigger('click');
     expect(spy.callCount).toBe(0);	
   });
 
@@ -76,11 +76,11 @@ describe('sudo.js Dataview Object', function() {
     });
     dv.bindEvents();
 
-    dv.$('button').trigger('click');
+    $(dv.el).find('button').trigger('click');
     expect(spy.callCount).toBe(2);
 
-    dv.$el.empty();
-    expect(dv.$el.html()).toBeFalsy();
+    $(dv.el).empty();
+    expect(dv.el.innerHTML).toBeFalsy();
 
     dv.model.sets({
       sayingOne:"You've got no arms left.",
@@ -89,17 +89,17 @@ describe('sudo.js Dataview Object', function() {
       buttonTwoValue: "It's just a flesh wound"
     });
 
-    expect(dv.$('#one span').text()).toBe("You've got no arms left.");
-    expect(dv.$('#one button').text()).toBe("Yes I have");
-    expect(dv.$('#two span').text()).toBe("Look!");
-    expect(dv.$('#two button').text()).toBe("It's just a flesh wound");
+    expect(dv.qs('#one span').textContent).toBe("You've got no arms left.");
+    expect(dv.qs('#one button').textContent).toBe("Yes I have");
+    expect(dv.qs('#two span').textContent).toBe("Look!");
+    expect(dv.qs('#two button').textContent).toBe("It's just a flesh wound");
 
-    dv.$('button').trigger('click');
+    $(dv.el).find('button').trigger('click');
     expect(spy.callCount).toBe(4);
 
     // can unbind events as well
     dv.unbindEvents();
-    dv.$('button').trigger('click');
+    $(dv.el).find('button').trigger('click');
     expect(spy.callCount).toBe(4);
   });
 
@@ -114,12 +114,12 @@ describe('sudo.js Dataview Object', function() {
     });
 
     var vc = new sudo.View('#testTarget');
-    vc.$el.empty();
+    $(vc.el).empty();
     
     expect($('#testTarget').html()).toBeFalsy();
 
     dv2.model.sets({
-      renderTarget: vc.$el,
+      renderTarget: vc.el,
       // test the auto render on added option
       renderOnAddedToParent: true
     });
@@ -142,11 +142,11 @@ describe('sudo.js Dataview Object', function() {
     });
 
     var vc = new sudo.View('#testTarget');
-    vc.$el.empty();
+    $(vc.el).empty();
     
     expect($('#testTarget').html()).toBeFalsy();
 
-    dv2.model.set('renderTarget', vc.$el);
+    dv2.model.set('renderTarget', vc.el);
     
     vc.addChild(dv2);
     
@@ -157,4 +157,3 @@ describe('sudo.js Dataview Object', function() {
   });
   
 });
-

@@ -22,7 +22,7 @@ describe('Sudo Container Class', function() {
   it('Adds a child view, not appending the DOM', function() {
     container.addChild(child1, 'Galahad');
     expect(container.children.length).toBe(1);
-    expect(container.$el.html()).toBeFalsy();
+    expect(container.el.innerHTML).toBeFalsy();
   });
 
   it('Adds many children via an array', function() {
@@ -82,23 +82,23 @@ describe('Sudo Container Class', function() {
   it('Can override methods and use `base` to call super', function() {
     container.addChild = function addChild(child, name) {
       this.base('addChild', child, name);
-      this.$el.append(child.$el);
+      this.el.appendChild(child.el);
       return this;
     };
     container.removeChild = function removeChild(id) {
-      this.getChild(id).$el.remove();
+      this.el.removeChild(this.getChild(id).el);
       this.base('removeChild', id);
       return this;
     };
     container.addChild(child1, 'Galahad').addChild(child2, 'Robin');
     expect(container.children.length).toBe(2);
-    expect(container.$('#theChaste')).toBeTruthy();
-    expect(container.$('#theBrave')).toBeTruthy();
+    expect(container.qs('#theChaste')).toBeTruthy();
+    expect(container.qs('#theBrave')).toBeTruthy();
 
     container.removeChild('Galahad').removeChild('Robin');
     expect(container.children.length).toBe(0);
-    expect(container.$('#theChaste').length).toBeFalsy();
-    expect(container.$('#theBrave').length).toBeFalsy();
+    expect(container.qs('#theChaste')).toBeFalsy();
+    expect(container.qs('#theBrave')).toBeFalsy();
   });
 
   it('uses the eachChild method correctly', function() {

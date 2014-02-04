@@ -4,7 +4,6 @@
 // events: [{
 //	name: `eventName`,
 //	sel: `an_optional_delegator`,
-//	data: an_optional_hash_of_data
 //	fn: `function name`
 // }, {...
 //	This array will be searched for via `this.get('events')`. There is a 
@@ -14,7 +13,6 @@
 //	Details about the hashes in the array:
 //	A. name -> jQuery compatible event name
 //	B. sel -> Optional jQuery compatible selector used to delegate events
-//	C. data: A hash that will be passed as the custom jQuery Event.data object
 //	D. fn -> If a {String} bound to the named function on this object, if a 
 //		function assumed to be anonymous and called with no scope manipulation
 sudo.extensions.listener = {
@@ -45,7 +43,7 @@ sudo.extensions.listener = {
   // `private`
   _handleEvent_: function _handleEvent_(e, which) {
     if(which) {
-      $(this.el).on(e.name, e.sel, e.data, typeof e.fn === 'string' ? this[e.fn].bind(this) : e.fn);
+      $(this.el).on(e.name, e.sel, typeof e.fn === 'string' ? this[e.fn].bind(this) : e.fn);
     } else {
       // do not re-bind the fn going to off otherwise the unbind will fail
       $(this.el).off(e.name, e.sel);

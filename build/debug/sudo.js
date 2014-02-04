@@ -27,6 +27,70 @@ var sudo = {
     }
     return obj;
   },
+  // ###getXhr
+  // While getting a new XMLHttpRequest is standardized now, we are still going 
+  // to provide this syntactic sugar to allow the setting of global headers (will
+  // be set on each request) as well as the onload, onerrer, and onloadend callbacks
+  // to be set with one call.
+  // Does not have a default for params.url all others are:
+  //   {
+  //     verb: 'GET',
+  //     responseType: 'text',
+  //     url: mandatory,
+  //     params: optional,
+  //     onload: _.noop,
+  //     onerrer: optional,
+  //     onloadend: optional,
+  //     user: optional,
+  //     password: optional
+  //   }
+  // If the verb is 'GET' and params is truthy it will be appended to the url as a 
+  // queryString (after being serialized if a hash -- assumed to be a string if not).
+  // This method does not call send() so do that once you have the xhr back, remember
+  // to set any pertinant MIME types if sending data via setRequestHeader (unless its 
+  // already in the sudo.xhrHeaders).
+  //
+  // `param` {object} attributes for the XHR
+  // `returns` {object} the xhr object
+  getXhr: function(params) {
+    var xhr =  new XMLHttpRequest(), keys = Object.keys(sudo.xhrHeaders),
+      len = keys.length, i;
+    params.verb || (params.verb = 'GET');
+    // check if we need a QS
+    if(params.verb === 'GET' && params.params) {
+      // assumed to be an object literal
+      if(typeof params.params !== 'string') params.params = Object.serialize(params.params);
+      params.url += ('?' + params.params);
+    }
+    xhr.responseType = params.responseType || 'text';
+    xhr.open(params.verb, params.url, true, params.user, params.password);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    // so that some common use-case request headers can be set automagically, for blob, 
+    // document, buffer and others handle manually after getting the xhr back.
+    if(xhr.responseType === 'text') {
+      // could be json or plain string TODO expand this to a hash lookup for other types later
+      if(params.contentType && params.contentType === 'json') {
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        // TODO does this work as expected?
+      } else {
+        xhr.setRequestHeader('Accept', 'text/plain');
+        xhr.setRequestHeader('Content-Type', 'text/plain');
+      }
+    }
+    // set any custom headers
+    if(len) for(i = 0; i < len; i++) xhr.setRequestHeader(keys[i], sudo.xhrHeaders[keys[i]]);
+    // The native xhr considers many status codes a success that we do not, wrap the onload
+    // so that we can call success or error based on code
+    xhr.onload = function(e) {
+      if(this.status >= 200 && this.status < 300 || this.status === 304) this._onload_(e);
+      else this.onerror(e);
+    };
+    xhr._onload_ = params.onload || sudo.noop;
+    xhr.onerror = params.onerror || sudo.noop;
+    if(params.onloadend) xhr.onloadend = params.onloadend;
+    return xhr;
+  },
   // ###inherit
   // Inherit the prototype from a parent to a child.
   // Set the childs constructor for subclasses of child.
@@ -539,12 +603,13 @@ sudo.Container.prototype.send = function send(/*args*/) {
 // based on the `tagName` (`div` by default). Specify `className`, `id` (or other attributes if desired)
 // as an (optional) `attributes` object literal on the `data` arg.
 //
-// The view object uses zepto for dom manipulation
-// and event delegation etc... A querified `this` reference is located
-// at `this.$el` and `this.$` scopes queries to this objects `el`, i.e it's
-// a shortcut for `this.$el.find(selector)`
+// The view object uses some jbone for dom manipulation
+// and event delegation etc... A `this` reference is located
+// at `this.el` and `this.qs` scopes queries to this objects `el`, i.e it's
+// a shortcut for `this.el.querySelector(selector)`
+// in addition `this.qsa` does the same for the querySelectorAll method
 //
-// `param` {string|element|Query} `el`. Otional el for the View instance.
+// `param` {string|element|query} `el`. Otional el for the View instance.
 // `param` {Object} `data`. Optional data object-literal which becomes the initial state
 // of a new model located at `this.model`. Also can be a reference to an existing sudo.Model instance
 //
@@ -581,15 +646,11 @@ sudo.View.prototype.becomePremier = function becomePremier() {
 // the el needs to be normalized before use
 // `private`
 sudo.View.prototype._normalizedEl_ = function _normalizedEl_(el) {
-  // Passed an already `querified` Element?
-  // It will have a length of 1 if so.
-  if(typeof el !== 'string' && el.length) return el;
-  // string or DOM node
-  var _el = $(el);
-  // if there is not a top level query returned the desired node may be 
-  // in a document fragment not in the DOM yet. We will check the parent's $el
-  // if available, or return the empty query
-  return _el.length ? _el : (this.parent ? this.parent.$(el) : _el);
+  var _el = typeof el === 'string' ? document.querySelector(el) : el;
+    // if there is not a top level query returned the desired node may be 
+    // in a document fragment not in the DOM yet. We will check the parent's el
+    // if available, or return the empty query
+    return _el ? _el : (this.parent ? this.parent.qs(el) : _el);
 };
 // ### resignPremier
 // Resign premier status
@@ -612,31 +673,43 @@ sudo.View.prototype.resignPremier = function resignPremier(cb) {
 sudo.View.prototype.role = 'view';
 // ###setEl
 // A view must have an element, set that here.
-// Stores a querified object as `this.$el` the raw
-// node is always then available as `this.$el[0]`.
+// Node is always then available as `this.el`.
 //
 // `param` {string=|element} `el`
 // `returns` {Object} `this`
 sudo.View.prototype.setEl = function setEl(el) {
-  var d = this.model && this.model.data, a, t;
+  var d = this.model && this.model.data, a, i, k, t;
   if(!el) {
     // normalize any relevant data
     t = d ? d.tagName || 'div': 'div';
-    this.$el = $(document.createElement(t));
-    if(d && (a = d.attributes)) this.$el.attr(a);
-  } else {
-    this.$el = this._normalizedEl_(el);
-  }
+    this.el = document.createElement(t);
+    if(d && (a = d.attributes)) {
+      // iterate and set the attributes
+      k = Object.keys(a);
+      for(i = 0; i < k.length; i++) {
+        this.el.setAttribute(k[i], a[k[i]]);
+      }
+    }
+  } else this.el = this._normalizedEl_(el);
   return this;
 };
-// ###this.$
+// ###this.qs
 // Return a single Element matching `sel` scoped to this View's el.
-// This is an alias to `this.$el.find(sel)`.
+// This is an alias to `this.el.querySelector(sel)`.
 //
-// `param` {string} `sel`. A Query compatible selector
-// `returns` {Query} A 'querified' result matching the selector
-sudo.View.prototype.$ = function(sel) {
-  return this.$el.find(sel);
+// `param` {string} `sel`. A DOM compatible selector
+// `returns` {node|null} A 'querified' result matching the selector
+sudo.View.prototype.qs = function(sel) {
+  return this.el.querySelector(sel);
+};
+// ###this.qsa
+// Return multiple Elements (a NodeList) matching `sel` scoped to this View's el.
+// This is an alias to `this.el.querySelectorAll(sel)`.
+//
+// `param` {string} `sel`. A querySelectorAll compatible selector
+// `returns` {Elements | undefined} Results matching the selector (or undefined if not)
+sudo.View.prototype.qsa = function(sel) {
+  return this.el.querySelectorAll(sel);
 };
 // ###Templating
 
@@ -749,7 +822,7 @@ sudo.template = function template(str, data, scope) {
 //		the child injects itself into (if not already in) the DOM
 // 3. Can have a 'renderMethod' property in its data store. If so this is the jQuery method
 //		that the child will use to place itself in it's `renderTarget`.
-// 4. Has a `render` method that when called re-hydrates it's $el by passing its
+// 4. Has a `render` method that when called re-hydrates it's el by passing its
 //		internal data store to its template
 // 5. Handles event binding/unbinding by implementing the sudo.extensions.listener
 //		extension object
@@ -793,7 +866,7 @@ sudo.DataView.prototype.addedToParent = function(parent) {
 // `returns` {Object} `this`
 sudo.DataView.prototype.removeFromParent = function removeFromParent() {
   this.parent.removeChild(this);
-  this.unbindEvents().$el.remove();
+  this.unbindEvents().el.parentNode.removeChild(this.el);
   // in the case that this.model is 'foreign'
   if(this.observer) {
     this.model.unobserve(this.observer);
@@ -804,7 +877,7 @@ sudo.DataView.prototype.removeFromParent = function removeFromParent() {
 // ###render
 // (Re)hydrate the innerHTML of this object via its template and data store.
 // If a `renderTarget` is present this Object will inject itself into the target via
-// `this.get('renderMethod')` or defualt to `$.append`. After injection, the `renderTarget`
+// `this.get('renderMethod')` or defualt to `appendChild`. After injection, the `renderTarget`
 // is deleted from this Objects data store (to prevent multiple injection).
 // Event unbinding/rebinding is generally not necessary for the Objects innerHTML as all events from the
 // Object's list of events (`this.get('event(s)'))` are delegated to the $el when added to parent.
@@ -818,10 +891,10 @@ sudo.DataView.prototype.render = function render(change) {
   var d = this.model.data;
   // (re)hydrate the innerHTML
   if(typeof d.template === 'string') d.template = sudo.template(d.template);
-  this.$el.html(d.template(d));
+  this.el.innerHTML = d.template(d);
   // am I in the dom yet?
   if(d.renderTarget) {
-    this._normalizedEl_(d.renderTarget)[d.renderMethod || 'append'](this.$el);
+    this._normalizedEl_(d.renderTarget)[d.renderMethod || 'appendChild'](this.el);
     delete d.renderTarget;
   }
   return this;
@@ -1284,7 +1357,6 @@ sudo.extensions.observable = {
 // events: [{
 //	name: `eventName`,
 //	sel: `an_optional_delegator`,
-//	data: an_optional_hash_of_data
 //	fn: `function name`
 // }, {...
 //	This array will be searched for via `this.get('events')`. There is a 
@@ -1294,7 +1366,6 @@ sudo.extensions.observable = {
 //	Details about the hashes in the array:
 //	A. name -> jQuery compatible event name
 //	B. sel -> Optional jQuery compatible selector used to delegate events
-//	C. data: A hash that will be passed as the custom jQuery Event.data object
 //	D. fn -> If a {String} bound to the named function on this object, if a 
 //		function assumed to be anonymous and called with no scope manipulation
 sudo.extensions.listener = {
@@ -1325,10 +1396,10 @@ sudo.extensions.listener = {
   // `private`
   _handleEvent_: function _handleEvent_(e, which) {
     if(which) {
-      this.$el.on(e.name, e.sel, e.data, typeof e.fn === 'string' ? this[e.fn].bind(this) : e.fn);
+      $(this.el).on(e.name, e.sel, typeof e.fn === 'string' ? this[e.fn].bind(this) : e.fn);
     } else {
       // do not re-bind the fn going to off otherwise the unbind will fail
-      this.$el.off(e.name, e.sel);
+      $(this.el).off(e.name, e.sel);
     }
   },
   // ###rebindEvents
@@ -1352,10 +1423,10 @@ sudo.extensions.listener = {
 //
 // A mixin providing restful CRUD operations for a sudo.Model instance.
 //
-//	create : POST
-//	read : GET
-//	update : PUT or PATCH (configurable)
-//	destroy : DELETE
+//  create : POST
+//  read : GET
+//  update : PUT or PATCH (configurable)
+//  destroy : DELETE
 //
 // Before use be sure to set an `ajax` property {object} with at least
 // a `baseUrl: ...` key. The model's id (if present -- indicating a persisted model)
@@ -1364,9 +1435,9 @@ sudo.extensions.listener = {
 // calling any of the methods (or override the model.url() method).
 //
 // Place any other default options in the `ajax` hash
-// that you would want sent to a $.ajax({...}) call. Again, you can also override those
+// that you would want sent to an ajax call. Again, you can also override those
 // defaults by passing in a hash of options to any method:
-//	`this.model.update({patch: true})` etc...
+//  `this.model.update({patch: true})` etc...
 sudo.extensions.persistable = {
   // ###create 
   //
@@ -1386,32 +1457,32 @@ sudo.extensions.persistable = {
   //
   // `param` {object} `params` Optional hash of options for the XHR
   // `returns` {object} Xhr
-  destroy: function destroy(params) {
+  destroy: function _delete(params) {
     return this._sendData_('DELETE', params);
   },
   // ###_normalizeParams_
   // Abstracted logic for preparing the options object. This looks at 
   // the set `ajax` property, allowing any passed in params to override.
   //
-  // Sets defaults: JSON dataType and a success callback that simply `sets()` the 
-  // data returned from the server
+  // Sets defaults: `text` responseType and an onload callback that simply `sets()` the 
+  // parsed response returned from the server
   //
   // `returns` {object} A normalized params object for the XHR call
-  _normalizeParams_: function _normalizeParams_(meth, opts, params) {
+  _normalizeParams_: function _normalizeParams_(verb, opts, params) {
+    var self = this;
     opts || (opts = $.extend({}, this.data.ajax));
     opts.url || (opts.url = this.url(opts.baseUrl));
-    opts.type || (opts.type = meth);
-    opts.dataType || (opts.dataType = 'json');
-    var isJson = opts.dataType === 'json';
-    // by default turn off the global ajax triggers as all data
-    // should flow thru the models to their observers
-    opts.global || (opts.global = false);
+    opts.verb || (opts.verb = verb);
+    opts.responseType || (opts.responseType = 'text');
+    // used in the _sendData_ to determine a Content-Type header
+    opts.contentType || (opts.contentType = 'json');
     // the default success callback is to set the data returned from the server
     // or just the status as `ajaxStatus` if no data was returned
-    opts.success || (opts.success = function(data, status) {
-      data ? this.sets((isJson && typeof data === 'string') ? JSON.parse(data) : data) : 
-        this.set('ajaxStatus', status);
-    }.bind(this));
+    opts.onload || (opts.onload = function() {
+      // try to json parse it by default, pass in an 'onload' to override
+      if(this.responseText) self.sets(JSON.parse(this.responseText));
+      else self.sets({ajaxStatus: this.status, ajaxStatusText: this.statusText});
+    });
     // allow the passed in params to override any set in this model's `ajax` options
     return params ? $.extend(opts, params) : opts;
   },
@@ -1440,8 +1511,11 @@ sudo.extensions.persistable = {
   // `param` {object} `params`. Optional info for the XHR call. If
   // present will override any set in this model's `ajax` options object.
   // `returns` {object} The XHR object
-  read: function read(params) {
-    return $.ajax(this._normalizeParams_('GET', null, params));
+  read: function post(params) {
+    var opts = this._normalizeParams_('GET', null, params),
+      xhr = sudo.getXhr(opts);
+    xhr.send();
+    return xhr;
   },
   // ###save
   //
@@ -1458,17 +1532,11 @@ sudo.extensions.persistable = {
   // varying only in their HTTP method. Abstracted logic is here.
   //
   // `returns` {object} Xhr
-  _sendData_: function _sendData_(meth, params) {
-    var opts = $.extend({}, this.data.ajax);
-    opts.contentType || (opts.contentType = 'application/json');
-    opts.data || (opts.data = this._prepareData_(this.data));
-    // assure that, in the default json case, opts.data is json
-    if(opts.contentType === 'application/json' && (typeof opts.data !== 'string')) {
-      opts.data = JSON.stringify(opts.data); 
-    }
-    // non GET requests do not 'processData'
-    if(!('processData' in opts)) opts.processData = false;
-    return $.ajax(this._normalizeParams_(meth, opts, params));
+  _sendData_: function _sendData_(verb, params) {
+    var opts = this._normalizeParams_(verb, null, params),
+      xhr = sudo.getXhr(opts);
+    xhr.send(opts.data || JSON.stringify(this._prepareData_(this.data)));
+    return xhr;
   },
   // ###serverDataBlacklist
   // Keys present in this hash will be removed from the object sent to the server
@@ -1503,15 +1571,13 @@ sudo.extensions.persistable = {
   //
   // `param` {string} `base` the baseUrl set in this models ajax options
   url: function url(base) {
-    if(!base) return void 0;
     // could possibly be 0...
     if('id' in this.data) {
       return base + (base.charAt(base.length - 1) === '/' ? 
         '' : '/') + encodeURIComponent(this.data.id);
     } else return base;
   }
-};
-//##Filtered Delegate
+};//##Filtered Delegate
 
 // The base type for both the Data and Change delegates.
 //
