@@ -23,7 +23,7 @@ sudo.extensions.bindable = {
     tabindex: true,
     title: true
   },
-  // Some bindings defer to jQuery.css() to be bound.
+  // Some bindings defer to .css() to be bound.
   //
   // `private`
   _css_: {
@@ -31,7 +31,7 @@ sudo.extensions.bindable = {
     visibility: true
   },
   // ###_handleAttr_
-  // bind the jQuery prop() method to this object, now exposed
+  // bind the  prop() method to this object, now exposed
   // by this name, matching passed `bindings` arguments.
   //
   // `param` {string} `meth` The name of the method to be bound
@@ -45,7 +45,7 @@ sudo.extensions.bindable = {
     return this;
   },
   // ###_handleCss_
-  // bind the jQuery css() method to this object, now exposed
+  // bind the  css() method to this object, now exposed
   // by this name, matching passed `bindings` arguments.
   //
   // `param` {string} `meth` The name of the method to be bound
@@ -59,7 +59,7 @@ sudo.extensions.bindable = {
     return this;
   },
   // ###_handleData_
-  // bind the jQuery data() method to this object, now exposed
+  // bind the  data() method to this object, now exposed
   // by this name, matching passed `bindings` arguments.
   //
   // `param` {string} `meth` The name of the method to be bound
@@ -75,7 +75,7 @@ sudo.extensions.bindable = {
     return this;
   },
   // ###_handleProp_
-  // bind the jQuery attr() method to this object, now exposed
+  // bind the  attr() method to this object, now exposed
   // by this name, matching passed `bindings` arguments.
   //
   // NOTE: If more than 1 data-* attribute is desired you must
@@ -93,7 +93,7 @@ sudo.extensions.bindable = {
     return this;
   },
   // ###_handleSpec_
-  // bind the jQuery shorthand methods to this object matching
+  // bind the  shorthand methods to this object matching
   // passed `bindings` arguments.
   //
   // `param` {string} `meth` The name of the method to be bound.
@@ -147,7 +147,7 @@ sudo.extensions.bindable = {
     }
     return this;
   },
-  // `Special` binding cases. jQuery shorthand methods to be used.
+  // `Special` binding cases.  shorthand methods to be used.
   //
   // `private`
   _spec_: {
