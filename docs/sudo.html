@@ -117,6 +117,194 @@ can be <code>implemented</code> (mixed-in) in sudo Class Objects</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
+              <h3 id="inherit">inherit</h3>
+<p>Inherit the prototype from a parent to a child.
+Set the childs constructor for subclasses of child.
+Subclasses of the library base classes will not 
+want to use this function in <em>most</em> use-cases. Why? User Sudo Class Objects
+possess their own constructors and any call back to a <code>superclass</code> constructor
+will generally be looking for the library Object&#39;s constructor.</p>
+<p><code>param</code> {function} <code>parent</code>
+<code>param</code> {function} <code>child</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  inherit: <span class="function"><span class="keyword">function</span> <span class="title">inherit</span><span class="params">(parent, child)</span> {</span>
+    child.prototype = Object.create(parent.prototype);
+    child.prototype.constructor = child;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h3 id="makemeasandwich">makeMeASandwich</h3>
+<p>Notice there is no need to extrinsically instruct <em>how</em> to
+make the sandwich, just the elegant single command.</p>
+<p><code>returns</code> {string}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  makeMeASandwich: <span class="function"><span class="keyword">function</span> <span class="title">makeMeASandwich</span><span class="params">()</span> {</span><span class="keyword">return</span> <span class="string">'Okay.'</span>;},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h3 id="namespace">namespace</h3>
+<p>Method for assuring a Namespace is defined.</p>
+<p><code>param</code> {string} <code>path</code>. The path that leads to a blank Object.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  namespace: <span class="function"><span class="keyword">function</span> <span class="title">namespace</span><span class="params">(path)</span> {</span>
+    <span class="keyword">if</span> (!<span class="keyword">this</span>.getPath(path, window)) {
+      <span class="keyword">this</span>.setPath(path, {}, window);
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h3 id="premier">premier</h3>
+<p>The premier object takes precedence over all others so define it at the topmost level.</p>
+<p><code>type</code> {Object}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  premier: <span class="literal">null</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h3 id="setpath">setPath</h3>
+<p>Traverse the keypath and get each object 
+(or make blank ones) eventually setting the value 
+at the end of the path</p>
+<p><code>param</code> {string} <code>path</code>. The path to traverse when setting a value.
+<code>param</code> {*} <code>value</code>. What to set.
+<code>param</code> {Object} <code>obj</code>. The object literal to operate on.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  setPath: <span class="function"><span class="keyword">function</span> <span class="title">setPath</span><span class="params">(path, value, obj)</span> {</span>
+    <span class="keyword">var</span> p = path.split(<span class="string">'.'</span>), key;
+    <span class="keyword">for</span> (key; p.length &amp;&amp; (key = p.shift());) {
+      <span class="keyword">if</span>(!p.length) obj[key] = value;
+      <span class="keyword">else</span> <span class="keyword">if</span> (obj[key]) obj = obj[key];
+      <span class="keyword">else</span> obj = obj[key] = {};
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <h4 id="uid">uid</h4>
+<p>Some sudo Objects use a unique integer as a <code>tag</code> for identification.
+(Views for example). This ensures they are indeed unique.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  uid: <span class="number">0</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <h4 id="unique">unique</h4>
+<p>An integer used as &#39;tags&#39; by some sudo Objects as well
+as a unique string for views when needed</p>
+<p><code>param</code> {string} prefix. Optional string identifier</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unique: <span class="function"><span class="keyword">function</span> <span class="title">unique</span><span class="params">(prefix)</span> {</span>
+    <span class="keyword">return</span> prefix ? prefix + <span class="keyword">this</span>.uid++ : <span class="keyword">this</span>.uid++;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <h3 id="unsetpath">unsetPath</h3>
+<p>Remove a key:value pair from this object&#39;s data store
+located at <path></p>
+<p><code>param</code> {String} <code>path</code>
+<code>param</code> {Object} <code>obj</code> The object to operate on.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unsetPath: <span class="function"><span class="keyword">function</span> <span class="title">unsetPath</span><span class="params">(path, obj)</span> {</span>
+    <span class="keyword">var</span> p = path.split(<span class="string">'.'</span>), key;
+    <span class="keyword">for</span> (key; p.length &amp;&amp; (key = p.shift());) {
+      <span class="keyword">if</span>(!p.length) <span class="keyword">delete</span> obj[key];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>this can fail if a faulty path is passed.
+using getPath beforehand can prevent that</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">else</span> obj = obj[key];
+    }
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
               <h3 id="getxhr">getXhr</h3>
 <p>While getting a new XMLHttpRequest is standardized now, we are still going 
 to provide this syntactic sugar to allow the setting of global headers (will
@@ -144,182 +332,10 @@ already in the sudo.xhrHeaders).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  getXhr: <span class="function"><span class="keyword">function</span><span class="params">(params)</span> {</span>
-    <span class="keyword">var</span> xhr =  <span class="keyword">new</span> XMLHttpRequest(), keys = Object.keys(sudo.xhrHeaders),
-      len = keys.length, i;
-    params.verb || (params.verb = <span class="string">'GET'</span>);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-7">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
-              <p>check if we need a QS</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span>(params.verb === <span class="string">'GET'</span> &amp;&amp; params.params) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <p>assumed to be an object literal</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span>(<span class="keyword">typeof</span> params.params !== <span class="string">'string'</span>) params.params = Object.serialize(params.params);
-      params.url += (<span class="string">'?'</span> + params.params);
-    }
-    xhr.responseType = params.responseType || <span class="string">'text'</span>;
-    xhr.open(params.verb, params.url, <span class="literal">true</span>, params.user, params.password);
-    xhr.setRequestHeader(<span class="string">'X-Requested-With'</span>, <span class="string">'XMLHttpRequest'</span>);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-9">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
-              </div>
-              <p>so that some common use-case request headers can be set automagically, for blob, 
-document, buffer and others handle manually after getting the xhr back.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span>(xhr.responseType === <span class="string">'text'</span>) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-10">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
-              </div>
-              <p>could be json or plain string TODO expand this to a hash lookup for other types later</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span>(params.contentType &amp;&amp; params.contentType === <span class="string">'json'</span>) {
-        xhr.setRequestHeader(<span class="string">'Accept'</span>, <span class="string">'application/json'</span>);
-        xhr.setRequestHeader(<span class="string">'Content-Type'</span>, <span class="string">'application/json'</span>);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-11">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
-              </div>
-              <p>TODO does this work as expected?</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      } <span class="keyword">else</span> {
-        xhr.setRequestHeader(<span class="string">'Accept'</span>, <span class="string">'text/plain'</span>);
-        xhr.setRequestHeader(<span class="string">'Content-Type'</span>, <span class="string">'text/plain'</span>);
-      }
-    }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-12">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
-              </div>
-              <p>set any custom headers</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span>(len) <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; len; i++) xhr.setRequestHeader(keys[i], sudo.xhrHeaders[keys[i]]);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-13">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
-              </div>
-              <p>The native xhr considers many status codes a success that we do not, wrap the onload
-so that we can call success or error based on code</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    xhr.onload = <span class="function"><span class="keyword">function</span><span class="params">(e)</span> {</span>
-      <span class="keyword">if</span>(<span class="keyword">this</span>.status &gt;= <span class="number">200</span> &amp;&amp; <span class="keyword">this</span>.status &lt; <span class="number">300</span> || <span class="keyword">this</span>.status === <span class="number">304</span>) <span class="keyword">this</span>._onload_(e);
-      <span class="keyword">else</span> <span class="keyword">this</span>.onerror(e);
-    };
-    xhr._onload_ = params.onload || $.noop;
-    xhr.onerror = params.onerror || $.noop;
-    <span class="keyword">if</span>(params.timeout) xhr.timeout = params.timeout;
-    <span class="keyword">if</span>(params.ontimeout) xhr.ontimeout = params.ontimeout;
-    <span class="keyword">if</span>(params.onloadend) xhr.onloadend = params.onloadend;
-    <span class="keyword">return</span> xhr;
-  },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-14">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
-              </div>
-              <h3 id="inherit">inherit</h3>
-<p>Inherit the prototype from a parent to a child.
-Set the childs constructor for subclasses of child.
-Subclasses of the library base classes will not 
-want to use this function in <em>most</em> use-cases. Why? User Sudo Class Objects
-possess their own constructors and any call back to a <code>superclass</code> constructor
-will generally be looking for the library Object&#39;s constructor.</p>
-<p><code>param</code> {function} <code>parent</code>
-<code>param</code> {function} <code>child</code></p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  inherit: <span class="function"><span class="keyword">function</span> <span class="title">inherit</span><span class="params">(parent, child)</span> {</span>
-    child.prototype = Object.create(parent.prototype);
-    child.prototype.constructor = child;
-  },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-15">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
-              </div>
-              <h3 id="makemeasandwich">makeMeASandwich</h3>
-<p>Notice there is no need to extrinsically instruct <em>how</em> to
-make the sandwich, just the elegant single command.</p>
-<p><code>returns</code> {string}</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  makeMeASandwich: <span class="function"><span class="keyword">function</span> <span class="title">makeMeASandwich</span><span class="params">()</span> {</span><span class="keyword">return</span> <span class="string">'Okay.'</span>;},</pre></div></div>
+            <div class="content"><div class='highlight'><pre>sudo.getXhr = <span class="function"><span class="keyword">function</span> <span class="title">getXhr</span><span class="params">(params)</span> {</span>
+  <span class="keyword">var</span> xhr =  <span class="keyword">new</span> XMLHttpRequest(), keys = Object.keys(sudo.xhrHeaders),
+    len = keys.length, i;
+  params.verb || (params.verb = <span class="string">'GET'</span>);</pre></div></div>
             
         </li>
         
@@ -330,17 +346,11 @@ make the sandwich, just the elegant single command.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <h3 id="namespace">namespace</h3>
-<p>Method for assuring a Namespace is defined.</p>
-<p><code>param</code> {string} <code>path</code>. The path that leads to a blank Object.</p>
+              <p>check if we need a QS</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  namespace: <span class="function"><span class="keyword">function</span> <span class="title">namespace</span><span class="params">(path)</span> {</span>
-    <span class="keyword">if</span> (!<span class="keyword">this</span>.getPath(path, window)) {
-      <span class="keyword">this</span>.setPath(path, {}, window);
-    }
-  },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span>(params.verb === <span class="string">'GET'</span> &amp;&amp; params.params) {</pre></div></div>
             
         </li>
         
@@ -351,13 +361,16 @@ make the sandwich, just the elegant single command.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <h3 id="premier">premier</h3>
-<p>The premier object takes precedence over all others so define it at the topmost level.</p>
-<p><code>type</code> {Object}</p>
+              <p>assumed to be an object literal</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  premier: <span class="literal">null</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span>(<span class="keyword">typeof</span> params.params !== <span class="string">'string'</span>) params.params = Object.serialize(params.params);
+    params.url += (<span class="string">'?'</span> + params.params);
+  }
+  xhr.responseType = params.responseType || <span class="string">'text'</span>;
+  xhr.open(params.verb, params.url, <span class="literal">true</span>, params.user, params.password);
+  xhr.setRequestHeader(<span class="string">'X-Requested-With'</span>, <span class="string">'XMLHttpRequest'</span>);</pre></div></div>
             
         </li>
         
@@ -368,24 +381,12 @@ make the sandwich, just the elegant single command.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <h3 id="setpath">setPath</h3>
-<p>Traverse the keypath and get each object 
-(or make blank ones) eventually setting the value 
-at the end of the path</p>
-<p><code>param</code> {string} <code>path</code>. The path to traverse when setting a value.
-<code>param</code> {*} <code>value</code>. What to set.
-<code>param</code> {Object} <code>obj</code>. The object literal to operate on.</p>
+              <p>so that some common use-case request headers can be set automagically, for blob, 
+document, buffer and others handle manually after getting the xhr back.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  setPath: <span class="function"><span class="keyword">function</span> <span class="title">setPath</span><span class="params">(path, value, obj)</span> {</span>
-    <span class="keyword">var</span> p = path.split(<span class="string">'.'</span>), key;
-    <span class="keyword">for</span> (key; p.length &amp;&amp; (key = p.shift());) {
-      <span class="keyword">if</span>(!p.length) obj[key] = value;
-      <span class="keyword">else</span> <span class="keyword">if</span> (obj[key]) obj = obj[key];
-      <span class="keyword">else</span> obj = obj[key] = {};
-    }
-  },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span>(xhr.responseType === <span class="string">'text'</span>) {</pre></div></div>
             
         </li>
         
@@ -396,13 +397,13 @@ at the end of the path</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <h4 id="uid">uid</h4>
-<p>Some sudo Objects use a unique integer as a <code>tag</code> for identification.
-(Views for example). This ensures they are indeed unique.</p>
+              <p>could be json or plain string TODO expand this to a hash lookup for other types later</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  uid: <span class="number">0</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span>(params.contentType &amp;&amp; params.contentType === <span class="string">'json'</span>) {
+      xhr.setRequestHeader(<span class="string">'Accept'</span>, <span class="string">'application/json'</span>);
+      xhr.setRequestHeader(<span class="string">'Content-Type'</span>, <span class="string">'application/json'</span>);</pre></div></div>
             
         </li>
         
@@ -413,16 +414,15 @@ at the end of the path</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              <h4 id="unique">unique</h4>
-<p>An integer used as &#39;tags&#39; by some sudo Objects as well
-as a unique string for views when needed</p>
-<p><code>param</code> {string} prefix. Optional string identifier</p>
+              <p>TODO does this work as expected?</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  unique: <span class="function"><span class="keyword">function</span> <span class="title">unique</span><span class="params">(prefix)</span> {</span>
-    <span class="keyword">return</span> prefix ? prefix + <span class="keyword">this</span>.uid++ : <span class="keyword">this</span>.uid++;
-  },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    } <span class="keyword">else</span> {
+      xhr.setRequestHeader(<span class="string">'Accept'</span>, <span class="string">'text/plain'</span>);
+      xhr.setRequestHeader(<span class="string">'Content-Type'</span>, <span class="string">'text/plain'</span>);
+    }
+  }</pre></div></div>
             
         </li>
         
@@ -433,18 +433,11 @@ as a unique string for views when needed</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              <h3 id="unsetpath">unsetPath</h3>
-<p>Remove a key:value pair from this object&#39;s data store
-located at <path></p>
-<p><code>param</code> {String} <code>path</code>
-<code>param</code> {Object} <code>obj</code> The object to operate on.</p>
+              <p>set any custom headers</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  unsetPath: <span class="function"><span class="keyword">function</span> <span class="title">unsetPath</span><span class="params">(path, obj)</span> {</span>
-    <span class="keyword">var</span> p = path.split(<span class="string">'.'</span>), key;
-    <span class="keyword">for</span> (key; p.length &amp;&amp; (key = p.shift());) {
-      <span class="keyword">if</span>(!p.length) <span class="keyword">delete</span> obj[key];</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span>(len) <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; len; i++) xhr.setRequestHeader(keys[i], sudo.xhrHeaders[keys[i]]);</pre></div></div>
             
         </li>
         
@@ -455,15 +448,22 @@ located at <path></p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p>this can fail if a faulty path is passed.
-using getPath beforehand can prevent that</p>
+              <p>The native xhr considers many status codes a success that we do not, wrap the onload
+so that we can call success or error based on code</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="keyword">else</span> obj = obj[key];
-    }
-  }
-};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  xhr.onload = <span class="function"><span class="keyword">function</span><span class="params">(e)</span> {</span>
+    <span class="keyword">if</span>(<span class="keyword">this</span>.status &gt;= <span class="number">200</span> &amp;&amp; <span class="keyword">this</span>.status &lt; <span class="number">300</span> || <span class="keyword">this</span>.status === <span class="number">304</span>) <span class="keyword">this</span>._onload_(e);
+    <span class="keyword">else</span> <span class="keyword">this</span>.onerror(e);
+  };
+  xhr._onload_ = params.onload || $.noop;
+  xhr.onerror = params.onerror || $.noop;
+  <span class="keyword">if</span>(params.timeout) xhr.timeout = params.timeout;
+  <span class="keyword">if</span>(params.ontimeout) xhr.ontimeout = params.ontimeout;
+  <span class="keyword">if</span>(params.onloadend) xhr.onloadend = params.onloadend;
+  <span class="keyword">return</span> xhr;
+};<span class="comment">// ##Base Class Object</span></pre></div></div>
             
         </li>
         
@@ -474,8 +474,7 @@ using getPath beforehand can prevent that</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
-              <h2 id="base-class-object">Base Class Object</h2>
-<p>All sudo.js objects inherit base, giving the ability
+              <p>All sudo.js objects inherit base, giving the ability
 to utilize delegation, the <code>base</code> function and the 
 <code>construct</code> convenience method.</p>
 <p><code>constructor</code></p>
