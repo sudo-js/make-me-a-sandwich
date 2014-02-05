@@ -62,8 +62,9 @@
         
       </div>
     </div>
-    <script src="../../../lib/zepto/zepto.js"></script>
+    <script src="../../../lib/jbone/jbone.js"></script>
     <script src="../../../build/debug/sudo.js"></script>
+    <script src="../../function/function.js"></script>
     <script src="infiniteScroll.js"></script>
     <script>
       var test = new _.View('body');
@@ -76,20 +77,20 @@
         // this pretty much calls it immediately over and over...
         rebind();
       };
+      // test.addDelegate(new _.delegates.infiniteScroll({
+      //   trigger: 10,
+      //   scrollable: '#scrollable',
+      //   container: '#container'
+      // }));
+
+      // uncomment for inverted example
       test.addDelegate(new _.delegates.infiniteScroll({
         trigger: 10,
         scrollable: '#scrollable',
-        container: '#container'
+        container: '#container',
+        inverted: true
       }));
-
-      // uncomment for inverted example
-      //test.addDelegate(new _.delegates.infiniteScroll({
-        //trigger: 10,
-        //scrollable: '#scrollable',
-        //container: '#container',
-        //inverted: true
-      //}));
-      //test.delegate('infiniteScroll').toBottom().setUp();
+      test.delegate('infiniteScroll').toBottom().setUp();
       
     </script>
   </body>

@@ -27,7 +27,10 @@ sudo.delegates.infiniteScroll.prototype = {
     // depending on what the scrollable is, set the proper height attr
     this.scrollTopAttr = this.scrollableIsWindow ? 'pageYOffset' : 'scrollTop';
     // if its the document, assure its the documentElement
-    if(Node.isDocument(this.scrollable)) this.scrollable = this.scrollable.documentElement;
+    if(!this.scrollableIsWindow && this.scrollable.nodeType === this.scrollable.DOCUMENT_NODE) {
+      this.scrollableIsDocument = true;
+      this.scrollable = this.scrollable.documentElement;
+    }
     // in the inverted case, do not setup until called. this is because unless the 
     // scrollable has been moved to the bottom, any scroll would trigger the call to infiniteScrollAction
     if(!this.inverted) this.setUp();
@@ -46,13 +49,12 @@ sudo.delegates.infiniteScroll.prototype = {
   }, 300, true),
   // ---
   scrolled: function scrolled(e) {
-    var scrollableHeight = this.scrollableIsWindow ? this.scrollable.innerHeight :
-      Node.getHeight(this.scrollable);
+    var scrollableHeight = $(this.scrollable).height();
     if(this.inverted) {
       if(this.scrollable[this.scrollTopAttr] <= this.trigger) this.scroll();
     } else {
       if(this.scrollable[this.scrollTopAttr] + this.trigger >= 
-        (Node.getHeight(this.container) - scrollableHeight)) this.scroll();
+        ($(this.container).height() - scrollableHeight)) this.scroll();
     }
   },
   // sets up the scroll listening
@@ -74,7 +76,7 @@ sudo.delegates.infiniteScroll.prototype = {
     var scr;
     // if the scrollable is window (or document) you are gonna have to set the scrolltop on body as
     // setting the pageYOffset || scrollTop will not have the desired effect
-    if(this.scrollableIsWindow || Node.isDocument(this.scrollable)) {
+    if(this.scrollableIsWindow || this.scrollableIsDocument) {
       scr = document.querySelector('body');
       scr.scrollTop = scr.scrollHeight;
     } else this.scrollable.scrollTop = this.scrollable.scrollHeight;
@@ -84,7 +86,7 @@ sudo.delegates.infiniteScroll.prototype = {
   toTop: function toTop() {
     var scr;
     // same as toBottom...
-    if(this.scrollableIsWindow || Node.isDocument(this.scrollable)) {
+    if(this.scrollableIsWindow || this.scrollableIsDocument) {
       scr = document.querySelector('body');
       scr.scrollTop = 0;
     } else this.scrollable.scrollTop = 0;
