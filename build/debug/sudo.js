@@ -862,9 +862,7 @@ sudo.Navigator.prototype = Object.create(sudo.Model.prototype);
 sudo.Navigator.prototype.buildPath = function getPath() {
   var args = Array.prototype.slice.call(arguments), query;
   // check if the last arg is a hash
-  if(typeof args[args.length - 1] === 'object') {
-    query = this.getQuery(args.pop());
-  }
+  if($.isObject(args[args.length - 1])) {query = this.getQuery(args.pop());}
   return this.data.root + args.join('/') + (query || '');
 };
 // ###buildRelativePath
