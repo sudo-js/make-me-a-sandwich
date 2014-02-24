@@ -105,72 +105,7 @@ var sudo = {
     }
   }
 };
-// ###getXhr
-// While getting a new XMLHttpRequest is standardized now, we are still going 
-// to provide this syntactic sugar to allow the setting of global headers (will
-// be set on each request) as well as the onload, onerrer, and onloadend callbacks
-// to be set with one call.
-// Does not have a default for params.url all others are:
-//   {
-//     verb: 'GET',
-//     responseType: 'text',
-//     url: mandatory,
-//     params: optional,
-//     onload: $.noop,
-//     onerrer: optional,
-//     onloadend: optional,
-//     user: optional,
-//     password: optional
-//   }
-// If the verb is 'GET' and params is truthy it will be appended to the url as a 
-// queryString (after being serialized if a hash -- assumed to be a string if not).
-// This method does not call send() so do that once you have the xhr back, remember
-// to set any pertinant MIME types if sending data via setRequestHeader (unless its 
-// already in the sudo.xhrHeaders).
-//
-// `param` {object} attributes for the XHR
-// `returns` {object} the xhr object
-sudo.getXhr = function getXhr(params) {
-  var xhr =  new XMLHttpRequest(), keys = Object.keys(sudo.xhrHeaders),
-    len = keys.length, i;
-  params.verb || (params.verb = 'GET');
-  // check if we need a QS
-  if(params.verb === 'GET' && params.params) {
-    // assumed to be an object literal
-    if(typeof params.params !== 'string') params.params = Object.serialize(params.params);
-    params.url += ('?' + params.params);
-  }
-  xhr.responseType = params.responseType || 'text';
-  xhr.open(params.verb, params.url, true, params.user, params.password);
-  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-  // so that some common use-case request headers can be set automagically, for blob, 
-  // document, buffer and others handle manually after getting the xhr back.
-  if(xhr.responseType === 'text') {
-    // could be json or plain string TODO expand this to a hash lookup for other types later
-    if(params.contentType && params.contentType === 'json') {
-      xhr.setRequestHeader('Accept', 'application/json');
-      xhr.setRequestHeader('Content-Type', 'application/json');
-      // TODO does this work as expected?
-    } else {
-      xhr.setRequestHeader('Accept', 'text/plain');
-      xhr.setRequestHeader('Content-Type', 'text/plain');
-    }
-  }
-  // set any custom headers
-  if(len) for(i = 0; i < len; i++) xhr.setRequestHeader(keys[i], sudo.xhrHeaders[keys[i]]);
-  // The native xhr considers many status codes a success that we do not, wrap the onload
-  // so that we can call success or error based on code
-  xhr.onload = function(e) {
-    if(this.status >= 200 && this.status < 300 || this.status === 304) this._onload_(e);
-    else this.onerror(e);
-  };
-  xhr._onload_ = params.onload || $.noop;
-  xhr.onerror = params.onerror || $.noop;
-  if(params.timeout) xhr.timeout = params.timeout;
-  if(params.ontimeout) xhr.ontimeout = params.ontimeout;
-  if(params.onloadend) xhr.onloadend = params.onloadend;
-  return xhr;
-};// ##Base Class Object
+// ##Base Class Object
 //
 // All sudo.js objects inherit base, giving the ability
 // to utilize delegation, the `base` function and the 
@@ -867,7 +802,8 @@ sudo.DataView.prototype.addedToParent = function(parent) {
 // `returns` {Object} `this`
 sudo.DataView.prototype.removeFromParent = function removeFromParent() {
   this.parent.removeChild(this);
-  this.unbindEvents().el.parentNode.removeChild(this.el);
+  this.unbindEvents();
+  this.el.parentNode && this.el.parentNode.removeChild(this.el);
   // in the case that this.model is 'foreign'
   if(this.observer) {
     this.model.unobserve(this.observer);
@@ -980,7 +916,7 @@ sudo.Navigator.prototype.getHash = function getHash(fragment) {
 // `param` {object} `obj`
 // `returns` {string} the serialized query string
 sudo.Navigator.prototype.getQuery = function getQuery(obj) {
-  return '?' + ($.param(obj));
+  return '?' + ($.serialize(obj));
 };
 
 // ###getSearch
@@ -1035,19 +971,7 @@ sudo.Navigator.prototype.handleChange = function handleChange() {
 // the current `query`
 //
 // `returns` {object}
-sudo.Navigator.prototype.parseQuery = function parseQuery() {
-  var obj = {}, seg = this.data.query,
-    i, s;
-  if(seg) {
-    seg = seg.split('&');
-    for(i = 0; i < seg.length; i++) {
-      if(!seg[i]) continue;
-      s = seg[i].split('=');
-      obj[s[0]] = s[1];
-    }
-    return obj;
-  }
-};
+sudo.Navigator.prototype.parseQuery = function parseQuery() {return $.deserialize(this.data.query);};
 // ###setData
 // Using the current `fragment` (minus any search or hash data) as a key,
 // use `parseQuery` as the value for the key, setting it into the specified
@@ -1373,7 +1297,7 @@ sudo.extensions.observable = {
 //		function assumed to be anonymous and called with no scope manipulation
 sudo.extensions.listener = {
   // ###bindEvents
-  // Bind the events in the data store to this object's $el
+  // Bind the events in the data store to this object's el
   //
   // `returns` {Object} `this`
   bindEvents: function bindEvents() {
@@ -1399,7 +1323,7 @@ sudo.extensions.listener = {
   // `private`
   _handleEvent_: function _handleEvent_(e, which) {
     if(which) {
-      $(this.el).on(e.name, e.sel, e.data, typeof e.fn === 'string' ? this[e.fn].bind(this) : e.fn);
+      $(this.el).on(e.name, typeof e.fn === 'string' ? this[e.fn].bind(this) : e.fn, e.sel, e.data);
     } else {
       // do not send the fn going to off otherwise the unbind will fail
       // because of how we bind the string names, if this is ever an issue we
@@ -1518,7 +1442,7 @@ sudo.extensions.persistable = {
   // `returns` {object} The XHR object
   read: function post(params) {
     var opts = this._normalizeParams_('GET', null, params),
-      xhr = sudo.getXhr(opts);
+      xhr = $.getXhr(opts);
     xhr.send();
     return xhr;
   },
@@ -1539,7 +1463,7 @@ sudo.extensions.persistable = {
   // `returns` {object} Xhr
   _sendData_: function _sendData_(verb, params) {
     var opts = this._normalizeParams_(verb, null, params),
-      xhr = sudo.getXhr(opts);
+      xhr = $.getXhr(opts);
     xhr.send(opts.data || JSON.stringify(this._prepareData_(this.data)));
     return xhr;
   },

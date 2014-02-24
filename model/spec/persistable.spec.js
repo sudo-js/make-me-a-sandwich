@@ -1,6 +1,6 @@
 describe('Sudo Model persistance', function() {
 
-  sudo.getXhr = function(params) {
+  $.getXhr = function(params) {
     // by this point all the data has been stringified
     //if(opts.data && (typeof opts.data === 'string')) opts.data = JSON.parse(opts.data);
     var _xhr = {

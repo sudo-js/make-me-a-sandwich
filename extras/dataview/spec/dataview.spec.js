@@ -30,13 +30,13 @@ describe('sudo.js Dataview Object', function() {
   });
   
   it('has not rendered yet', function() {
-    expect($('#testTarget').html()).toBeFalsy();
+    expect(document.querySelector('#testTarget').innerHTML).toBeFalsy();
   });
 
   dv.addedToParent();
 
   it('exists, but without the inner content', function() {
-    expect($('#testTarget').html()).toBeFalsy();
+    expect(document.querySelector('#testTarget').innerHTML).toBeFalsy();
     expect(dv.el.innerHTML).toBeFalsy();
   });
 
@@ -48,7 +48,7 @@ describe('sudo.js Dataview Object', function() {
       buttonTwoValue: "I bet you're gay"
     });
     
-    expect($('#testTarget').html()).toBeTruthy();
+    expect(document.querySelector('#testTarget').innerHTML).toBeTruthy();
 
     expect(dv.qs('#one span').textContent).toBe("Let's not bicker and argue over who killed who.");
     expect(dv.qs('#one button').textContent).toBe("I'm not worthy");
@@ -79,7 +79,7 @@ describe('sudo.js Dataview Object', function() {
     $(dv.el).find('button').trigger('click');
     expect(spy.callCount).toBe(2);
 
-    $(dv.el).empty();
+    dv.el.innerHTML = '';
     expect(dv.el.innerHTML).toBeFalsy();
 
     dv.model.sets({
@@ -114,9 +114,9 @@ describe('sudo.js Dataview Object', function() {
     });
 
     var vc = new sudo.View('#testTarget');
-    $(vc.el).empty();
+    vc.el.innerHTML = '';
     
-    expect($('#testTarget').html()).toBeFalsy();
+    expect(document.querySelector('#testTarget').innerHTML).toBeFalsy();
 
     dv2.model.sets({
       renderTarget: vc.el,
@@ -125,10 +125,10 @@ describe('sudo.js Dataview Object', function() {
     });
     
     vc.addChild(dv2);
-    expect($('#testTarget').html()).toBeTruthy();
+    expect(document.querySelector('#testTarget').innerHTML).toBeTruthy();
 
     dv2.removeFromParent();
-    expect($('#testTarget').html()).toBeFalsy();
+    expect(document.querySelector('#testTarget').innerHTML).toBeFalsy();
   });
   
   it('does no rendering in the default state', function() {
@@ -142,18 +142,18 @@ describe('sudo.js Dataview Object', function() {
     });
 
     var vc = new sudo.View('#testTarget');
-    $(vc.el).empty();
+    vc.el.innerHTML = '';
     
-    expect($('#testTarget').html()).toBeFalsy();
+    expect(document.querySelector('#testTarget').innerHTML).toBeFalsy();
 
     dv2.model.set('renderTarget', vc.el);
     
     vc.addChild(dv2);
     
-    expect($('#testTarget').html()).toBeFalsy();
+    expect(document.querySelector('#testTarget').innerHTML).toBeFalsy();
 
     dv2.render();
-    expect($('#testTarget').html()).toBeTruthy();
+    expect(document.querySelector('#testTarget').innerHTML).toBeTruthy();
   });
   
 });

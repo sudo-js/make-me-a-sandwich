@@ -92,7 +92,7 @@ sudo.extensions.persistable = {
   // `returns` {object} The XHR object
   read: function post(params) {
     var opts = this._normalizeParams_('GET', null, params),
-      xhr = sudo.getXhr(opts);
+      xhr = $.getXhr(opts);
     xhr.send();
     return xhr;
   },
@@ -113,7 +113,7 @@ sudo.extensions.persistable = {
   // `returns` {object} Xhr
   _sendData_: function _sendData_(verb, params) {
     var opts = this._normalizeParams_(verb, null, params),
-      xhr = sudo.getXhr(opts);
+      xhr = $.getXhr(opts);
     xhr.send(opts.data || JSON.stringify(this._prepareData_(this.data)));
     return xhr;
   },

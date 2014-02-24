@@ -22,9 +22,7 @@ sudo.Navigator.prototype = Object.create(sudo.Model.prototype);
 sudo.Navigator.prototype.buildPath = function getPath() {
   var args = Array.prototype.slice.call(arguments), query;
   // check if the last arg is a hash
-  if(typeof args[args.length - 1] === 'object') {
-    query = this.getQuery(args.pop());
-  }
+  if($.isObject(args[args.length - 1])) {query = this.getQuery(args.pop());}
   return this.data.root + args.join('/') + (query || '');
 };
 // ###buildRelativePath
@@ -76,7 +74,7 @@ sudo.Navigator.prototype.getHash = function getHash(fragment) {
 // `param` {object} `obj`
 // `returns` {string} the serialized query string
 sudo.Navigator.prototype.getQuery = function getQuery(obj) {
-  return '?' + ($.param(obj));
+  return '?' + ($.serialize(obj));
 };
 
 // ###getSearch
@@ -131,19 +129,7 @@ sudo.Navigator.prototype.handleChange = function handleChange() {
 // the current `query`
 //
 // `returns` {object}
-sudo.Navigator.prototype.parseQuery = function parseQuery() {
-  var obj = {}, seg = this.data.query,
-    i, s;
-  if(seg) {
-    seg = seg.split('&');
-    for(i = 0; i < seg.length; i++) {
-      if(!seg[i]) continue;
-      s = seg[i].split('=');
-      obj[s[0]] = s[1];
-    }
-    return obj;
-  }
-};
+sudo.Navigator.prototype.parseQuery = function parseQuery() {return $.deserialize(this.data.query);};
 // ###setData
 // Using the current `fragment` (minus any search or hash data) as a key,
 // use `parseQuery` as the value for the key, setting it into the specified

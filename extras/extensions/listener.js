@@ -19,7 +19,7 @@
 //		function assumed to be anonymous and called with no scope manipulation
 sudo.extensions.listener = {
   // ###bindEvents
-  // Bind the events in the data store to this object's $el
+  // Bind the events in the data store to this object's el
   //
   // `returns` {Object} `this`
   bindEvents: function bindEvents() {
@@ -45,7 +45,7 @@ sudo.extensions.listener = {
   // `private`
   _handleEvent_: function _handleEvent_(e, which) {
     if(which) {
-      $(this.el).on(e.name, e.sel, e.data, typeof e.fn === 'string' ? this[e.fn].bind(this) : e.fn);
+      $(this.el).on(e.name, typeof e.fn === 'string' ? this[e.fn].bind(this) : e.fn, e.sel, e.data);
     } else {
       // do not send the fn going to off otherwise the unbind will fail
       // because of how we bind the string names, if this is ever an issue we

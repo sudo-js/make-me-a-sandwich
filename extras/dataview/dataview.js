@@ -50,7 +50,8 @@ sudo.DataView.prototype.addedToParent = function(parent) {
 // `returns` {Object} `this`
 sudo.DataView.prototype.removeFromParent = function removeFromParent() {
   this.parent.removeChild(this);
-  this.unbindEvents().el.parentNode.removeChild(this.el);
+  this.unbindEvents();
+  this.el.parentNode && this.el.parentNode.removeChild(this.el);
   // in the case that this.model is 'foreign'
   if(this.observer) {
     this.model.unobserve(this.observer);
