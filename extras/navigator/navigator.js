@@ -68,8 +68,7 @@ sudo.Navigator.prototype.getHash = function getHash(fragment) {
   return match ? match[1] : '';
 };
 // ###getQuery
-// Take a hash and convert it to a `search` query. Reuse
-// Zepto|jQuery `param` method
+// Take a hash and convert it to a `search` query
 //
 // `param` {object} `obj`
 // `returns` {string} the serialized query string

@@ -27,7 +27,7 @@ sudo.extensions.listener = {
     if((e = this.model.data.event || this.model.data.events)) this._handleEvents_(e, 1);
     return this;
   },
-  // Use the jQuery `on` or 'off' method, optionally delegating to a selector if present
+  // Use the cash `on` or 'off' method, optionally delegating to a selector if present
   // `private`
   _handleEvents_: function _handleEvents_(e, which) {
     var i;
@@ -61,7 +61,7 @@ sudo.extensions.listener = {
     return this.unbindEvents().bindEvents();
   },
   // ###unbindEvents
-  // Unbind the events in the data store from this object's $el
+  // Unbind the events in the data store from this object's el
   //
   // `returns` {Object} `this`
   unbindEvents: function unbindEvents() {

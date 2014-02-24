@@ -136,15 +136,12 @@ sudo.Container.prototype.removeChild = function removeChild(arg) {
 // This method calls removeFromParent as each child may have overridden logic there.
 //
 // see `removeChild`
-//
-// `param` {bool} `keep` Optional arg to instruct the parent to `detach` its $el
-// rather than the default `remove` if truthy
 // `returns` {object} `this`
-sudo.Container.prototype.removeChildren = function removeChildren(keep) {
+sudo.Container.prototype.removeChildren = function removeChildren() {
   // use the child names hash to avoid loop modification errors
   var keys = Object.keys(this.childNames), i;
   for (i = 0; i < keys.length; i++) {
-    this.getChild(keys[i]).removeFromParent(keep);
+    this.getChild(keys[i]).removeFromParent();
   }
   return this;
 };

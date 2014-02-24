@@ -4,7 +4,7 @@
 // 1. Expects to have a template located in its internal data Store accessible via `this.model.get('template')`.
 // 2. Can have a `renderTarget` property in its data store. If so this will be the location
 //		the child injects itself into (if not already in) the DOM
-// 3. Can have a 'renderMethod' property in its data store. If so this is the jQuery method
+// 3. Can have a 'renderMethod' property in its data store. If so this is the DOM method
 //		that the child will use to place itself in it's `renderTarget`.
 // 4. Has a `render` method that when called re-hydrates it's el by passing its
 //		internal data store to its template
@@ -45,7 +45,7 @@ sudo.DataView.prototype.addedToParent = function(parent) {
 };
 // ###removeFromParent
 // Remove this object from the DOM and its parent's list of children.
-// Overrides `sudo.View.removeFromParent` to unbind events and `remove` its $el 
+// Overrides `sudo.View.removeFromParent` to unbind events and `remove` its el 
 //
 // `returns` {Object} `this`
 sudo.DataView.prototype.removeFromParent = function removeFromParent() {
@@ -65,7 +65,7 @@ sudo.DataView.prototype.removeFromParent = function removeFromParent() {
 // `this.get('renderMethod')` or defualt to `appendChild`. After injection, the `renderTarget`
 // is deleted from this Objects data store (to prevent multiple injection).
 // Event unbinding/rebinding is generally not necessary for the Objects innerHTML as all events from the
-// Object's list of events (`this.get('event(s)'))` are delegated to the $el when added to parent.
+// Object's list of events (`this.get('event(s)'))` are delegated to the el when added to parent.
 //
 // `param` {object} `change` dataviews may be observing their model if `renderOnModelChange: true`
 //
