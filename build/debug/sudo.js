@@ -464,15 +464,12 @@ sudo.Container.prototype.removeChild = function removeChild(arg) {
 // This method calls removeFromParent as each child may have overridden logic there.
 //
 // see `removeChild`
-//
-// `param` {bool} `keep` Optional arg to instruct the parent to `detach` its $el
-// rather than the default `remove` if truthy
 // `returns` {object} `this`
-sudo.Container.prototype.removeChildren = function removeChildren(keep) {
+sudo.Container.prototype.removeChildren = function removeChildren() {
   // use the child names hash to avoid loop modification errors
   var keys = Object.keys(this.childNames), i;
   for (i = 0; i < keys.length; i++) {
-    this.getChild(keys[i]).removeFromParent(keep);
+    this.getChild(keys[i]).removeFromParent();
   }
   return this;
 };
@@ -756,7 +753,7 @@ sudo.template = function template(str, data, scope) {
 // 1. Expects to have a template located in its internal data Store accessible via `this.model.get('template')`.
 // 2. Can have a `renderTarget` property in its data store. If so this will be the location
 //		the child injects itself into (if not already in) the DOM
-// 3. Can have a 'renderMethod' property in its data store. If so this is the jQuery method
+// 3. Can have a 'renderMethod' property in its data store. If so this is the DOM method
 //		that the child will use to place itself in it's `renderTarget`.
 // 4. Has a `render` method that when called re-hydrates it's el by passing its
 //		internal data store to its template
@@ -797,7 +794,7 @@ sudo.DataView.prototype.addedToParent = function(parent) {
 };
 // ###removeFromParent
 // Remove this object from the DOM and its parent's list of children.
-// Overrides `sudo.View.removeFromParent` to unbind events and `remove` its $el 
+// Overrides `sudo.View.removeFromParent` to unbind events and `remove` its el 
 //
 // `returns` {Object} `this`
 sudo.DataView.prototype.removeFromParent = function removeFromParent() {
@@ -817,7 +814,7 @@ sudo.DataView.prototype.removeFromParent = function removeFromParent() {
 // `this.get('renderMethod')` or defualt to `appendChild`. After injection, the `renderTarget`
 // is deleted from this Objects data store (to prevent multiple injection).
 // Event unbinding/rebinding is generally not necessary for the Objects innerHTML as all events from the
-// Object's list of events (`this.get('event(s)'))` are delegated to the $el when added to parent.
+// Object's list of events (`this.get('event(s)'))` are delegated to the el when added to parent.
 //
 // `param` {object} `change` dataviews may be observing their model if `renderOnModelChange: true`
 //
@@ -908,8 +905,7 @@ sudo.Navigator.prototype.getHash = function getHash(fragment) {
   return match ? match[1] : '';
 };
 // ###getQuery
-// Take a hash and convert it to a `search` query. Reuse
-// Zepto|jQuery `param` method
+// Take a hash and convert it to a `search` query
 //
 // `param` {object} `obj`
 // `returns` {string} the serialized query string
@@ -1303,7 +1299,7 @@ sudo.extensions.listener = {
     if((e = this.model.data.event || this.model.data.events)) this._handleEvents_(e, 1);
     return this;
   },
-  // Use the jQuery `on` or 'off' method, optionally delegating to a selector if present
+  // Use the cash `on` or 'off' method, optionally delegating to a selector if present
   // `private`
   _handleEvents_: function _handleEvents_(e, which) {
     var i;
@@ -1337,7 +1333,7 @@ sudo.extensions.listener = {
     return this.unbindEvents().bindEvents();
   },
   // ###unbindEvents
-  // Unbind the events in the data store from this object's $el
+  // Unbind the events in the data store from this object's el
   //
   // `returns` {Object} `this`
   unbindEvents: function unbindEvents() {

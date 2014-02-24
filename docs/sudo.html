@@ -1179,14 +1179,12 @@ An object will be assumed to be an actual sudo Class Object.
               <h3 id="removechildren">removeChildren</h3>
 <p>Remove all children, name references and adjust indexes accordingly.
 This method calls removeFromParent as each child may have overridden logic there.</p>
-<p>see <code>removeChild</code></p>
-<p><code>param</code> {bool} <code>keep</code> Optional arg to instruct the parent to <code>detach</code> its $el
-rather than the default <code>remove</code> if truthy
+<p>see <code>removeChild</code>
 <code>returns</code> {object} <code>this</code></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.removeChildren = <span class="function"><span class="keyword">function</span> <span class="title">removeChildren</span><span class="params">(keep)</span> {</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.removeChildren = <span class="function"><span class="keyword">function</span> <span class="title">removeChildren</span><span class="params">()</span> {</span></pre></div></div>
             
         </li>
         
@@ -1203,7 +1201,7 @@ rather than the default <code>remove</code> if truthy
             
             <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> keys = Object.keys(<span class="keyword">this</span>.childNames), i;
   <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; keys.length; i++) {
-    <span class="keyword">this</span>.getChild(keys[i]).removeFromParent(keep);
+    <span class="keyword">this</span>.getChild(keys[i]).removeFromParent();
   }
   <span class="keyword">return</span> <span class="keyword">this</span>;
 };</pre></div></div>
@@ -1972,7 +1970,7 @@ cannot be included in a string literal and then unescape them in code blocks.</p
 <li>Expects to have a template located in its internal data Store accessible via <code>this.model.get(&#39;template&#39;)</code>.</li>
 <li>Can have a <code>renderTarget</code> property in its data store. If so this will be the location
  the child injects itself into (if not already in) the DOM</li>
-<li>Can have a &#39;renderMethod&#39; property in its data store. If so this is the jQuery method
+<li>Can have a &#39;renderMethod&#39; property in its data store. If so this is the DOM method
  that the child will use to place itself in it&#39;s <code>renderTarget</code>.</li>
 <li>Has a <code>render</code> method that when called re-hydrates it&#39;s el by passing its
  internal data store to its template</li>
@@ -2103,7 +2101,7 @@ Regardless of the rendering options any events in the <code>event(s)</code> prop
               </div>
               <h3 id="removefromparent">removeFromParent</h3>
 <p>Remove this object from the DOM and its parent&#39;s list of children.
-Overrides <code>sudo.View.removeFromParent</code> to unbind events and <code>remove</code> its $el </p>
+Overrides <code>sudo.View.removeFromParent</code> to unbind events and <code>remove</code> its el </p>
 <p><code>returns</code> {Object} <code>this</code></p>
 
             </div>
@@ -2148,7 +2146,7 @@ If a <code>renderTarget</code> is present this Object will inject itself into th
 <code>this.get(&#39;renderMethod&#39;)</code> or defualt to <code>appendChild</code>. After injection, the <code>renderTarget</code>
 is deleted from this Objects data store (to prevent multiple injection).
 Event unbinding/rebinding is generally not necessary for the Objects innerHTML as all events from the
-Object&#39;s list of events (<code>this.get(&#39;event(s)&#39;))</code> are delegated to the $el when added to parent.</p>
+Object&#39;s list of events (<code>this.get(&#39;event(s)&#39;))</code> are delegated to the el when added to parent.</p>
 <p><code>param</code> {object} <code>change</code> dataviews may be observing their model if <code>renderOnModelChange: true</code></p>
 <p><code>returns</code> {Object} <code>this</code></p>
 
@@ -2400,8 +2398,7 @@ for a <code>hash</code> value</p>
                 <a class="pilcrow" href="#section-119">&#182;</a>
               </div>
               <h3 id="getquery">getQuery</h3>
-<p>Take a hash and convert it to a <code>search</code> query. Reuse
-Zepto|jQuery <code>param</code> method</p>
+<p>Take a hash and convert it to a <code>search</code> query</p>
 <p><code>param</code> {object} <code>obj</code>
 <code>returns</code> {string} the serialized query string</p>
 
@@ -3416,7 +3413,7 @@ D. fn -&gt; If a {String} bound to the named function on this object, if a
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-169">&#182;</a>
               </div>
-              <p>Use the jQuery <code>on</code> or &#39;off&#39; method, optionally delegating to a selector if present
+              <p>Use the cash <code>on</code> or &#39;off&#39; method, optionally delegating to a selector if present
 <code>private</code></p>
 
             </div>
@@ -3501,7 +3498,7 @@ can hash them and look it up, but I don&#39;t see that as necessary atm</p>
                 <a class="pilcrow" href="#section-173">&#182;</a>
               </div>
               <h3 id="unbindevents">unbindEvents</h3>
-<p>Unbind the events in the data store from this object&#39;s $el</p>
+<p>Unbind the events in the data store from this object&#39;s el</p>
 <p><code>returns</code> {Object} <code>this</code></p>
 
             </div>
