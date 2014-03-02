@@ -94,10 +94,6 @@ establishing hierarchies of objects which have intrinsic knowledge of their resp
 
 + template(string, data, scope)
 
-#### [ViewController](https://github.com/sudo-js/make-me-a-sandwich/wiki/viewcontroller)
-
-+ instantiateChildren()
-
 ## Test Suite
 
 The `specRunner.html` file in `root` runs each individual module's specs. Load it as a file in your browser of
