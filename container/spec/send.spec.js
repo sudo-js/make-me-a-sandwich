@@ -9,8 +9,8 @@ describe('Sudo Container Send Functionality', function() {
   Z.prototype = Object.create(_.View.prototype);
 
   Z.prototype.sendersName = function(sender, whatevs) {
-    console.log('sender\'s name: ' + sender.model.get('name') + ' sent ' + whatevs);
-    console.log('my name: ' + this.model.get('name'));
+    console.log('sender\'s name: ' + sender.data.name + ' sent ' + whatevs);
+    console.log('my name: ' + this.data.name);
   };
 
   var a = new Z(null, {name: 'A'});
@@ -19,17 +19,17 @@ describe('Sudo Container Send Functionality', function() {
   var d = new Z(null, {name: 'D'});
 
   it('sets a method and gets it', function() {
-    b.model.set('sendMethod', 'sendersName');
-    expect(b.model.get('sendMethod')).toEqual('sendersName');
+    b.data.sendMethod =  'sendersName';
+    expect(b.data.sendMethod).toEqual('sendersName');
   });
 
   it('should not have the action set', function() {
-    expect(c.model.get('sendMethod')).toBeFalsy();
+    expect(c.data.sendMethod).toBeFalsy();
   });
 
   it('sets a target and gets it', function() {
-    b.model.set('sendTarget', c);
-    expect(b.model.get('sendTarget')).toEqual(c);
+    b.data.sendTarget = c;
+    expect(b.data.sendTarget).toEqual(c);
   });
 
   it('successfully sends its message to its target with (self) arg', function() {
@@ -41,7 +41,7 @@ describe('Sudo Container Send Functionality', function() {
   it('sucessfully sends a message to a different target', function() {
     // actions and targets can be declared 'on-the-fly'
     var spy = spyOn(a, 'sendersName').andCallThrough();
-    d.model.set('sendTarget', a);
+    d.data.sendTarget = a;
     d.send('sendersName', ' Go boil your bottoms...');
     expect(spy).toHaveBeenCalledWith(d, ' Go boil your bottoms...');
   });

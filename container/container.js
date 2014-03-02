@@ -21,19 +21,19 @@ sudo.inherit(sudo.Base, sudo.Container);
 // Also adds an 'index' property and an entry in the childNames hash.
 // If `addedToParent` if found on the child, call it, sending `this` as an argument.
 //
-// `param` {Object} `child`. View (or View subclass) instance.
+// `param` {Object} `c`. View (or View subclass) instance.
 // `param` {String} `name`. An optional name for the child that will go in the childNames hash.
 // `returns` {Object} `this`
-sudo.Container.prototype.addChild = function addChild(child, name) {
-  var c = this.children;
-  child.parent = this;
-  child.index = c.length;
+sudo.Container.prototype.addChild = function addChild(c, name) {
+  var ch = this.children;
+  c.parent = this;
+  c.index = ch.length;
   if(name) {
-    child.name = name;
-    this.childNames[name] = child.index;
+    c.name = name;
+    this.childNames[name] = c.index;
   }
-  c.push(child);
-  if('addedToParent' in child) child.addedToParent(this);
+  ch.push(c);
+  if('addedToParent' in c) c.addedToParent(this);
   return this;
 };
 // ###addChildren
@@ -46,18 +46,12 @@ sudo.Container.prototype.addChild = function addChild(child, name) {
 // Object literal in the form {name: child}
 // `returns` {Object} `this` 
 sudo.Container.prototype.addChildren = function addChildren(arg) {
-  var i, keys;
-  // Array?
-  if(Array.isArray(arg)) {
-    for (i = 0; i < arg.length; i++) {
-      this.addChild(arg[i]);
-    }
-  } else {
-    keys = Object.keys(arg);
-    for (i = 0; i < keys.length; i++) {
-      this.addChild(arg[keys[i]] , keys[i]);
-    }
-  }
+  // normalize the arg
+  var keys = Array.isArray(arg) ? undefined : Object.keys(arg),
+    ary = keys || arg;
+  ary.forEach(function(c) {
+    keys ? this.addChild(arg[c], c) : this.addChild(c);
+  }.bind(this));
   return this;
 };
 // ###bubble
@@ -73,12 +67,8 @@ sudo.Container.prototype.bubble = function bubble() {return this.parent;};
 // The named method to look for and call. Other args are passed through
 // `returns` {object} `this`
 sudo.Container.prototype.eachChild = function eachChild(/*args*/) {
-  var args = Array.prototype.slice.call(arguments), 
-    which = args.shift(), i, len, curr;
-  for (i = 0, len = this.children.length; i < len; i++) {
-    curr = this.children[i];
-    if(which in curr) curr[which].apply(curr, args);
-  }
+  var args = Array.prototype.slice.call(arguments), meth = args.shift();
+  this.children.forEach(function(c) {if(meth in c) c[meth].apply(c, args);});
   return this;
 };
 // ###getChild
@@ -138,12 +128,9 @@ sudo.Container.prototype.removeChild = function removeChild(arg) {
 // see `removeChild`
 // `returns` {object} `this`
 sudo.Container.prototype.removeChildren = function removeChildren() {
-  // use the child names hash to avoid loop modification errors
-  var keys = Object.keys(this.childNames), i;
-  for (i = 0; i < keys.length; i++) {
-    this.getChild(keys[i]).removeFromParent();
-  }
-  return this;
+  Object.keys(this.childNames).forEach(function(n) {
+    this.getChild(n).removeFromParent();
+  }.bind(this));
 };
 // ###removeFromParent
 // Remove this object from its parents list of children.
@@ -169,12 +156,12 @@ sudo.Container.prototype.role = 'container';
 // A sendMethod will be located by:
 //   1. using the first argument if it is a string
 //   2. looking for a `sendMethod` property if it is an object
-// In the case a specified target exists at `this.model.get('sendTarget')` it will be used
+// In the case a specified target exists at `this.data.sendTarget` it will be used
 // Any other args will be passed to the sendMethod after `this`
 // `returns` {Object} `this`
 sudo.Container.prototype.send = function send(/*args*/) {
   var args = Array.prototype.slice.call(arguments),
-    d = this.model && this.model.data, meth, targ, fn;
+    d = this.data, meth, targ, fn;
   // normalize the input, common use cases first
   if(d && 'sendMethod' in d) meth = d.sendMethod;
   else if(typeof args[0] === 'string') meth = args.shift();
@@ -183,7 +170,7 @@ sudo.Container.prototype.send = function send(/*args*/) {
     // passed as a custom data attr bound in events
     meth = 'data' in args[0] ? args[0].data.sendMethod :
       // passed in a hash from something or not passed at all
-      args[0].sendMethod || void 0;
+      args[0].sendMethod || undefined;
   }
   // target is either specified or my parent
   targ = d && d.sendTarget || this.bubble();

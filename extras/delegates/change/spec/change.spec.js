@@ -52,13 +52,13 @@ describe('Sudo Change Delegate', function() {
   it('can add a filter', function() {
     var del = view.delegate('change');
     del.addFilter('isNaughty', 'acceptIt');
-    expect(del.get('filters').isNaughty).toBe('acceptIt');
+    expect(del.data.filters.isNaughty).toBe('acceptIt');
   });
 
   it('can remove a filter', function() {
     var del = view.delegate('change');
     del.removeFilter('isNaughty');
-    expect(del.get('filters').isNaughty).toBeFalsy();
+    expect(del.data.filters.isNaughty).toBeFalsy();
   });
 
   it('removes a delegate', function() {

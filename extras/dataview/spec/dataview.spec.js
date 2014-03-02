@@ -1,5 +1,7 @@
 /*global spyOn*/
 describe('sudo.js Dataview Object', function() {
+  // model for the dv to observe
+  var mod = $.extend(new _.Model(), _.extensions.observable);
   
   var DV = function(el, data) {
     this.construct(el, data);
@@ -16,6 +18,7 @@ describe('sudo.js Dataview Object', function() {
       id: 'spam', 
       'class': 'eggs'
     },
+    model: mod,
     renderTarget: '#testTarget',
     renderOnModelChange: true, 
     template: '' +
@@ -41,7 +44,7 @@ describe('sudo.js Dataview Object', function() {
   });
 
   it('renders correctly', function() {
-    dv.model.sets({
+    mod.sets({
       sayingOne:"Let's not bicker and argue over who killed who.",
       buttonOneValue: "I'm not worthy",
       sayingTwo: "You were in terrible peril.",
@@ -57,7 +60,7 @@ describe('sudo.js Dataview Object', function() {
   });
 
   it('deleted the renderTarget', function() {
-      expect(dv.model.get('renderTarget')).toBeFalsy();
+      expect(dv.data.renderTarget).toBeFalsy();
   });
 
   it('has not yet bound the click event', function() {
@@ -69,11 +72,12 @@ describe('sudo.js Dataview Object', function() {
   it('has delegated the event, maintaining it even when html is refreshed', function() {
     var spy = spyOn(dv, 'buttonClicked').andCallThrough();
     // set and bind after spy declaration or jasmine won't see it
-    dv.model.set('event', {
-      name: 'click',
+    dv.data.event = {
+      on: 'click',
       sel: 'button',
       fn: 'buttonClicked'
-    });
+    };
+    
     dv.bindEvents();
 
     $(dv.el).find('button').trigger('click');
@@ -82,7 +86,7 @@ describe('sudo.js Dataview Object', function() {
     dv.el.innerHTML = '';
     expect(dv.el.innerHTML).toBeFalsy();
 
-    dv.model.sets({
+    mod.sets({
       sayingOne:"You've got no arms left.",
       buttonOneValue: "Yes I have",
       sayingTwo: "Look!",
@@ -109,7 +113,7 @@ describe('sudo.js Dataview Object', function() {
         id: 'spam', 
         'class': 'eggs'
       },
-      renderTarget: '#testTarget', 
+      model: mod,
       template: '<div id="two"></div>'
     });
 
@@ -118,7 +122,7 @@ describe('sudo.js Dataview Object', function() {
     
     expect(document.querySelector('#testTarget').innerHTML).toBeFalsy();
 
-    dv2.model.sets({
+    $.extend(dv2.data, {
       renderTarget: vc.el,
       // test the auto render on added option
       renderOnAddedToParent: true
@@ -137,7 +141,7 @@ describe('sudo.js Dataview Object', function() {
         id: 'spam', 
         'class': 'eggs'
       },
-      renderTarget: '#testTarget', 
+      model: mod,
       template: '<div id="two"></div>'
     });
 
@@ -146,7 +150,7 @@ describe('sudo.js Dataview Object', function() {
     
     expect(document.querySelector('#testTarget').innerHTML).toBeFalsy();
 
-    dv2.model.set('renderTarget', vc.el);
+    dv2.data.renderTarget = vc.el;
     
     vc.addChild(dv2);
     
