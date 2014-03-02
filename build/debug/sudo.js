@@ -1524,7 +1524,7 @@ sudo.delegates.Data.prototype.filter = function(obj) {
 // `private`
 sudo.delegates.Data.prototype.role = 'data';
 
-sudo.version = "0.9.8";
+sudo.version = "0.9.9";
 window.sudo = sudo;
 if(typeof window._ === "undefined") window._ = sudo;
 }).call(this, this);
