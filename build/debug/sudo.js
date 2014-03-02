@@ -56,11 +56,6 @@ var sudo = {
       this.setPath(path, {}, window);
     }
   },
-  // ###premier
-  // The premier object takes precedence over all others so define it at the topmost level.
-  //
-  // `type` {Object}
-  premier: null,
   // ###setPath
   // Traverse the keypath and get each object 
   // (or make blank ones) eventually setting the value 
