@@ -10,10 +10,9 @@ sudo.extensions.observable = {
   //
   // `private`
   _deliver_: function _deliver_(obj) {
-    var i, cb = this.callbacks;
-    for(i = 0; i < cb.length; i++) {
-      cb[i](obj);
-    }
+    this.callbacks.forEach(function(cb) {
+      cb(obj);
+    });
   },
   // ###deliverChangeRecords
   // Iterate through the changeRecords array(emptying it as you go), delivering them to the
@@ -23,9 +22,7 @@ sudo.extensions.observable = {
   deliverChangeRecords: function deliverChangeRecords() {
     var rec, cr = this.changeRecords;
     // FIFO
-    for(rec; cr.length && (rec = cr.shift());) {
-      this._deliver_(rec);
-    }
+    for(rec; cr.length && (rec = cr.shift());) {this._deliver_(rec);}
     return this;
   },
   // ###observe
@@ -33,12 +30,12 @@ sudo.extensions.observable = {
   // passing a callback will cause that callback to be called whenever any
   // property on the observable's data store is set, changed or deleted 
   // via set, unset, setPath or unsetPath with an object containing:
-  //     {
-  //	     type: <new, updated, deleted>,
-  //	     object: <the object being observed>,
-  //	     name: <the key that was modified>,
-  //	     oldValue: <if a previous value existed for this key>
-  //     }
+  //    {
+  //      type: <new, updated, deleted>,
+  //      object: <the object being observed>,
+  //      name: <the key that was modified>,
+  //      oldValue: <if a previous value existed for this key>
+  //    }
   // For ease of 'unobserving' the same Function passed in is returned.
   //
   // `param` {Function} `fn` The callback to be called with changeRecord(s)
@@ -56,10 +53,7 @@ sudo.extensions.observable = {
   // `param` {Array} ary
   // `returns` {Array} the Array passed in to observe
   observes: function observes(ary) {
-    var i;
-    for(i = 0; i < ary.length; i++) {
-      this.observe(ary[i]);
-    }
+    ary.forEach(function(fn) {this.observe(fn);}.bind(this));
     return ary;
   },
   // ###set
@@ -71,16 +65,16 @@ sudo.extensions.observable = {
   // to be delivered upon a call to deliverChangeRecords (truthy)
   //
   // `returns` {Object|*} `this` or calls deliverChangeRecords
-  set: function set(key, value, hold) {
-    var obj = {name: key, object: this.data};
+  set: function set(k, v, hold) {
+    var obj = {name: k, object: this.data};
     // did this key exist already
-    if(key in this.data) {
+    if(k in this.data) {
       obj.type = 'updated';
       // then there is an oldValue
-      obj.oldValue = this.data[key];
+      obj.oldValue = this.data[k];
     } else obj.type = 'new';
     // now actually set the value
-    this.data[key] = value;
+    this.data[k] = v;
     this.changeRecords.push(obj);
     // call the observers or not
     if(hold) return this;
@@ -99,21 +93,21 @@ sudo.extensions.observable = {
   // `param` {Bool} `hold` Call _deliver_ (falsy) or store the change notification
   // to be delivered upon a call to deliverChangeRecords (truthy)
   // `returns` {Object|*} `this` or calls deliverChangeRecords
-  setPath: function setPath(path, value, hold) {
+  setPath: function setPath(path, v, hold) {
     var curr = this.data, obj = {name: path, object: this.data},
-      p = path.split('.'), key;
-    for (key; p.length && (key = p.shift());) {
+      p = path.split('.'), k;
+    for(k; p.length && (k = p.shift());) {
       if(!p.length) {
         // reached the last refinement, pre-existing?
-        if (key in curr) {
+        if (k in curr) {
           obj.type = 'updated';
-          obj.oldValue = curr[key];
+          obj.oldValue = curr[k];
         } else obj.type = 'new';
-        curr[key] = value;
-      } else if (curr[key]) {
-        curr = curr[key];
+        curr[k] = v;
+      } else if (curr[k]) {
+        curr = curr[k];
       } else {
-        curr = curr[key] = {};
+        curr = curr[k] = {};
       }
     }
     this.changeRecords.push(obj);
@@ -127,11 +121,10 @@ sudo.extensions.observable = {
   //
   // `returns` {Object|*} `this` or calls deliverChangeRecords
   sets: function sets(obj, hold) {
-    var i, k = Object.keys(obj);
-    for(i = 0; i < k.length; i++) {
-      k[i].indexOf('.') === -1 ? this.set(k[i], obj[k[i]], true) :
-        this.setPath(k[i], obj[k[i]], true);
-    }
+    Object.keys(obj).forEach(function(k) {
+      k.indexOf('.') === -1 ? this.set(k, obj[k], true) :
+        this.setPath(k, obj[k], true);      
+    }.bind(this));
     if(hold) return this;
     return this.deliverChangeRecords();
   },
@@ -142,7 +135,7 @@ sudo.extensions.observable = {
   // `returns` {Object} `this`
   unobserve: function unobserve(fn) {
     var cb = this.callbacks, i = cb.indexOf(fn);
-    if(i !== -1) cb.splice(i, 1);
+    if(~i) cb.splice(i, 1);
     return this;
   },
   // ###unobserves
@@ -151,10 +144,7 @@ sudo.extensions.observable = {
   // `param` {Array} ary
   // `returns` {Object} `this`
   unobserves: function unobserves(ary) {
-    var i;
-    for(i = 0; i < ary.length; i++) {
-      this.unobserve(ary[i]);
-    }
+    ary.forEach(function(fn) {this.unobserve(fn);}.bind(this));
     return this;
   },
   // ###unset
@@ -194,19 +184,19 @@ sudo.extensions.observable = {
   unsetPath: function unsetPath(path, hold) {
     var obj = {name: path, object: this.data, type: 'deleted'}, 
       curr = this.data, p = path.split('.'), 
-      key, val;
-    for (key; p.length && (key = p.shift());) {
+      k, v;
+    for (k; p.length && (k = p.shift());) {
       if(!p.length) {
         // reached the last refinement
-        val = !!curr[key];
-        delete curr[key];
+        v = !!curr[k];
+        delete curr[k];
       } else {
         // this can obviously fail, but can be prevented by checking
         // with `getPath` first.
-        curr = curr[key];
+        curr = curr[k];
       }
     }
-    return this._unset_(obj, val, hold);
+    return this._unset_(obj, v, hold);
   },
   // ###unsets
   // Override of Base.unsets to hold the call to _deliver_ until done
@@ -215,11 +205,9 @@ sudo.extensions.observable = {
   // `param` hold
   // `returns` {Object|*} `this` or calls deliverChangeRecords
   unsets: function unsets(ary, hold) {
-    var i;
-    for(i = 0; i < ary.length; i++) {
-      ary[i].indexOf('.') === -1 ? this.unset(ary[i], true) :
-        this.unsetPath(ary[i], true);
-    }
+    ary.forEach(function(k) {
+      k.indexOf('.') === -1 ? this.unset(k, true) : this.unsetPath(k, true);   
+    }.bind(this));
     if(hold) return this;
     return this.deliverChangeRecords();	
   }

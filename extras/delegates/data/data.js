@@ -19,23 +19,19 @@ sudo.delegates.Data.prototype = Object.create(sudo.delegates.Filtered.prototype)
 //
 // `param` {Object} `obj`
 sudo.delegates.Data.prototype.filter = function(obj) {
-  var filters = this.data.filters,
-    ary = Object.keys(filters), key, i, o, k;
-  for(i = 0; i < ary.length; i++) {
-    key = ary[i];
+  var filters = this.data.filters, sl, o;
+  Object.keys(filters).forEach(function(k) {
     // keys and paths need different handling
-    if(key.indexOf('.') === -1) {
-      if(key in obj) this.delegator[filters[key]].call(
-        this.delegator, obj[key]);	
+    if(k.indexOf('.') === -1) {
+      if(k in obj) this.delegator[filters[k]].call(this.delegator, obj[k]);	
     } else {
       // the chars after the last refinement are the key we need to check for
-      k = key.slice(key.lastIndexOf('.') + 1);
+      sl = k.slice(k.lastIndexOf('.') + 1);
       // and the ones prior are the object
-      o = sudo.getPath(key.slice(0, key.lastIndexOf('.')), obj);
-      if(o && k in o) this.delegator[filters[key]].call(
-        this.delegator, o[k]);
+      o = sudo.getPath(k.slice(0, k.lastIndexOf('.')), obj);
+      if(o && sl in o) this.delegator[filters[k]].call(this.delegator, o[sl]);
     }
-  }
+  }.bind(this));
 };
 // `private`
 sudo.delegates.Data.prototype.role = 'data';

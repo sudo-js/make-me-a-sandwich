@@ -4,27 +4,28 @@
 //
 // `param` {Object} data
 sudo.delegates.Filtered = function(data) {
-  sudo.Model.call(this, data);
+  sudo.Base.call(this);
+  this.data = data;
 };
 // The filtered delegate
-sudo.inherit(sudo.Model, sudo.delegates.Filtered);
+sudo.inherit(sudo.Base, sudo.delegates.Filtered);
 // ###addFilter
 // Place an entry into this object's hash of filters
 //
-// `param` {string} `key`
-// `param` {string} `val`
+// `param` {string} `k`
+// `param` {string} `v`
 // `returns` {object} this
-sudo.delegates.Filtered.prototype.addFilter = function addFilter(key, val) {
-  this.data.filters[key] = val;
+sudo.delegates.Filtered.prototype.addFilter = function addFilter(k, v) {
+  this.data.filters[k] = v;
   return this;
 };
 // ###removeFilter
 // Remove an entry from this object's hash of filters
 //
-// `param` {string} `key`
+// `param` {string} `k`
 // `returns` {object} this
-sudo.delegates.Filtered.prototype.removeFilter = function removeFilter(key) {
-  delete this.data.filters[key];
+sudo.delegates.Filtered.prototype.removeFilter = function removeFilter(k) {
+  delete this.data.filters[k];
   return this;
 };
 // `private`

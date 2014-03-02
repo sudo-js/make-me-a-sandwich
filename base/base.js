@@ -14,7 +14,7 @@ sudo.Base = function() {
 // ###addDelegate
 // Push an instance of a Class Object into this object's `_delegates_` list.
 //
-// `param` {Object} an instance of a sudo.delegates Class Object
+// `param` {Object} `del`. An instance of a sudo.delegates Class Object
 // `returns` {Object} `this`
 sudo.Base.prototype.addDelegate = function addDelegate(del) {
   del.delegator = this;

@@ -16,17 +16,17 @@ describe('Sudo Filtered Delegate', function() {
   });
   
   it('establishes the filters', function() {
-    expect(view.delegate('filtered').getPath('filters.foo')).toBe('foo');
+    expect(view.delegate('filtered').data.filters.foo).toBe('foo');
   });
 
   it('can add a filter', function() {
     view.delegate('filtered').addFilter('bar', 'bar');
-    expect(view.delegate('filtered').getPath('filters.bar')).toBe('bar');
+    expect(view.delegate('filtered').data.filters.bar).toBe('bar');
   });
 
   it('can remove a filter', function() {
     view.delegate('filtered').removeFilter('bar');
-    expect(view.delegate('filtered').getPath('filters.bar')).toBeFalsy();
+    expect(view.delegate('filtered').data.filters.bar).toBeFalsy();
   });
 });
 

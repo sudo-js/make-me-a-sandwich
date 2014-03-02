@@ -52,20 +52,6 @@ describe('sudo.js View Object', function() {
     expect(v4.el.id).toBe('fooDiv');
   });
 
-  it('becomes the premier', function() {
-    v1.becomePremier();
-    expect(_.premier.uid).toEqual(v1.uid);
-  });
-
-  it('resigns premier when another asks', function() {
-    v1.becomePremier();
-    var spy = spyOn(v1, 'resignPremier').andCallThrough();
-    v2.becomePremier();
-    expect(_.premier.uid).toEqual(v2.uid);
-    expect(spy).toHaveBeenCalled();
-    expect(v1.isPremier).toBeFalsy();
-  });
-
   it('has an addedToParent method that is called if present when added', function() {
     var vc = new _.View();
     v1.addedToParent = function(p) {console.log(v1.role + ' added to ' + p.role);};
@@ -85,12 +71,6 @@ describe('sudo.js View Object', function() {
 
     expect(vc.children.length).toBe(0);
     expect(vc.qsa('#spam').length).toBe(0);
-  });
-
-  it('allows a Model instance to be passed in', function() {
-      var m = new _.Model({tagName: 'ul'}),
-        v = new _.View(null, m);
-      expect(v.el.tagName).toBe('UL');
   });
 
 });
