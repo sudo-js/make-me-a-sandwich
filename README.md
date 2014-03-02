@@ -98,11 +98,6 @@ establishing hierarchies of objects which have intrinsic knowledge of their resp
 
 + instantiateChildren()
 
-#### [bindable extension](https://github.com/sudo-js/make-me-a-sandwich/wiki/bindable-extension)
-
-+ setBinding()
-+ setBindings()
-
 ## Test Suite
 
 The `specRunner.html` file in `root` runs each individual module's specs. Load it as a file in your browser of
