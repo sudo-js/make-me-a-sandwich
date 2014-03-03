@@ -47,12 +47,9 @@ establishing hierarchies of objects which have intrinsic knowledge of their resp
 
 #### [View](https://github.com/sudo-js/make-me-a-sandwich/wiki/view)
 
-+ becomePremier
-+ init
-+ resignPremier
 + setEl(_argument_)
-+ $(selector)
-
++ qs(selector)
++ qsa(selector)
 
 #### [observable extension](https://github.com/sudo-js/make-me-a-sandwich/wiki/observable-extension)
 
