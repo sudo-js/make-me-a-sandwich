@@ -1935,13 +1935,13 @@ Overrides <code>sudo.View.removeFromParent</code> to unbind events and <code>rem
                 <a class="pilcrow" href="#section-95">&#182;</a>
               </div>
               <h3 id="render">render</h3>
-<p>(Re)hydrate the innerHTML of this object via its template and data in the <code>change.object</code>.
+<p>(Re)hydrate the innerHTML of this object via its template and data in the <code>change.object</code> or <code>this.data</code>.
 If a <code>renderTarget</code> is present this Object will inject itself into the target via
 <code>this.data.renderMethod</code> or defualt to <code>appendChild</code>. After injection, the <code>renderTarget</code>
 is deleted from this Objects data store (to prevent multiple injection).
 Event unbinding/rebinding is generally not necessary for the Objects innerHTML as all events from the
 Object&#39;s list of events (<code>this.data.event(s)</code>) are delegated to the el when added to parent.</p>
-<p><code>param</code> {object} <code>change</code> dataviews may be observing their model if <code>renderOnModelChange: true</code>
+<p><code>param</code> {object} <code>change</code> dataviews may be observing a model if <code>renderOnModelChange: true</code>
 <code>returns</code> {Object} <code>this</code></p>
 
             </div>
@@ -1963,7 +1963,7 @@ Object&#39;s list of events (<code>this.data.event(s)</code>) are delegated to t
             </div>
             
             <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span>(<span class="keyword">typeof</span> d.template === <span class="string">'string'</span>) d.template = sudo.template(d.template);
-  <span class="keyword">if</span>(change &amp;&amp; change.object) <span class="keyword">this</span>.el.innerHTML = d.template(change.object);</pre></div></div>
+  <span class="keyword">this</span>.el.innerHTML = d.template(change &amp;&amp; change.object || <span class="keyword">this</span>.data);</pre></div></div>
             
         </li>
         

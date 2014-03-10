@@ -741,20 +741,20 @@ sudo.DataView.prototype.removeFromParent = function removeFromParent() {
   return this;
 };
 // ###render
-// (Re)hydrate the innerHTML of this object via its template and data in the `change.object`.
+// (Re)hydrate the innerHTML of this object via its template and data in the `change.object` or `this.data`.
 // If a `renderTarget` is present this Object will inject itself into the target via
 // `this.data.renderMethod` or defualt to `appendChild`. After injection, the `renderTarget`
 // is deleted from this Objects data store (to prevent multiple injection).
 // Event unbinding/rebinding is generally not necessary for the Objects innerHTML as all events from the
 // Object's list of events (`this.data.event(s)`) are delegated to the el when added to parent.
 //
-// `param` {object} `change` dataviews may be observing their model if `renderOnModelChange: true`
+// `param` {object} `change` dataviews may be observing a model if `renderOnModelChange: true`
 // `returns` {Object} `this`
 sudo.DataView.prototype.render = function render(change) {
   var d = this.data;
   // (re)hydrate the innerHTML
   if(typeof d.template === 'string') d.template = sudo.template(d.template);
-  if(change && change.object) this.el.innerHTML = d.template(change.object);
+  this.el.innerHTML = d.template(change && change.object || this.data);
   // am I in the dom yet?
   if(d.renderTarget) {
     this._normalizedEl_(d.renderTarget)[d.renderMethod || 'appendChild'](this.el);
