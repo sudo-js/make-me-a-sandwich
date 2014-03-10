@@ -137,23 +137,4 @@ describe('Sudo Model persistance', function() {
     model.set('id', 47).destroy();
     expect(model.get('ajaxStatusText')).toBe('200 OK');
   });
-
-  it('Removes the items in the serverDataBlacklist', function() {
-    // now just return what showed up
-    
-    model.sets({
-      template: '<section></section>',
-      renderTarget: '#camelot',
-      renderMethod: 'spanking'
-    });
-    
-    var res = model._prepareData_(model.data);
-    
-    expect(('name' in res)).toBe(true);    
-    expect(('occupation' in res)).toBe(true);
-    expect(('ajax' in res)).toBe(false);
-    expect(('renderTarget' in res)).toBe(false);
-    expect(('renderMethod' in res)).toBe(false);
-    expect(('template' in res)).toBe(false);
-  });
 });

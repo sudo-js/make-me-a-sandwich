@@ -1319,19 +1319,6 @@ sudo.extensions.persistable = {
     // allow the passed in params to override any set in this model's `ajax` options
     return params ? $.extend(opts, params) : opts;
   },
-  // ###_prepareData_
-  // In the default state, that is to data is explicitly passed to them, save
-  // type operations will pass this model's data hash here to be cloned and have
-  // the items in the blacklist removed
-  // `param` {object} `data`
-  // `returns` {object} A clone of this models data hash minus the blacklisted keys
-  _prepareData_: function _prepareData_(data) {
-    var keys = Object.keys(data), len = keys.length, res = {}, i;
-    for(i = 0; i < len; i++) {
-      if(!(keys[i] in this.serverDataBlacklist)) res[keys[i]] = data[keys[i]];
-    }
-    return res;
-  },
   // ###read
   //
   // Fetch this models state from the server and set it here. The 
@@ -1368,17 +1355,8 @@ sudo.extensions.persistable = {
   _sendData_: function _sendData_(verb, params) {
     var opts = this._normalizeParams_(verb, null, params),
       xhr = $.getXhr(opts);
-    xhr.send(opts.data || JSON.stringify(this._prepareData_(this.data)));
+    xhr.send(opts.data || JSON.stringify(this.data));
     return xhr;
-  },
-  // ###serverDataBlacklist
-  // Keys present in this hash will be removed from the object sent to the server
-  // on a save type operation if no data was passed explicitly to that method
-  serverDataBlacklist: {
-    ajax: true,
-    renderMethod: true,
-    renderTarget: true,
-    template: true
   },
   // ###update
   //
