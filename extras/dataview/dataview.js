@@ -18,6 +18,7 @@ sudo.DataView = function(el, data) {
   $.extend(this, sudo.extensions.listener);
   // renderOnModelChange types observe a data.model
   if(data.renderOnModelChange) {
+    // will error if no model || the model is not observable
     this.observer = data.model.observe(this.render.bind(this));
   }
 };
@@ -69,7 +70,7 @@ sudo.DataView.prototype.render = function render(change) {
   var d = this.data;
   // (re)hydrate the innerHTML
   if(typeof d.template === 'string') d.template = sudo.template(d.template);
-  this.el.innerHTML = d.template(change && change.object || this.data);
+  this.el.innerHTML = d.template(change && change.object || d.model && d.model.data || d);
   // am I in the dom yet?
   if(d.renderTarget) {
     this._normalizedEl_(d.renderTarget)[d.renderMethod || 'appendChild'](this.el);
