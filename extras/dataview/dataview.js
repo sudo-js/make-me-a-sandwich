@@ -26,7 +26,7 @@ sudo.DataView = function(el, data) {
 sudo.inherit(sudo.View, sudo.DataView);
 // ###addedToParent
 // Container's will check for the presence of this method and call it if it is present.
-// Options affecting this method are: 
+// Options affecting this method are:
 // `renderOnModelChange`: render not called until an observed model is changed via
 // a `set`, `sets` or `unsets` operation.
 // `renderOnAddedToParent`: render is called from this method.
@@ -42,7 +42,7 @@ sudo.DataView.prototype.addedToParent = function(parent) {
 };
 // ###removeFromParent
 // Remove this object from the DOM and its parent's list of children.
-// Overrides `sudo.View.removeFromParent` to unbind events and `remove` its el 
+// Overrides `sudo.View.removeFromParent` to unbind events and `remove` its el
 //
 // `returns` {Object} `this`
 sudo.DataView.prototype.removeFromParent = function removeFromParent() {

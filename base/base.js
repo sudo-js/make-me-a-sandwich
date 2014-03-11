@@ -1,7 +1,7 @@
 // ##Base Class Object
 //
 // All sudo.js objects inherit base, giving the ability
-// to utilize delegation, the `base` function and the 
+// to utilize delegation, the `base` function and the
 // `construct` convenience method.
 //
 // `constructor`
@@ -32,7 +32,7 @@ sudo.Base.prototype.addDelegate = function addDelegate(del) {
 // along with the initial method name
 sudo.Base.prototype.base = function base() {
   var args = Array.prototype.slice.call(arguments),
-    name = args.shift(), 
+    name = args.shift(),
     found = false,
     obj = this,
     curr;
@@ -72,7 +72,7 @@ sudo.Base.prototype.delegate = function delegate(role, meth) {
 };
 // ###getDelegate
 // Fetch a delegate whose role property matches the passed in argument.
-// Uses the `delegate` method in its 'single argument' form, included for 
+// Uses the `delegate` method in its 'single argument' form, included for
 // API consistency
 //
 // `param` {String} `role`

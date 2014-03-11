@@ -30,7 +30,7 @@ describe('Sudo Container Class', function() {
     container.addChildren(ary);
     expect(container.children.length).toBe(2);
   });
-  
+
   it('Adds many children via an object literal', function() {
     var obj = {'Galahad': child1, 'Robin': child2};
     container.addChildren(obj);
@@ -115,5 +115,25 @@ describe('Sudo Container Class', function() {
       expect(spy1).toHaveBeenCalledWith('baz');
       expect(spy2).toHaveBeenCalledWith('baz');
   });
-  
+
+  it('invokes addedToParent on the child if it is defined', function() {
+    var addedParent;
+
+    child1.addedToParent = function(parent){ addedParent = parent; };
+
+    container.addChild(child1, 'foo');
+    expect(addedParent).toEqual(container);
+  });
+
+  it('invokes removedFromParent when a child is removed from its parent and the child defines it', function(){
+    var removedParent;
+
+    child1.removedFromParent = function(parent){ removedParent = parent; };
+
+    container.addChild(child1, 'foo');
+    container.removeChild('foo');
+
+    expect(removedParent).toEqual(container);
+  });
+
 });

@@ -7,7 +7,7 @@
 //  data: an_optional_hash_of_data,
 //	fn: `function name`
 // }, {...
-//	This array will be searched for via `this.data.events`. There is a 
+//	This array will be searched for via `this.data.events`. There is a
 //	single-event use case as well, pass a single object literal in the above form.
 //	with the key `event`:
 //	event: {...same as above}
@@ -15,7 +15,7 @@
 //	A. on -> DOM compatible event name
 //	B. sel -> Optional DOM compatible selector used to delegate events
 //  C. data: A hash that will be passed as the custom Event.data object
-//	D. fn -> If a {String} bound to the named function on this object, if a 
+//	D. fn -> If a {String} bound to the named function on this object, if a
 //		function assumed to be anonymous and called with no scope manipulation
 sudo.extensions.listener = {
   // ###bindEvents
@@ -30,7 +30,7 @@ sudo.extensions.listener = {
   // Use the cash `on` or 'off' method, optionally delegating to a selector if present
   // `private`
   _handleEvents_: function _handleEvents_(e, which) {
-    Array.isArray(e) ? 
+    Array.isArray(e) ?
       e.forEach(function(ev) {this._handleEvent_(ev, which);}.bind(this)) :
       this._handleEvent_(e, which);
   },

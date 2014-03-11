@@ -1,7 +1,7 @@
 //##Data Delegate
 
 // Delegates, if present, can extend the behavior
-// of objects, lessening the need for subclassing. 
+// of objects, lessening the need for subclassing.
 // The data delegate is specifically designed to
 // filter through an object, looking for specified keys or paths
 // and returning values for those if found
@@ -23,7 +23,7 @@ sudo.delegates.Data.prototype.filter = function(obj) {
   Object.keys(filters).forEach(function(k) {
     // keys and paths need different handling
     if(k.indexOf('.') === -1) {
-      if(k in obj) this.delegator[filters[k]].call(this.delegator, obj[k]);	
+      if(k in obj) this.delegator[filters[k]].call(this.delegator, obj[k]);
     } else {
       // the chars after the last refinement are the key we need to check for
       sl = k.slice(k.lastIndexOf('.') + 1);

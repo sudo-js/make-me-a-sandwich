@@ -1,6 +1,6 @@
 // ##Navigator Class Object
 
-// Abstracts location and history events, parsing their information into a 
+// Abstracts location and history events, parsing their information into a
 // normalized object that is then set to an Observable class instance
 //
 // `constructor`
@@ -124,7 +124,7 @@ sudo.Navigator.prototype.handleChange = function handleChange() {
   }
 };
 // ###parseQuery
-// Parse and return a hash of the key value pairs contained in 
+// Parse and return a hash of the key value pairs contained in
 // the current `query`
 //
 // `returns` {object}
@@ -147,9 +147,9 @@ sudo.Navigator.prototype.setData = function setData() {
   return this;
 };
 // ###start
-// Gather the necessary information about the current environment and 
+// Gather the necessary information about the current environment and
 // bind to either (push|pop)state or hashchange.
-// Also, if given an imcorrect URL for the current environment (hashchange 
+// Also, if given an imcorrect URL for the current environment (hashchange
 // vs pushState) normalize it and set accordingly (or don't).
 //
 // `returns` {object} `this`
@@ -159,7 +159,7 @@ sudo.Navigator.prototype.start = function start() {
   hasPushState = window.history && window.history.pushState;
   this.started = true;
   // setup the initial configuration
-  this.isHashChange = this.data.useHashChange && 'onhashchange' in window || 
+  this.isHashChange = this.data.useHashChange && 'onhashchange' in window ||
     (!hasPushState && 'onhashchange' in window);
   this.isPushState = !this.isHashChange && !!hasPushState;
   // normalize the root to always contain a leading and trailing slash
@@ -176,16 +176,16 @@ sudo.Navigator.prototype.start = function start() {
   // somehow a URL got here not in my 'format', unless explicitly told not too, correct this
   if(!this.data.stay) {
    if(this.isHashChange && !atRoot) {
-      window.location.replace(this.data.root + window.location.search + '#' + 
+      window.location.replace(this.data.root + window.location.search + '#' +
         this.data.fragment);
       // return early as browser will redirect
       return true;
       // the converse of the above
     } else if(this.isPushState && atRoot && window.location.hash) {
       tmp = this.getHash().replace(this.leadingStripper, '');
-      window.history.replaceState({}, document.title, this.data.root + 
+      window.history.replaceState({}, document.title, this.data.root +
         tmp + window.location.search);
-    } 
+    }
   }
   // TODO provide option to `go` from inital `start` state?
   return this;
@@ -196,14 +196,14 @@ sudo.Navigator.prototype.start = function start() {
 // simply return false
 //
 // `param` {String} `fragment`
-// `returns` {bool} 
+// `returns` {bool}
 sudo.Navigator.prototype.urlChanged = function urlChanged(fragment) {
   var current = this.getFragment(fragment);
   // nothing has changed
   if (current === this.data.fragment) return false;
   this.data.fragment = current;
   // the fragment and the href need to checked here, optimized for the 'go' scenario
-  this.data.query = (this.getSearch(current) || this.getSearch()) || 
+  this.data.query = (this.getSearch(current) || this.getSearch()) ||
     (this.getHash(current) || this.getHash());
   return true;
 };
