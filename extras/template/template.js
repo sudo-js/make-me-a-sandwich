@@ -1,6 +1,6 @@
 // ###Templating
 
-// Allow the default {{ js code }}, {{= key }}, and {{- escape stuff }} 
+// Allow the default {{ js code }}, {{= key }}, and {{- escape stuff }}
 // micro templating delimiters to be overridden if desired
 //
 // `type` {Object}
@@ -9,7 +9,7 @@ sudo.templateSettings = {
   interpolate: /\{\{=([\s\S]+?)\}\}/g,
   escape: /\{\{-([\s\S]+?)\}\}/g
 };
-// Certain characters need to be escaped so that they can be put 
+// Certain characters need to be escaped so that they can be put
 // into a string literal when templating.
 //
 // `type` {Object}

@@ -10,7 +10,7 @@
 // Before use be sure to set an `ajax` property {object} with at least
 // a `baseUrl: ...` key. The model's id (if present -- indicating a persisted model)
 // is appended to the baseUrl (baseUrl/id) by default. You can override this behavior
-// by simply setting a `url: ...` in the `ajax` options hash or pass in the same when 
+// by simply setting a `url: ...` in the `ajax` options hash or pass in the same when
 // calling any of the methods (or override the model.url() method).
 //
 // Place any other default options in the `ajax` hash
@@ -18,11 +18,11 @@
 // defaults by passing in a hash of options to any method:
 //  `this.model.update({patch: true})` etc...
 sudo.extensions.persistable = {
-  // ###create 
+  // ###create
   //
   // Save this model on the server. If a subset of this model's attributes
   // have not been stated (ajax:{data:{...}}) send all of the model's data.
-  // Anticipate that the server response will send back the 
+  // Anticipate that the server response will send back the
   // state of the model on the server and set it here (via a success callback).
   //
   // `param` {object} `params` Hash of options for the XHR call
@@ -40,10 +40,10 @@ sudo.extensions.persistable = {
     return this._sendData_('DELETE', params);
   },
   // ###_normalizeParams_
-  // Abstracted logic for preparing the options object. This looks at 
+  // Abstracted logic for preparing the options object. This looks at
   // the set `ajax` property, allowing any passed in params to override.
   //
-  // Sets defaults: `text` responseType and an onload callback that simply `sets()` the 
+  // Sets defaults: `text` responseType and an onload callback that simply `sets()` the
   // parsed response returned from the server
   //
   // `returns` {object} A normalized params object for the XHR call
@@ -67,8 +67,8 @@ sudo.extensions.persistable = {
   },
   // ###read
   //
-  // Fetch this models state from the server and set it here. The 
-  // `Model.sets()` method is used with the returned data (we are 
+  // Fetch this models state from the server and set it here. The
+  // `Model.sets()` method is used with the returned data (we are
   // asssuming the default json dataType). Pass in (via the params arg)
   // a success function to override this default.
   //
@@ -86,7 +86,7 @@ sudo.extensions.persistable = {
   // ###save
   //
   // Convenience method removing the need to know if a model is new (not yet persisted)
-  // or has been loaded/refreshed from the server. 
+  // or has been loaded/refreshed from the server.
   //
   // `param` {object} `params` Hash of options for the XHR call
   // `returns` {object} The XHR object
@@ -117,7 +117,7 @@ sudo.extensions.persistable = {
   // `param` {object} `params` Optional hash of options for the XHR
   // `returns` {object|bool} the Xhr if called false if not
   update: function update(params) {
-    return this._sendData_((this.data.ajax.patch || params && params.patch) ? 
+    return this._sendData_((this.data.ajax.patch || params && params.patch) ?
       'PATCH' : 'PUT', params);
   },
   // ###url
@@ -130,7 +130,7 @@ sudo.extensions.persistable = {
   url: function url(base) {
     // could possibly be 0...
     if('id' in this.data) {
-      return base + (base.charAt(base.length - 1) === '/' ? 
+      return base + (base.charAt(base.length - 1) === '/' ?
         '' : '/') + encodeURIComponent(this.data.id);
     } else return base;
   }

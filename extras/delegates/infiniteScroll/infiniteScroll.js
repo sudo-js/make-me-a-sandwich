@@ -31,14 +31,14 @@ sudo.delegates.infiniteScroll.prototype = {
       this.scrollableIsDocument = true;
       this.scrollable = this.scrollable.documentElement;
     }
-    // in the inverted case, do not setup until called. this is because unless the 
+    // in the inverted case, do not setup until called. this is because unless the
     // scrollable has been moved to the bottom, any scroll would trigger the call to infiniteScrollAction
     if(!this.inverted) this.setUp();
   },
-  // all delegates require a role which the delegator can use 
+  // all delegates require a role which the delegator can use
   // when using this.delagate(<role>)...
   role: 'infiniteScroll',
-  // common to either the inverted case or non-inverted 
+  // common to either the inverted case or non-inverted
   scroll: Function.debounce(function(e) {
     this.scrollable.removeEventListener('scroll', this._boundScroll);
     this.isListening = false;
@@ -53,7 +53,7 @@ sudo.delegates.infiniteScroll.prototype = {
     if(this.inverted) {
       if(this.scrollable[this.scrollTopAttr] <= this.trigger) this.scroll();
     } else {
-      if(this.scrollable[this.scrollTopAttr] + this.trigger >= 
+      if(this.scrollable[this.scrollTopAttr] + this.trigger >=
         ($(this.container).height() - scrollableHeight)) this.scroll();
     }
   },

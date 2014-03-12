@@ -26,9 +26,9 @@ sudo.extensions.observable = {
     return this;
   },
   // ###observe
-  // In a quasi-ES6 Object.observe pattern, calling observe on an `observable` and 
+  // In a quasi-ES6 Object.observe pattern, calling observe on an `observable` and
   // passing a callback will cause that callback to be called whenever any
-  // property on the observable's data store is set, changed or deleted 
+  // property on the observable's data store is set, changed or deleted
   // via set, unset, setPath or unsetPath with an object containing:
   //    {
   //      type: <new, updated, deleted>,
@@ -85,7 +85,7 @@ sudo.extensions.observable = {
   // Change records originating from a `setPath` operation
   // send back the passed in `path` as `name` as well as the
   // top level object being observed (this observable's data).
-  // this allows for easy filtering either manually or via a 
+  // this allows for easy filtering either manually or via a
   // `change delegate`
   //
   // `param` {String} `path`
@@ -114,7 +114,7 @@ sudo.extensions.observable = {
     // call all observers or not
     if(hold) return this;
     return this.deliverChangeRecords();
-  }, 
+  },
   // ###sets
   // Overrides Base.sets to hold the call to _deliver_ until
   // all operations are done
@@ -123,7 +123,7 @@ sudo.extensions.observable = {
   sets: function sets(obj, hold) {
     Object.keys(obj).forEach(function(k) {
       k.indexOf('.') === -1 ? this.set(k, obj[k], true) :
-        this.setPath(k, obj[k], true);      
+        this.setPath(k, obj[k], true);
     }.bind(this));
     if(hold) return this;
     return this.deliverChangeRecords();
@@ -155,7 +155,7 @@ sudo.extensions.observable = {
   //
   // `returns` {Object|*} `this` or calls deliverChangeRecords
   unset: function unset(key, hold) {
-    var obj = {name: key, object: this.data, type: 'deleted'}, 
+    var obj = {name: key, object: this.data, type: 'deleted'},
       val = !!this.data[key];
     delete this.data[key];
     // call the observers if there was a val to delete
@@ -182,8 +182,8 @@ sudo.extensions.observable = {
   //
   // `returns` {Object|*} `this` or calls deliverChangeRecords
   unsetPath: function unsetPath(path, hold) {
-    var obj = {name: path, object: this.data, type: 'deleted'}, 
-      curr = this.data, p = path.split('.'), 
+    var obj = {name: path, object: this.data, type: 'deleted'},
+      curr = this.data, p = path.split('.'),
       k, v;
     for (k; p.length && (k = p.shift());) {
       if(!p.length) {
@@ -201,14 +201,14 @@ sudo.extensions.observable = {
   // ###unsets
   // Override of Base.unsets to hold the call to _deliver_ until done
   //
-  // `param` ary 
+  // `param` ary
   // `param` hold
   // `returns` {Object|*} `this` or calls deliverChangeRecords
   unsets: function unsets(ary, hold) {
     ary.forEach(function(k) {
-      k.indexOf('.') === -1 ? this.unset(k, true) : this.unsetPath(k, true);   
+      k.indexOf('.') === -1 ? this.unset(k, true) : this.unsetPath(k, true);
     }.bind(this));
     if(hold) return this;
-    return this.deliverChangeRecords();	
+    return this.deliverChangeRecords();
   }
 };
