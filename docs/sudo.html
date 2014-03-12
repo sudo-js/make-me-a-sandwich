@@ -1977,7 +1977,7 @@ Object&#39;s list of events (<code>this.data.event(s)</code>) are delegated to t
             </div>
             
             <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span>(<span class="keyword">typeof</span> d.template === <span class="string">'string'</span>) d.template = sudo.template(d.template);
-  <span class="keyword">this</span>.el.innerHTML = d.template(change &amp;&amp; change.object || d.model &amp;&amp; d.model.data || d);</pre></div></div>
+  <span class="keyword">this</span>.el.innerHTML = d.template(change &amp;&amp; change.object || d);</pre></div></div>
             
         </li>
         
