@@ -42,7 +42,7 @@ establishing hierarchies of objects which have intrinsic knowledge of their resp
 + getChild(_argument_)
 + removeChild(_argument_)
 + bubble()
-+ removeFromParent()
++ removedFromParent()
 + send(_arguments_)
 
 #### [View](https://github.com/sudo-js/make-me-a-sandwich/wiki/view)
