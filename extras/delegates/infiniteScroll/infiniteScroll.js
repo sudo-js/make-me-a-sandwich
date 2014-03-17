@@ -18,7 +18,7 @@ sudo.delegates.infiniteScroll = function(opts) {
 };
 
 sudo.delegates.infiniteScroll.prototype = {
-  addedAsDelegate: function addedAsDelegate(delegator) {
+  addedAsDelegate: function(delegator) {
     // normalize the passed in scrollable and container if present
     if(typeof this.scrollable === 'string') this.scrollable = delegator.qs(this.scrollable);
     if(typeof this.container === 'string') this.container = delegator.qs(this.container);
@@ -48,7 +48,7 @@ sudo.delegates.infiniteScroll.prototype = {
     }
   }, 300, true),
   // ---
-  scrolled: function scrolled(e) {
+  scrolled: function(e) {
     var scrollableHeight = $(this.scrollable).height();
     if(this.inverted) {
       if(this.scrollable[this.scrollTopAttr] <= this.trigger) this.scroll();
@@ -58,7 +58,7 @@ sudo.delegates.infiniteScroll.prototype = {
     }
   },
   // sets up the scroll listening
-  setUp: function setUp() {
+  setUp: function() {
     if(!this.isListening) {
       this.scrollable.addEventListener('scroll', this._boundScroll);
       this.isListening = true;
@@ -67,12 +67,12 @@ sudo.delegates.infiniteScroll.prototype = {
   },
   // when being unloaded the delegator should
   // make sure the scroll listener is off
-  tearDown: function tearDown() {
+  tearDown: function() {
     this.scrollable.removeEventListener('scroll', this._boundScroll);
     return this;
   },
   // force the scroll to the bottom of the scrollable
-  toBottom: function toBottom() {
+  toBottom: function() {
     var scr;
     // if the scrollable is window (or document) you are gonna have to set the scrolltop on body as
     // setting the pageYOffset || scrollTop will not have the desired effect
@@ -83,7 +83,7 @@ sudo.delegates.infiniteScroll.prototype = {
     return this;
   },
   // force the scroll to the top of the scrollable
-  toTop: function toTop() {
+  toTop: function() {
     var scr;
     // same as toBottom...
     if(this.scrollableIsWindow || this.scrollableIsDocument) {

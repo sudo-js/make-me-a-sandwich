@@ -16,7 +16,7 @@ sudo.Base = function() {
 //
 // `param` {Object} `del`. An instance of a sudo.delegates Class Object
 // `returns` {Object} `this`
-sudo.Base.prototype.addDelegate = function addDelegate(del) {
+sudo.Base.prototype.addDelegate = function(del) {
   del.delegator = this;
   this.delegates.push(del);
   if('addedAsDelegate' in del) del.addedAsDelegate(this);
@@ -30,7 +30,7 @@ sudo.Base.prototype.addDelegate = function addDelegate(del) {
 //
 // `params` {*} any other number of arguments to be passed to the looked up method
 // along with the initial method name
-sudo.Base.prototype.base = function base() {
+sudo.Base.prototype.base = function() {
   var args = Array.prototype.slice.call(arguments),
     name = args.shift(), 
     found = false,
@@ -49,7 +49,7 @@ sudo.Base.prototype.base = function base() {
 // A convenience method that alleviates the need to place:
 // `Object.getPrototypeOf(this).consturctor.apply(this, arguments)`
 // in every constructor
-sudo.Base.prototype.construct = function construct() {
+sudo.Base.prototype.construct = function() {
   Object.getPrototypeOf(this).constructor.apply(this, arguments || []);
 };
 // ###delegate
@@ -61,7 +61,7 @@ sudo.Base.prototype.construct = function construct() {
 // `param` {String} `role` The role property to match in this object's delegates list
 // `param` {String} `meth` Optional method to bind to the action this delegate is being used for
 // `returns`
-sudo.Base.prototype.delegate = function delegate(role, meth) {
+sudo.Base.prototype.delegate = function(role, meth) {
   var del = this.delegates, i;
   for(i = 0; i < del.length; i++) {
     if(del[i].role === role) {
@@ -77,16 +77,14 @@ sudo.Base.prototype.delegate = function delegate(role, meth) {
 //
 // `param` {String} `role`
 // 'returns' {Object|undefined}
-sudo.Base.prototype.getDelegate = function getDelegate(role) {
-  return this.delegate(role);
-};
+sudo.Base.prototype.getDelegate = function(role) {return this.delegate(role);};
 // ###removeDelegate
 // From this objects `delegates` list remove the object (there should only ever be 1)
 // whose role matches the passed in argument
 //
 // `param` {String} `role`
 // `returns` {Object} `this`
-sudo.Base.prototype.removeDelegate = function removeDelegate(role) {
+sudo.Base.prototype.removeDelegate = function(role) {
   var del = this.delegates, i;
   for(i = 0; i < del.length; i++) {
     if(del[i].role === role) {

@@ -21,16 +21,14 @@ sudo.inherit(sudo.Base, sudo.Model);
 //
 // `param` {String} `k`. The name of the key
 // `returns` {*}. The value associated with the key or false if not found.
-sudo.Model.prototype.get = function get(k) {
-  return this.data[k];
-};
+sudo.Model.prototype.get = function(k) {return this.data[k];};
 // ###getPath
 // Uses the sudo namespace's getpath function operating on the model's
 // data hash.
 //
 // `param` {string} `path`
 // `returns` {*|undefined}. The value at keypath or undefined if not found.
-sudo.Model.prototype.getPath = function getPath(path) {
+sudo.Model.prototype.getPath = function(path) {
   return sudo.getPath(path, this.data);
 };
 // ###gets
@@ -39,7 +37,7 @@ sudo.Model.prototype.getPath = function getPath(path) {
 //
 // `param` {array} `ary`. An array of keys.
 // `returns` {object}
-sudo.Model.prototype.gets = function gets(ary) {
+sudo.Model.prototype.gets = function(ary) {
   var obj = {};
   ary.forEach(function(str) {
     obj[str] = str.indexOf('.') === -1 ? this.get(str) : this.getPath(str);
@@ -54,7 +52,7 @@ sudo.Model.prototype.role = 'model';
 // `param` {String} `k`. The name of the key.
 // `param` {*} `v`. The value associated with the key.
 // `returns` {Object} `this`
-sudo.Model.prototype.set = function set(k, v) {
+sudo.Model.prototype.set = function(k, v) {
   // _NOTE: intentional possibilty of setting a falsy value_
   this.data[k] = v;
   return this;
@@ -66,7 +64,7 @@ sudo.Model.prototype.set = function set(k, v) {
 // `param` {String} `path`
 // `param` {*} `v`
 // `returns` {Object} this.
-sudo.Model.prototype.setPath = function setPath(path, v) {
+sudo.Model.prototype.setPath = function(path, v) {
   sudo.setPath(path, v, this.data);
   return this;
 };
@@ -76,7 +74,7 @@ sudo.Model.prototype.setPath = function setPath(path, v) {
 //
 // `param` {Object} `obj`. The keys and values to set.
 // `returns` {Object} `this`
-sudo.Model.prototype.sets = function sets(obj) {
+sudo.Model.prototype.sets = function(obj) {
   Object.keys(obj).forEach(function(k) {
     k.indexOf('.') === -1 ? this.set(k, obj[k]) : this.setPath(k, obj[k]);
   }.bind(this));
@@ -87,7 +85,7 @@ sudo.Model.prototype.sets = function sets(obj) {
 //
 // `param` {String} `k`
 // `returns` {Object} `this`
-sudo.Model.prototype.unset = function unset(k) {
+sudo.Model.prototype.unset = function(k) {
   delete this.data[k];
   return this;
 };
@@ -96,7 +94,7 @@ sudo.Model.prototype.unset = function unset(k) {
 //
 // `param` {String} path
 // `returns` {Object} `this`
-sudo.Model.prototype.unsetPath = function unsetPath(path) {
+sudo.Model.prototype.unsetPath = function(path) {
   sudo.unsetPath(path, this.data);
   return this;
 };
@@ -105,7 +103,7 @@ sudo.Model.prototype.unsetPath = function unsetPath(path) {
 //
 // `param` {array} `ary`. An array of keys or paths.
 // `returns` {Objaect} `this`
-sudo.Model.prototype.unsets = function unsets(ary) {
+sudo.Model.prototype.unsets = function(ary) {
   ary.forEach(function(k) {
     k.indexOf('.') === -1 ? this.unset(k) : this.unsetPath(k);
   }.bind(this));

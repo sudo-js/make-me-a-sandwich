@@ -345,7 +345,7 @@ to utilize delegation, the <code>base</code> function and the
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.addDelegate = <span class="function"><span class="keyword">function</span> <span class="title">addDelegate</span><span class="params">(del)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.addDelegate = <span class="function"><span class="keyword">function</span><span class="params">(del)</span> {</span>
   del.delegator = <span class="keyword">this</span>;
   <span class="keyword">this</span>.delegates.push(del);
   <span class="keyword">if</span>(<span class="string">'addedAsDelegate'</span> <span class="keyword">in</span> del) del.addedAsDelegate(<span class="keyword">this</span>);
@@ -371,7 +371,7 @@ along with the initial method name</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.base = <span class="function"><span class="keyword">function</span> <span class="title">base</span><span class="params">()</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.base = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
   <span class="keyword">var</span> args = Array.prototype.slice.call(arguments),
     name = args.shift(), 
     found = <span class="literal">false</span>,
@@ -429,7 +429,7 @@ in every constructor</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.construct = <span class="function"><span class="keyword">function</span> <span class="title">construct</span><span class="params">()</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.construct = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
   Object.getPrototypeOf(<span class="keyword">this</span>).constructor.apply(<span class="keyword">this</span>, arguments || []);
 };</pre></div></div>
             
@@ -455,7 +455,7 @@ the passed <code>name</code> and:</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.delegate = <span class="function"><span class="keyword">function</span> <span class="title">delegate</span><span class="params">(role, meth)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.delegate = <span class="function"><span class="keyword">function</span><span class="params">(role, meth)</span> {</span>
   <span class="keyword">var</span> del = <span class="keyword">this</span>.delegates, i;
   <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; del.length; i++) {
     <span class="keyword">if</span>(del[i].role === role) {
@@ -483,9 +483,7 @@ API consistency</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.getDelegate = <span class="function"><span class="keyword">function</span> <span class="title">getDelegate</span><span class="params">(role)</span> {</span>
-  <span class="keyword">return</span> <span class="keyword">this</span>.delegate(role);
-};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.getDelegate = <span class="function"><span class="keyword">function</span><span class="params">(role)</span> {</span><span class="keyword">return</span> <span class="keyword">this</span>.delegate(role);};</pre></div></div>
             
         </li>
         
@@ -504,7 +502,7 @@ whose role matches the passed in argument</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.removeDelegate = <span class="function"><span class="keyword">function</span> <span class="title">removeDelegate</span><span class="params">(role)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.removeDelegate = <span class="function"><span class="keyword">function</span><span class="params">(role)</span> {</span>
   <span class="keyword">var</span> del = <span class="keyword">this</span>.delegates, i;
   <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; del.length; i++) {
     <span class="keyword">if</span>(del[i].role === role) {</pre></div></div>
@@ -543,7 +541,7 @@ whose role matches the passed in argument</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.role = <span class="string">'base'</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.role = <span class="string">'base'</span>;<span class="comment">// ##Model Class Object</span></pre></div></div>
             
         </li>
         
@@ -554,8 +552,7 @@ whose role matches the passed in argument</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
-              <h2 id="model-class-object">Model Class Object</h2>
-<p>Model Objects expose methods for setting and getting data, and
+              <p>Model Objects expose methods for setting and getting data, and
 can be observed if implementing the <code>Observable Extension</code></p>
 <p><code>param</code> {object} data. An initial state for this model.</p>
 <p><code>constructor</code></p>
@@ -615,9 +612,7 @@ can be observed if implementing the <code>Observable Extension</code></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.get = <span class="function"><span class="keyword">function</span> <span class="title">get</span><span class="params">(k)</span> {</span>
-  <span class="keyword">return</span> <span class="keyword">this</span>.data[k];
-};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.get = <span class="function"><span class="keyword">function</span><span class="params">(k)</span> {</span><span class="keyword">return</span> <span class="keyword">this</span>.data[k];};</pre></div></div>
             
         </li>
         
@@ -636,7 +631,7 @@ data hash.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.getPath = <span class="function"><span class="keyword">function</span> <span class="title">getPath</span><span class="params">(path)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.getPath = <span class="function"><span class="keyword">function</span><span class="params">(path)</span> {</span>
   <span class="keyword">return</span> sudo.getPath(path, <span class="keyword">this</span>.data);
 };</pre></div></div>
             
@@ -657,7 +652,7 @@ contained in the passed in Array.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.gets = <span class="function"><span class="keyword">function</span> <span class="title">gets</span><span class="params">(ary)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.gets = <span class="function"><span class="keyword">function</span><span class="params">(ary)</span> {</span>
   <span class="keyword">var</span> obj = {};
   ary.forEach(<span class="function"><span class="keyword">function</span><span class="params">(str)</span> {</span>
     obj[str] = str.indexOf(<span class="string">'.'</span>) === -<span class="number">1</span> ? <span class="keyword">this</span>.get(str) : <span class="keyword">this</span>.getPath(str);
@@ -697,7 +692,7 @@ contained in the passed in Array.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.set = <span class="function"><span class="keyword">function</span> <span class="title">set</span><span class="params">(k, v)</span> {</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.set = <span class="function"><span class="keyword">function</span><span class="params">(k, v)</span> {</span></pre></div></div>
             
         </li>
         
@@ -734,7 +729,7 @@ data hash.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.setPath = <span class="function"><span class="keyword">function</span> <span class="title">setPath</span><span class="params">(path, v)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.setPath = <span class="function"><span class="keyword">function</span><span class="params">(path, v)</span> {</span>
   sudo.setPath(path, v, <span class="keyword">this</span>.data);
   <span class="keyword">return</span> <span class="keyword">this</span>;
 };</pre></div></div>
@@ -756,7 +751,7 @@ Any listeners for those keys or paths will be called.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.sets = <span class="function"><span class="keyword">function</span> <span class="title">sets</span><span class="params">(obj)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.sets = <span class="function"><span class="keyword">function</span><span class="params">(obj)</span> {</span>
   Object.keys(obj).forEach(<span class="function"><span class="keyword">function</span><span class="params">(k)</span> {</span>
     k.indexOf(<span class="string">'.'</span>) === -<span class="number">1</span> ? <span class="keyword">this</span>.set(k, obj[k]) : <span class="keyword">this</span>.setPath(k, obj[k]);
   }.bind(<span class="keyword">this</span>));
@@ -779,7 +774,7 @@ Any listeners for those keys or paths will be called.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.unset = <span class="function"><span class="keyword">function</span> <span class="title">unset</span><span class="params">(k)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.unset = <span class="function"><span class="keyword">function</span><span class="params">(k)</span> {</span>
   <span class="keyword">delete</span> <span class="keyword">this</span>.data[k];
   <span class="keyword">return</span> <span class="keyword">this</span>;
 };</pre></div></div>
@@ -800,7 +795,7 @@ Any listeners for those keys or paths will be called.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.unsetPath = <span class="function"><span class="keyword">function</span> <span class="title">unsetPath</span><span class="params">(path)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.unsetPath = <span class="function"><span class="keyword">function</span><span class="params">(path)</span> {</span>
   sudo.unsetPath(path, <span class="keyword">this</span>.data);
   <span class="keyword">return</span> <span class="keyword">this</span>;
 };</pre></div></div>
@@ -821,7 +816,7 @@ Any listeners for those keys or paths will be called.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.unsets = <span class="function"><span class="keyword">function</span> <span class="title">unsets</span><span class="params">(ary)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.unsets = <span class="function"><span class="keyword">function</span><span class="params">(ary)</span> {</span>
   ary.forEach(<span class="function"><span class="keyword">function</span><span class="params">(k)</span> {</span>
     k.indexOf(<span class="string">'.'</span>) === -<span class="number">1</span> ? <span class="keyword">this</span>.unset(k) : <span class="keyword">this</span>.unsetPath(k);
   }.bind(<span class="keyword">this</span>));
@@ -888,7 +883,7 @@ If <code>addedToParent</code> if found on the child, call it, sending <code>this
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.addChild = <span class="function"><span class="keyword">function</span> <span class="title">addChild</span><span class="params">(c, name)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.addChild = <span class="function"><span class="keyword">function</span><span class="params">(c, name)</span> {</span>
   <span class="keyword">var</span> ch = <span class="keyword">this</span>.children;
   c.parent = <span class="keyword">this</span>;
   c.index = ch.length;
@@ -920,7 +915,7 @@ Object literal in the form {name: child}
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.addChildren = <span class="function"><span class="keyword">function</span> <span class="title">addChildren</span><span class="params">(arg)</span> {</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.addChildren = <span class="function"><span class="keyword">function</span><span class="params">(arg)</span> {</span></pre></div></div>
             
         </li>
         
@@ -958,7 +953,7 @@ Object literal in the form {name: child}
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.bubble = <span class="function"><span class="keyword">function</span> <span class="title">bubble</span><span class="params">()</span> {</span><span class="keyword">return</span> <span class="keyword">this</span>.parent;};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.bubble = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span><span class="keyword">return</span> <span class="keyword">this</span>.parent;};</pre></div></div>
             
         </li>
         
@@ -978,7 +973,7 @@ The named method to look for and call. Other args are passed through
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.eachChild = <span class="function"><span class="keyword">function</span> <span class="title">eachChild</span><span class="params">(<span class="comment">/*args*/</span>)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.eachChild = <span class="function"><span class="keyword">function</span><span class="params">(<span class="comment">/*args*/</span>)</span> {</span>
   <span class="keyword">var</span> args = Array.prototype.slice.call(arguments), meth = args.shift();
   <span class="keyword">this</span>.children.forEach(<span class="function"><span class="keyword">function</span><span class="params">(c)</span> {</span><span class="keyword">if</span>(meth <span class="keyword">in</span> c) c[meth].apply(c, args);});
   <span class="keyword">return</span> <span class="keyword">this</span>;
@@ -1002,7 +997,7 @@ containers children by index. That is possible however, though not preferred.</p
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.getChild = <span class="function"><span class="keyword">function</span> <span class="title">getChild</span><span class="params">(id)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.getChild = <span class="function"><span class="keyword">function</span><span class="params">(id)</span> {</span>
   <span class="keyword">return</span> <span class="keyword">typeof</span> id === <span class="string">'string'</span> ? <span class="keyword">this</span>.children[<span class="keyword">this</span>.childNames[id]] :
     <span class="keyword">this</span>.children[id];
 };</pre></div></div>
@@ -1024,7 +1019,7 @@ Beginning at <code>i</code> decrement subview indices.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Container.prototype._indexChildren_ = <span class="function"><span class="keyword">function</span> <span class="title">_indexChildren_</span><span class="params">(i)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype._indexChildren_ = <span class="function"><span class="keyword">function</span><span class="params">(i)</span> {</span>
   <span class="keyword">var</span> c = <span class="keyword">this</span>.children, obj = <span class="keyword">this</span>.childNames, len;
   <span class="keyword">for</span> (len = c.length; i &lt; len; i++) {
     c[i].index--;</pre></div></div>
@@ -1059,6 +1054,8 @@ Beginning at <code>i</code> decrement subview indices.
 <p>Find the intended child from my list of children and remove it, removing the name reference and re-indexing
 remaining children. This method does not remove the child&#39;s DOM.
 Override this method, doing whatever you want to the child&#39;s DOM, then call <code>base(&#39;removeChild&#39;)</code> to do so.</p>
+<p>If the child being removed has a <code>removedFromParent</code> method it will be called after the parenth has
+finished, passing itself(the parent) as an argument.</p>
 <p><code>param</code> {String|Number|Object} <code>arg</code>. Children will always have an <code>index</code> number, and optionally a <code>name</code>.
 If passed a string <code>name</code> is assumed, so be sure to pass an actual number if expecting to use index.
 An object will be assumed to be an actual sudo Class Object.
@@ -1066,7 +1063,7 @@ An object will be assumed to be an actual sudo Class Object.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.removeChild = <span class="function"><span class="keyword">function</span> <span class="title">removeChild</span><span class="params">(arg)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.removeChild = <span class="function"><span class="keyword">function</span><span class="params">(arg)</span> {</span>
   <span class="keyword">var</span> i, t = <span class="keyword">typeof</span> arg, c;</pre></div></div>
             
         </li>
@@ -1133,6 +1130,7 @@ An object will be assumed to be an actual sudo Class Object.
   <span class="keyword">delete</span> c.index;
   <span class="keyword">delete</span> c.name;
   <span class="keyword">this</span>._indexChildren_(i);
+  <span class="keyword">if</span>(<span class="string">'removedFromParent'</span> <span class="keyword">in</span> c) c.removedFromParent(<span class="keyword">this</span>);
   <span class="keyword">return</span> <span class="keyword">this</span>;
 };</pre></div></div>
             
@@ -1153,10 +1151,11 @@ This method calls removeFromParent as each child may have overridden logic there
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.removeChildren = <span class="function"><span class="keyword">function</span> <span class="title">removeChildren</span><span class="params">()</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.removeChildren = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
   Object.keys(<span class="keyword">this</span>.childNames).forEach(<span class="function"><span class="keyword">function</span><span class="params">(n)</span> {</span>
-    <span class="keyword">this</span>.getChild(n).removeFromParent();
+    <span class="keyword">this</span>.removeChild(<span class="keyword">this</span>.getChild(n));
   }.bind(<span class="keyword">this</span>));
+  <span class="keyword">return</span> <span class="keyword">this</span>;
 };</pre></div></div>
             
         </li>
@@ -1168,14 +1167,11 @@ This method calls removeFromParent as each child may have overridden logic there
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-57">&#182;</a>
               </div>
-              <h3 id="removefromparent">removeFromParent</h3>
-<p>Remove this object from its parents list of children.
-Does not alter the dom - do that yourself by overriding this method
-or chaining method calls</p>
+              <p>This is a container, yes.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.removeFromParent = <span class="function"><span class="keyword">function</span> <span class="title">removeFromParent</span><span class="params">()</span> {</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.role = <span class="string">'container'</span>;</pre></div></div>
             
         </li>
         
@@ -1185,24 +1181,6 @@ or chaining method calls</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-58">&#182;</a>
-              </div>
-              <p>will error without a parent, but that would be your fault...</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="keyword">this</span>.parent.removeChild(<span class="keyword">this</span>);
-  <span class="keyword">return</span> <span class="keyword">this</span>;
-};
-sudo.Container.prototype.role = <span class="string">'container'</span>;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-59">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-59">&#182;</a>
               </div>
               <h3 id="send">send</h3>
 <p>The call to the specific method on a (un)specified target happens here.
@@ -1224,18 +1202,18 @@ Any other args will be passed to the sendMethod after <code>this</code>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.send = <span class="function"><span class="keyword">function</span> <span class="title">send</span><span class="params">(<span class="comment">/*args*/</span>)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.send = <span class="function"><span class="keyword">function</span><span class="params">(<span class="comment">/*args*/</span>)</span> {</span>
   <span class="keyword">var</span> args = Array.prototype.slice.call(arguments),
     d = <span class="keyword">this</span>.data, meth, targ, fn;</pre></div></div>
             
         </li>
         
         
-        <li id="section-60">
+        <li id="section-59">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-60">&#182;</a>
+                <a class="pilcrow" href="#section-59">&#182;</a>
               </div>
               <p>normalize the input, common use cases first</p>
 
@@ -1247,11 +1225,11 @@ Any other args will be passed to the sendMethod after <code>this</code>
         </li>
         
         
-        <li id="section-61">
+        <li id="section-60">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-61">&#182;</a>
+                <a class="pilcrow" href="#section-60">&#182;</a>
               </div>
               <p>less common but viable options</p>
 
@@ -1262,11 +1240,11 @@ Any other args will be passed to the sendMethod after <code>this</code>
         </li>
         
         
-        <li id="section-62">
+        <li id="section-61">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-62">&#182;</a>
+                <a class="pilcrow" href="#section-61">&#182;</a>
               </div>
               <p>passed as a custom data attr bound in events</p>
 
@@ -1277,11 +1255,11 @@ Any other args will be passed to the sendMethod after <code>this</code>
         </li>
         
         
-        <li id="section-63">
+        <li id="section-62">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-63">&#182;</a>
+                <a class="pilcrow" href="#section-62">&#182;</a>
               </div>
               <p>passed in a hash from something or not passed at all</p>
 
@@ -1293,11 +1271,11 @@ Any other args will be passed to the sendMethod after <code>this</code>
         </li>
         
         
-        <li id="section-64">
+        <li id="section-63">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-64">&#182;</a>
+                <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
               <p>target is either specified or my parent</p>
 
@@ -1308,11 +1286,11 @@ Any other args will be passed to the sendMethod after <code>this</code>
         </li>
         
         
-        <li id="section-65">
+        <li id="section-64">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
+                <a class="pilcrow" href="#section-64">&#182;</a>
               </div>
               <p>obvious chance for errors here, don&#39;t be dumb</p>
 
@@ -1326,11 +1304,11 @@ Any other args will be passed to the sendMethod after <code>this</code>
         </li>
         
         
-        <li id="section-66">
+        <li id="section-65">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-66">&#182;</a>
+                <a class="pilcrow" href="#section-65">&#182;</a>
               </div>
               <p>sendMethods expect a signature (sender, ...)</p>
 
@@ -1346,11 +1324,11 @@ Any other args will be passed to the sendMethod after <code>this</code>
         </li>
         
         
-        <li id="section-67">
+        <li id="section-66">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
+                <a class="pilcrow" href="#section-66">&#182;</a>
               </div>
               <h2 id="view-class-object">View Class Object</h2>
 <p>Create an instance of a sudo.View object. A view is any object
@@ -1379,11 +1357,11 @@ of <code>this.data</code> on the View.</p>
         </li>
         
         
-        <li id="section-68">
+        <li id="section-67">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-68">&#182;</a>
+                <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
               <p>View inherits from Container
 <code>private</code></p>
@@ -1395,28 +1373,28 @@ of <code>this.data</code> on the View.</p>
         </li>
         
         
-        <li id="section-69">
+        <li id="section-68">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
+                <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
               <p>the el needs to be normalized before use
 <code>private</code></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.View.prototype._normalizedEl_ = <span class="function"><span class="keyword">function</span> <span class="title">_normalizedEl_</span><span class="params">(el)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.View.prototype._normalizedEl_ = <span class="function"><span class="keyword">function</span><span class="params">(el)</span> {</span>
   <span class="keyword">var</span> _el = <span class="keyword">typeof</span> el === <span class="string">'string'</span> ? document.querySelector(el) : el;</pre></div></div>
             
         </li>
         
         
-        <li id="section-70">
+        <li id="section-69">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
               <p>if there is not a top level query returned the desired node may be 
 in a document fragment not in the DOM yet. We will check the parent&#39;s el
@@ -1430,11 +1408,11 @@ if available, or return the empty query</p>
         </li>
         
         
-        <li id="section-71">
+        <li id="section-70">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
+                <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
               <p><code>private</code></p>
 
@@ -1445,11 +1423,11 @@ if available, or return the empty query</p>
         </li>
         
         
-        <li id="section-72">
+        <li id="section-71">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-72">&#182;</a>
+                <a class="pilcrow" href="#section-71">&#182;</a>
               </div>
               <h3 id="setel">setEl</h3>
 <p>A view must have an element, set that here.
@@ -1459,18 +1437,18 @@ Node is always then available as <code>this.el</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.View.prototype.setEl = <span class="function"><span class="keyword">function</span> <span class="title">setEl</span><span class="params">(el)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.View.prototype.setEl = <span class="function"><span class="keyword">function</span><span class="params">(el)</span> {</span>
   <span class="keyword">var</span> d = <span class="keyword">this</span>.data, a, t;
   <span class="keyword">if</span>(!el) {</pre></div></div>
             
         </li>
         
         
-        <li id="section-73">
+        <li id="section-72">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-73">&#182;</a>
+                <a class="pilcrow" href="#section-72">&#182;</a>
               </div>
               <p>normalize any relevant data</p>
 
@@ -1483,11 +1461,11 @@ Node is always then available as <code>this.el</code>.</p>
         </li>
         
         
-        <li id="section-74">
+        <li id="section-73">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-74">&#182;</a>
+                <a class="pilcrow" href="#section-73">&#182;</a>
               </div>
               <p>iterate and set the attributes</p>
 
@@ -1504,11 +1482,11 @@ Node is always then available as <code>this.el</code>.</p>
         </li>
         
         
-        <li id="section-75">
+        <li id="section-74">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-74">&#182;</a>
               </div>
               <h3 id="this-qs">this.qs</h3>
 <p>Return a single Element matching <code>sel</code> scoped to this View&#39;s el.
@@ -1525,11 +1503,11 @@ This is an alias to <code>this.el.querySelector(sel)</code>.</p>
         </li>
         
         
-        <li id="section-76">
+        <li id="section-75">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-76">&#182;</a>
+                <a class="pilcrow" href="#section-75">&#182;</a>
               </div>
               <h3 id="this-qsa">this.qsa</h3>
 <p>Return multiple Elements (a NodeList) matching <code>sel</code> scoped to this View&#39;s el.
@@ -1546,11 +1524,11 @@ This is an alias to <code>this.el.querySelectorAll(sel)</code>.</p>
         </li>
         
         
-        <li id="section-77">
+        <li id="section-76">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-77">&#182;</a>
+                <a class="pilcrow" href="#section-76">&#182;</a>
               </div>
               <h3 id="templating">Templating</h3>
 <p>Allow the default {{ js code }}, {{= key }}, and {{- escape stuff }} 
@@ -1568,11 +1546,11 @@ micro templating delimiters to be overridden if desired</p>
         </li>
         
         
-        <li id="section-78">
+        <li id="section-77">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-78">&#182;</a>
+                <a class="pilcrow" href="#section-77">&#182;</a>
               </div>
               <p>Certain characters need to be escaped so that they can be put 
 into a string literal when templating.</p>
@@ -1597,11 +1575,11 @@ into a string literal when templating.</p>
         </li>
         
         
-        <li id="section-79">
+        <li id="section-78">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-79">&#182;</a>
+                <a class="pilcrow" href="#section-78">&#182;</a>
               </div>
               <p>lookup hash for <code>escape</code></p>
 <p><code>type</code> {Object}</p>
@@ -1620,11 +1598,11 @@ into a string literal when templating.</p>
         </li>
         
         
-        <li id="section-80">
+        <li id="section-79">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-80">&#182;</a>
+                <a class="pilcrow" href="#section-79">&#182;</a>
               </div>
               <p>Escapes certain characters for templating</p>
 <p><code>type</code> {regexp}</p>
@@ -1636,11 +1614,11 @@ into a string literal when templating.</p>
         </li>
         
         
-        <li id="section-81">
+        <li id="section-80">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-81">&#182;</a>
+                <a class="pilcrow" href="#section-80">&#182;</a>
               </div>
               <p>Escape unsafe HTML</p>
 <p><code>type</code> {regexp}</p>
@@ -1652,11 +1630,11 @@ into a string literal when templating.</p>
         </li>
         
         
-        <li id="section-82">
+        <li id="section-81">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-82">&#182;</a>
+                <a class="pilcrow" href="#section-81">&#182;</a>
               </div>
               <p>Unescapes certain characters for templating</p>
 <p><code>type</code> {regexp}</p>
@@ -1668,11 +1646,11 @@ into a string literal when templating.</p>
         </li>
         
         
-        <li id="section-83">
+        <li id="section-82">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-83">&#182;</a>
+                <a class="pilcrow" href="#section-82">&#182;</a>
               </div>
               <h3 id="escape">escape</h3>
 <p>Remove unsafe characters from a string</p>
@@ -1689,11 +1667,11 @@ into a string literal when templating.</p>
         </li>
         
         
-        <li id="section-84">
+        <li id="section-83">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-84">&#182;</a>
+                <a class="pilcrow" href="#section-83">&#182;</a>
               </div>
               <h3 id="unescape">unescape</h3>
 <p>Within an interpolation, evaluation, or escaping,
@@ -1711,11 +1689,11 @@ remove HTML escaping that had been previously added.</p>
         </li>
         
         
-        <li id="section-85">
+        <li id="section-84">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-85">&#182;</a>
+                <a class="pilcrow" href="#section-84">&#182;</a>
               </div>
               <h3 id="template">template</h3>
 <p>JavaScript micro-templating, similar to John Resig&#39;s (and it&#39;s offspring) implementation.
@@ -1735,11 +1713,11 @@ if it is not present.</p>
         </li>
         
         
-        <li id="section-86">
+        <li id="section-85">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-86">&#182;</a>
+                <a class="pilcrow" href="#section-85">&#182;</a>
               </div>
               <p>Compile the template source, taking care to escape characters that
 cannot be included in a string literal and then unescape them in code blocks.</p>
@@ -1765,11 +1743,11 @@ cannot be included in a string literal and then unescape them in code blocks.</p
         </li>
         
         
-        <li id="section-87">
+        <li id="section-86">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-87">&#182;</a>
+                <a class="pilcrow" href="#section-86">&#182;</a>
               </div>
               <p>Provide the compiled function source as a convenience for reflection/compilation</p>
 
@@ -1782,11 +1760,11 @@ cannot be included in a string literal and then unescape them in code blocks.</p
         </li>
         
         
-        <li id="section-88">
+        <li id="section-87">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-88">&#182;</a>
+                <a class="pilcrow" href="#section-87">&#182;</a>
               </div>
               <h2 id="dataview-class-object">DataView Class Object</h2>
 <p>Create an instance of an Object, inheriting from sudo.View that:</p>
@@ -1811,11 +1789,11 @@ cannot be included in a string literal and then unescape them in code blocks.</p
         </li>
         
         
-        <li id="section-89">
+        <li id="section-88">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-89">&#182;</a>
+                <a class="pilcrow" href="#section-88">&#182;</a>
               </div>
               <p>implements the listener extension</p>
 
@@ -1826,11 +1804,11 @@ cannot be included in a string literal and then unescape them in code blocks.</p
         </li>
         
         
-        <li id="section-90">
+        <li id="section-89">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-90">&#182;</a>
+                <a class="pilcrow" href="#section-89">&#182;</a>
               </div>
               <p>renderOnModelChange types observe a data.model</p>
 
@@ -1841,11 +1819,11 @@ cannot be included in a string literal and then unescape them in code blocks.</p
         </li>
         
         
-        <li id="section-91">
+        <li id="section-90">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-91">&#182;</a>
+                <a class="pilcrow" href="#section-90">&#182;</a>
               </div>
               <p>will error if no model || the model is not observable</p>
 
@@ -1858,11 +1836,11 @@ cannot be included in a string literal and then unescape them in code blocks.</p
         </li>
         
         
-        <li id="section-92">
+        <li id="section-91">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-92">&#182;</a>
+                <a class="pilcrow" href="#section-91">&#182;</a>
               </div>
               <p><code>private</code></p>
 
@@ -1873,11 +1851,11 @@ cannot be included in a string literal and then unescape them in code blocks.</p
         </li>
         
         
-        <li id="section-93">
+        <li id="section-92">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-93">&#182;</a>
+                <a class="pilcrow" href="#section-92">&#182;</a>
               </div>
               <h3 id="addedtoparent">addedToParent</h3>
 <p>Container&#39;s will check for the presence of this method and call it if it is present.
@@ -1892,11 +1870,30 @@ Regardless of the rendering options any events in the <code>event(s)</code> prop
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.DataView.prototype.addedToParent = <span class="function"><span class="keyword">function</span><span class="params">(parent)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.DataView.prototype.addedToParent = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
   <span class="keyword">this</span>.bindEvents();
   <span class="keyword">if</span>(<span class="keyword">this</span>.data.renderOnAddedToParent) <span class="keyword">return</span> <span class="keyword">this</span>.render();
   <span class="keyword">return</span> <span class="keyword">this</span>;
 };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-93">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-93">&#182;</a>
+              </div>
+              <h3 id="removedfromparent">removedFromParent</h3>
+<p>Remove this object from the DOM, called from the parent&#39;s removeChild method.</p>
+<p><code>returns</code> {Object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.DataView.prototype.removedFromParent = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="keyword">this</span>.unbindEvents();
+  <span class="keyword">this</span>.el.parentNode &amp;&amp; <span class="keyword">this</span>.el.parentNode.removeChild(<span class="keyword">this</span>.el);</pre></div></div>
             
         </li>
         
@@ -1907,28 +1904,7 @@ Regardless of the rendering options any events in the <code>event(s)</code> prop
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-94">&#182;</a>
               </div>
-              <h3 id="removefromparent">removeFromParent</h3>
-<p>Remove this object from the DOM and its parent&#39;s list of children.
-Overrides <code>sudo.View.removeFromParent</code> to unbind events and <code>remove</code> its el </p>
-<p><code>returns</code> {Object} <code>this</code></p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>sudo.DataView.prototype.removeFromParent = <span class="function"><span class="keyword">function</span> <span class="title">removeFromParent</span><span class="params">()</span> {</span>
-  <span class="keyword">this</span>.parent.removeChild(<span class="keyword">this</span>);
-  <span class="keyword">this</span>.unbindEvents();
-  <span class="keyword">this</span>.el.parentNode &amp;&amp; <span class="keyword">this</span>.el.parentNode.removeChild(<span class="keyword">this</span>.el);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-95">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-95">&#182;</a>
-              </div>
-              <p>in the case that this.model is &#39;foreign&#39;</p>
+              <p>a render on model change type</p>
 
             </div>
             
@@ -1942,11 +1918,11 @@ Overrides <code>sudo.View.removeFromParent</code> to unbind events and <code>rem
         </li>
         
         
-        <li id="section-96">
+        <li id="section-95">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-96">&#182;</a>
+                <a class="pilcrow" href="#section-95">&#182;</a>
               </div>
               <h3 id="render">render</h3>
 <p>(Re)hydrate the innerHTML of this object via its template and data in the <code>change.object</code> or <code>this.data</code>.
@@ -1960,17 +1936,17 @@ Object&#39;s list of events (<code>this.data.event(s)</code>) are delegated to t
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.DataView.prototype.render = <span class="function"><span class="keyword">function</span> <span class="title">render</span><span class="params">(change)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.DataView.prototype.render = <span class="function"><span class="keyword">function</span><span class="params">(change)</span> {</span>
   <span class="keyword">var</span> d = <span class="keyword">this</span>.data;</pre></div></div>
             
         </li>
         
         
-        <li id="section-97">
+        <li id="section-96">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-97">&#182;</a>
+                <a class="pilcrow" href="#section-96">&#182;</a>
               </div>
               <p>(re)hydrate the innerHTML</p>
 
@@ -1982,11 +1958,11 @@ Object&#39;s list of events (<code>this.data.event(s)</code>) are delegated to t
         </li>
         
         
-        <li id="section-98">
+        <li id="section-97">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-98">&#182;</a>
+                <a class="pilcrow" href="#section-97">&#182;</a>
               </div>
               <p>am I in the dom yet?</p>
 
@@ -2002,11 +1978,11 @@ Object&#39;s list of events (<code>this.data.event(s)</code>) are delegated to t
         </li>
         
         
-        <li id="section-99">
+        <li id="section-98">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-99">&#182;</a>
+                <a class="pilcrow" href="#section-98">&#182;</a>
               </div>
               <p><code>private</code></p>
 
@@ -2017,11 +1993,11 @@ Object&#39;s list of events (<code>this.data.event(s)</code>) are delegated to t
         </li>
         
         
-        <li id="section-100">
+        <li id="section-99">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-100">&#182;</a>
+                <a class="pilcrow" href="#section-99">&#182;</a>
               </div>
               <h2 id="navigator-class-object">Navigator Class Object</h2>
 <p>Abstracts location and history events, parsing their information into a 
@@ -2041,11 +2017,11 @@ normalized object that is then set to an Observable class instance</p>
         </li>
         
         
-        <li id="section-101">
+        <li id="section-100">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-101">&#182;</a>
+                <a class="pilcrow" href="#section-100">&#182;</a>
               </div>
               <p>Navigator inherits from <code>sudo.Model</code></p>
 
@@ -2056,11 +2032,11 @@ normalized object that is then set to an Observable class instance</p>
         </li>
         
         
-        <li id="section-102">
+        <li id="section-101">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-102">&#182;</a>
+                <a class="pilcrow" href="#section-101">&#182;</a>
               </div>
               <h3 id="buildpath">buildPath</h3>
 <p>Put together a path from the arguments passed in.
@@ -2070,17 +2046,17 @@ If you want a hash paramaterized pass it as the last arg.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.buildPath = <span class="function"><span class="keyword">function</span> <span class="title">getPath</span><span class="params">()</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.buildPath = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
   <span class="keyword">var</span> args = Array.prototype.slice.call(arguments), query;</pre></div></div>
             
         </li>
         
         
-        <li id="section-103">
+        <li id="section-102">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-103">&#182;</a>
+                <a class="pilcrow" href="#section-102">&#182;</a>
               </div>
               <p>check if the last arg is a hash</p>
 
@@ -2093,11 +2069,11 @@ If you want a hash paramaterized pass it as the last arg.</p>
         </li>
         
         
-        <li id="section-104">
+        <li id="section-103">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-104">&#182;</a>
+                <a class="pilcrow" href="#section-103">&#182;</a>
               </div>
               <h3 id="buildrelativepath">buildRelativePath</h3>
 <p>Extend the already existing getUrl type functionality with the ability to append
@@ -2107,7 +2083,7 @@ to that path as well as paramaterize a hash</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.buildRelativePath = <span class="function"><span class="keyword">function</span> <span class="title">getRelativePath</span><span class="params">()</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.buildRelativePath = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
   <span class="keyword">var</span> args = Array.prototype.slice.call(arguments);
   args.unshift(<span class="keyword">this</span>.data.fragment);
   <span class="keyword">return</span> <span class="keyword">this</span>.buildPath.apply(<span class="keyword">this</span>, args);
@@ -2116,11 +2092,11 @@ to that path as well as paramaterize a hash</p>
         </li>
         
         
-        <li id="section-105">
+        <li id="section-104">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-105">&#182;</a>
+                <a class="pilcrow" href="#section-104">&#182;</a>
               </div>
               <h3 id="getfragment">getFragment</h3>
 <p>&#39;Fragment&#39; is defined as any URL information after the &#39;root&#39; path
@@ -2130,18 +2106,18 @@ including the <code>search</code> or <code>hash</code></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.getFragment = <span class="function"><span class="keyword">function</span> <span class="title">getFragment</span><span class="params">(fragment)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.getFragment = <span class="function"><span class="keyword">function</span><span class="params">(fragment)</span> {</span>
   <span class="keyword">var</span> root = <span class="keyword">this</span>.data.root;
   <span class="keyword">if</span>(!fragment) {</pre></div></div>
             
         </li>
         
         
-        <li id="section-106">
+        <li id="section-105">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-106">&#182;</a>
+                <a class="pilcrow" href="#section-105">&#182;</a>
               </div>
               <p>intentional use of coersion</p>
 
@@ -2161,11 +2137,11 @@ including the <code>search</code> or <code>hash</code></p>
         </li>
         
         
-        <li id="section-107">
+        <li id="section-106">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-107">&#182;</a>
+                <a class="pilcrow" href="#section-106">&#182;</a>
               </div>
               <h3 id="gethash">getHash</h3>
 <p>Check either the passed in fragment, or the full location.href
@@ -2175,10 +2151,30 @@ for a <code>hash</code> value</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.getHash = <span class="function"><span class="keyword">function</span> <span class="title">getHash</span><span class="params">(fragment)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.getHash = <span class="function"><span class="keyword">function</span><span class="params">(fragment)</span> {</span>
   fragment || (fragment = window.location.href);
   <span class="keyword">var</span> match = fragment.match(<span class="regexp">/#(.*)$/</span>);
   <span class="keyword">return</span> match ? match[<span class="number">1</span>] : <span class="string">''</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-107">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-107">&#182;</a>
+              </div>
+              <h3 id="getquery">getQuery</h3>
+<p>Take a hash and convert it to a <code>search</code> query</p>
+<p><code>param</code> {object} <code>obj</code>
+<code>returns</code> {string} the serialized query string</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.getQuery = <span class="function"><span class="keyword">function</span><span class="params">(obj)</span> {</span>
+  <span class="keyword">return</span> <span class="string">'?'</span> + ($.serialize(obj));
 };</pre></div></div>
             
         </li>
@@ -2190,15 +2186,18 @@ for a <code>hash</code> value</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-108">&#182;</a>
               </div>
-              <h3 id="getquery">getQuery</h3>
-<p>Take a hash and convert it to a <code>search</code> query</p>
-<p><code>param</code> {object} <code>obj</code>
-<code>returns</code> {string} the serialized query string</p>
+              <h3 id="getsearch">getSearch</h3>
+<p>Check either the passed in fragment, or the full location.href
+for a <code>search</code> value</p>
+<p><code>param</code> {string} <code>fragment</code> Optional fragment to check
+<code>returns</code> {String} the normalized current <code>search</code></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.getQuery = <span class="function"><span class="keyword">function</span> <span class="title">getQuery</span><span class="params">(obj)</span> {</span>
-  <span class="keyword">return</span> <span class="string">'?'</span> + ($.serialize(obj));
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.getSearch = <span class="function"><span class="keyword">function</span><span class="params">(fragment)</span> {</span>
+  fragment || (fragment = window.location.href);
+  <span class="keyword">var</span> match = fragment.match(<span class="regexp">/\?(.*)$/</span>);
+  <span class="keyword">return</span> match ? match[<span class="number">1</span>] : <span class="string">''</span>;
 };</pre></div></div>
             
         </li>
@@ -2210,19 +2209,13 @@ for a <code>hash</code> value</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-109">&#182;</a>
               </div>
-              <h3 id="getsearch">getSearch</h3>
-<p>Check either the passed in fragment, or the full location.href
-for a <code>search</code> value</p>
-<p><code>param</code> {string} <code>fragment</code> Optional fragment to check
-<code>returns</code> {String} the normalized current <code>search</code></p>
+              <h3 id="geturl">getUrl</h3>
+<p>fetch the URL in the form <root + fragment></p>
+<p><code>returns</code> {String}</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.getSearch = <span class="function"><span class="keyword">function</span> <span class="title">getSearch</span><span class="params">(fragment)</span> {</span>
-  fragment || (fragment = window.location.href);
-  <span class="keyword">var</span> match = fragment.match(<span class="regexp">/\?(.*)$/</span>);
-  <span class="keyword">return</span> match ? match[<span class="number">1</span>] : <span class="string">''</span>;
-};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.getUrl = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span></pre></div></div>
             
         </li>
         
@@ -2232,23 +2225,6 @@ for a <code>search</code> value</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-110">&#182;</a>
-              </div>
-              <h3 id="geturl">getUrl</h3>
-<p>fetch the URL in the form <root + fragment></p>
-<p><code>returns</code> {String}</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.getUrl = <span class="function"><span class="keyword">function</span> <span class="title">getUrl</span><span class="params">()</span> {</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-111">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-111">&#182;</a>
               </div>
               <p>note that delegate(<em>role</em>) returns the deleagte</p>
 
@@ -2260,11 +2236,11 @@ for a <code>search</code> value</p>
         </li>
         
         
-        <li id="section-112">
+        <li id="section-111">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-112">&#182;</a>
+                <a class="pilcrow" href="#section-111">&#182;</a>
               </div>
               <h3 id="go">go</h3>
 <p>If the passed in &#39;fragment&#39; is different than the currently stored one,
@@ -2274,18 +2250,18 @@ push a new state entry / hash event and set the data where specified</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.go = <span class="function"><span class="keyword">function</span> <span class="title">go</span><span class="params">(fragment)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.go = <span class="function"><span class="keyword">function</span><span class="params">(fragment)</span> {</span>
   <span class="keyword">if</span>(!<span class="keyword">this</span>.started) <span class="keyword">return</span> <span class="literal">false</span>;
   <span class="keyword">if</span>(!<span class="keyword">this</span>.urlChanged(fragment)) <span class="keyword">return</span>;</pre></div></div>
             
         </li>
         
         
-        <li id="section-113">
+        <li id="section-112">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-113">&#182;</a>
+                <a class="pilcrow" href="#section-112">&#182;</a>
               </div>
               <p>TODO ever use replaceState?</p>
 
@@ -2302,11 +2278,11 @@ push a new state entry / hash event and set the data where specified</p>
         </li>
         
         
-        <li id="section-114">
+        <li id="section-113">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-114">&#182;</a>
+                <a class="pilcrow" href="#section-113">&#182;</a>
               </div>
               <h3 id="handlechange">handleChange</h3>
 <p>Bound to either the <code>popstate</code> or <code>hashchange</code> events, if the
@@ -2316,11 +2292,29 @@ triggering change observers</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.handleChange = <span class="function"><span class="keyword">function</span> <span class="title">handleChange</span><span class="params">()</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.handleChange = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
   <span class="keyword">if</span>(<span class="keyword">this</span>.urlChanged()) {
     <span class="keyword">return</span> <span class="keyword">this</span>.setData();
   }
 };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-114">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-114">&#182;</a>
+              </div>
+              <h3 id="parsequery">parseQuery</h3>
+<p>Parse and return a hash of the key value pairs contained in 
+the current <code>query</code></p>
+<p><code>returns</code> {object}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.parseQuery = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span><span class="keyword">return</span> $.deserialize(<span class="keyword">this</span>.data.query);};</pre></div></div>
             
         </li>
         
@@ -2331,14 +2325,16 @@ triggering change observers</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-115">&#182;</a>
               </div>
-              <h3 id="parsequery">parseQuery</h3>
-<p>Parse and return a hash of the key value pairs contained in 
-the current <code>query</code></p>
-<p><code>returns</code> {object}</p>
+              <h3 id="setdata">setData</h3>
+<p>Using the current <code>fragment</code> (minus any search or hash data) as a key,
+use <code>parseQuery</code> as the value for the key, setting it into the specified
+model (a stated <code>Observable</code> or <code>this.data</code>)</p>
+<p><code>returns</code> {object} <code>this</code></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.parseQuery = <span class="function"><span class="keyword">function</span> <span class="title">parseQuery</span><span class="params">()</span> {</span><span class="keyword">return</span> $.deserialize(<span class="keyword">this</span>.data.query);};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.setData = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="keyword">var</span> frag = <span class="keyword">this</span>.data.fragment,</pre></div></div>
             
         </li>
         
@@ -2348,26 +2344,6 @@ the current <code>query</code></p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-116">&#182;</a>
-              </div>
-              <h3 id="setdata">setData</h3>
-<p>Using the current <code>fragment</code> (minus any search or hash data) as a key,
-use <code>parseQuery</code> as the value for the key, setting it into the specified
-model (a stated <code>Observable</code> or <code>this.data</code>)</p>
-<p><code>returns</code> {object} <code>this</code></p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.setData = <span class="function"><span class="keyword">function</span> <span class="title">setData</span><span class="params">()</span> {</span>
-  <span class="keyword">var</span> frag = <span class="keyword">this</span>.data.fragment,</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-117">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-117">&#182;</a>
               </div>
               <p>data is set in a specified model or in self</p>
 
@@ -2379,11 +2355,11 @@ model (a stated <code>Observable</code> or <code>this.data</code>)</p>
         </li>
         
         
-        <li id="section-118">
+        <li id="section-117">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-118">&#182;</a>
+                <a class="pilcrow" href="#section-117">&#182;</a>
               </div>
               <p>we want to set the key minus any search/hash</p>
 
@@ -2398,11 +2374,11 @@ model (a stated <code>Observable</code> or <code>this.data</code>)</p>
         </li>
         
         
-        <li id="section-119">
+        <li id="section-118">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-119">&#182;</a>
+                <a class="pilcrow" href="#section-118">&#182;</a>
               </div>
               <h3 id="start">start</h3>
 <p>Gather the necessary information about the current environment and 
@@ -2413,7 +2389,7 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.start = <span class="function"><span class="keyword">function</span> <span class="title">start</span><span class="params">()</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.start = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
   <span class="keyword">var</span> hasPushState, atRoot, tmp;
   <span class="keyword">if</span>(<span class="keyword">this</span>.started) <span class="keyword">return</span>;
   hasPushState = window.history &amp;&amp; window.history.pushState;
@@ -2422,11 +2398,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-120">
+        <li id="section-119">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-120">&#182;</a>
+                <a class="pilcrow" href="#section-119">&#182;</a>
               </div>
               <p>setup the initial configuration</p>
 
@@ -2439,11 +2415,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-121">
+        <li id="section-120">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-121">&#182;</a>
+                <a class="pilcrow" href="#section-120">&#182;</a>
               </div>
               <p>normalize the root to always contain a leading and trailing slash</p>
 
@@ -2454,11 +2430,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-122">
+        <li id="section-121">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-122">&#182;</a>
+                <a class="pilcrow" href="#section-121">&#182;</a>
               </div>
               <p>Get a snapshot of the current fragment</p>
 
@@ -2469,11 +2445,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-123">
+        <li id="section-122">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-123">&#182;</a>
+                <a class="pilcrow" href="#section-122">&#182;</a>
               </div>
               <p>monitor URL changes via popState or hashchange</p>
 
@@ -2489,11 +2465,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-124">
+        <li id="section-123">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-124">&#182;</a>
+                <a class="pilcrow" href="#section-123">&#182;</a>
               </div>
               <p>somehow a URL got here not in my &#39;format&#39;, unless explicitly told not too, correct this</p>
 
@@ -2507,11 +2483,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-125">
+        <li id="section-124">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-125">&#182;</a>
+                <a class="pilcrow" href="#section-124">&#182;</a>
               </div>
               <p>return early as browser will redirect</p>
 
@@ -2522,11 +2498,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-126">
+        <li id="section-125">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-126">&#182;</a>
+                <a class="pilcrow" href="#section-125">&#182;</a>
               </div>
               <p>the converse of the above</p>
 
@@ -2542,11 +2518,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-127">
+        <li id="section-126">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-127">&#182;</a>
+                <a class="pilcrow" href="#section-126">&#182;</a>
               </div>
               <p>TODO provide option to <code>go</code> from inital <code>start</code> state?</p>
 
@@ -2558,11 +2534,11 @@ vs pushState) normalize it and set accordingly (or don&#39;t).</p>
         </li>
         
         
-        <li id="section-128">
+        <li id="section-127">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-128">&#182;</a>
+                <a class="pilcrow" href="#section-127">&#182;</a>
               </div>
               <h3 id="urlchanged">urlChanged</h3>
 <p>Is a passed in fragment different from the one currently set at <code>this.get(&#39;fragment&#39;)</code>?
@@ -2573,17 +2549,17 @@ simply return false</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.urlChanged = <span class="function"><span class="keyword">function</span> <span class="title">urlChanged</span><span class="params">(fragment)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.urlChanged = <span class="function"><span class="keyword">function</span><span class="params">(fragment)</span> {</span>
   <span class="keyword">var</span> current = <span class="keyword">this</span>.getFragment(fragment);</pre></div></div>
             
         </li>
         
         
-        <li id="section-129">
+        <li id="section-128">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-129">&#182;</a>
+                <a class="pilcrow" href="#section-128">&#182;</a>
               </div>
               <p>nothing has changed</p>
 
@@ -2595,11 +2571,11 @@ simply return false</p>
         </li>
         
         
-        <li id="section-130">
+        <li id="section-129">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-130">&#182;</a>
+                <a class="pilcrow" href="#section-129">&#182;</a>
               </div>
               <p>the fragment and the href need to checked here, optimized for the &#39;go&#39; scenario</p>
 
@@ -2613,11 +2589,11 @@ simply return false</p>
         </li>
         
         
-        <li id="section-131">
+        <li id="section-130">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-131">&#182;</a>
+                <a class="pilcrow" href="#section-130">&#182;</a>
               </div>
               <h2 id="observable-extension-object">Observable Extension Object</h2>
 <p>Implementaion of the ES6 Harmony Observer pattern.
@@ -2631,11 +2607,11 @@ data-mutation-observation is required</p>
         </li>
         
         
-        <li id="section-132">
+        <li id="section-131">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-132">&#182;</a>
+                <a class="pilcrow" href="#section-131">&#182;</a>
               </div>
               <h3 id="_deliver_"><em>deliver</em></h3>
 <p>Called from deliverChangeRecords when ready to send
@@ -2644,11 +2620,30 @@ changeRecords to observers.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _deliver_: <span class="function"><span class="keyword">function</span> <span class="title">_deliver_</span><span class="params">(obj)</span> {</span>
+            <div class="content"><div class='highlight'><pre>  _deliver_: <span class="function"><span class="keyword">function</span><span class="params">(obj)</span> {</span>
     <span class="keyword">this</span>.callbacks.forEach(<span class="function"><span class="keyword">function</span><span class="params">(cb)</span> {</span>
       cb(obj);
     });
   },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-132">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-132">&#182;</a>
+              </div>
+              <h3 id="deliverchangerecords">deliverChangeRecords</h3>
+<p>Iterate through the changeRecords array(emptying it as you go), delivering them to the
+observers. You can override this method to change the standard delivery behavior.</p>
+<p><code>returns</code> {Object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  deliverChangeRecords: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> rec, cr = <span class="keyword">this</span>.changeRecords;</pre></div></div>
             
         </li>
         
@@ -2658,25 +2653,6 @@ changeRecords to observers.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-133">&#182;</a>
-              </div>
-              <h3 id="deliverchangerecords">deliverChangeRecords</h3>
-<p>Iterate through the changeRecords array(emptying it as you go), delivering them to the
-observers. You can override this method to change the standard delivery behavior.</p>
-<p><code>returns</code> {Object} <code>this</code></p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  deliverChangeRecords: <span class="function"><span class="keyword">function</span> <span class="title">deliverChangeRecords</span><span class="params">()</span> {</span>
-    <span class="keyword">var</span> rec, cr = <span class="keyword">this</span>.changeRecords;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-134">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-134">&#182;</a>
               </div>
               <p>FIFO</p>
 
@@ -2689,11 +2665,11 @@ observers. You can override this method to change the standard delivery behavior
         </li>
         
         
-        <li id="section-135">
+        <li id="section-134">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-135">&#182;</a>
+                <a class="pilcrow" href="#section-134">&#182;</a>
               </div>
               <h3 id="observe">observe</h3>
 <p>In a quasi-ES6 Object.observe pattern, calling observe on an <code>observable</code> and 
@@ -2712,16 +2688,16 @@ For ease of &#39;unobserving&#39; the same Function passed in is returned.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  observe: <span class="function"><span class="keyword">function</span> <span class="title">observe</span><span class="params">(fn)</span> {</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  observe: <span class="function"><span class="keyword">function</span><span class="params">(fn)</span> {</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-136">
+        <li id="section-135">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-136">&#182;</a>
+                <a class="pilcrow" href="#section-135">&#182;</a>
               </div>
               <p>this will fail if mixed-in and no <code>callbacks</code> created so don&#39;t do that.
 Per the spec, do not allow the same callback to be added</p>
@@ -2736,11 +2712,11 @@ Per the spec, do not allow the same callback to be added</p>
         </li>
         
         
-        <li id="section-137">
+        <li id="section-136">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-137">&#182;</a>
+                <a class="pilcrow" href="#section-136">&#182;</a>
               </div>
               <h3 id="observes">observes</h3>
 <p>Allow an array of callbacks to be registered as changeRecord recipients</p>
@@ -2749,7 +2725,7 @@ Per the spec, do not allow the same callback to be added</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  observes: <span class="function"><span class="keyword">function</span> <span class="title">observes</span><span class="params">(ary)</span> {</span>
+            <div class="content"><div class='highlight'><pre>  observes: <span class="function"><span class="keyword">function</span><span class="params">(ary)</span> {</span>
     ary.forEach(<span class="function"><span class="keyword">function</span><span class="params">(fn)</span> {</span><span class="keyword">this</span>.observe(fn);}.bind(<span class="keyword">this</span>));
     <span class="keyword">return</span> ary;
   },</pre></div></div>
@@ -2757,11 +2733,11 @@ Per the spec, do not allow the same callback to be added</p>
         </li>
         
         
-        <li id="section-138">
+        <li id="section-137">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-138">&#182;</a>
+                <a class="pilcrow" href="#section-137">&#182;</a>
               </div>
               <h3 id="set">set</h3>
 <p>Overrides sudo.Base.set to check for observers</p>
@@ -2773,17 +2749,17 @@ to be delivered upon a call to deliverChangeRecords (truthy)</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  set: <span class="function"><span class="keyword">function</span> <span class="title">set</span><span class="params">(k, v, hold)</span> {</span>
+            <div class="content"><div class='highlight'><pre>  set: <span class="function"><span class="keyword">function</span><span class="params">(k, v, hold)</span> {</span>
     <span class="keyword">var</span> obj = {name: k, object: <span class="keyword">this</span>.data};</pre></div></div>
             
         </li>
         
         
-        <li id="section-139">
+        <li id="section-138">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-139">&#182;</a>
+                <a class="pilcrow" href="#section-138">&#182;</a>
               </div>
               <p>did this key exist already</p>
 
@@ -2795,11 +2771,11 @@ to be delivered upon a call to deliverChangeRecords (truthy)</p>
         </li>
         
         
-        <li id="section-140">
+        <li id="section-139">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-140">&#182;</a>
+                <a class="pilcrow" href="#section-139">&#182;</a>
               </div>
               <p>then there is an oldValue</p>
 
@@ -2811,11 +2787,11 @@ to be delivered upon a call to deliverChangeRecords (truthy)</p>
         </li>
         
         
-        <li id="section-141">
+        <li id="section-140">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-141">&#182;</a>
+                <a class="pilcrow" href="#section-140">&#182;</a>
               </div>
               <p>now actually set the value</p>
 
@@ -2827,11 +2803,11 @@ to be delivered upon a call to deliverChangeRecords (truthy)</p>
         </li>
         
         
-        <li id="section-142">
+        <li id="section-141">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-142">&#182;</a>
+                <a class="pilcrow" href="#section-141">&#182;</a>
               </div>
               <p>call the observers or not</p>
 
@@ -2844,11 +2820,11 @@ to be delivered upon a call to deliverChangeRecords (truthy)</p>
         </li>
         
         
-        <li id="section-143">
+        <li id="section-142">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-143">&#182;</a>
+                <a class="pilcrow" href="#section-142">&#182;</a>
               </div>
               <h3 id="setpath">setPath</h3>
 <p>Overrides sudo.Base.setPath to check for observers.
@@ -2865,7 +2841,7 @@ to be delivered upon a call to deliverChangeRecords (truthy)
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  setPath: <span class="function"><span class="keyword">function</span> <span class="title">setPath</span><span class="params">(path, v, hold)</span> {</span>
+            <div class="content"><div class='highlight'><pre>  setPath: <span class="function"><span class="keyword">function</span><span class="params">(path, v, hold)</span> {</span>
     <span class="keyword">var</span> curr = <span class="keyword">this</span>.data, obj = {name: path, object: <span class="keyword">this</span>.data},
       p = path.split(<span class="string">'.'</span>), k;
     <span class="keyword">for</span>(k; p.length &amp;&amp; (k = p.shift());) {
@@ -2874,11 +2850,11 @@ to be delivered upon a call to deliverChangeRecords (truthy)
         </li>
         
         
-        <li id="section-144">
+        <li id="section-143">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-144">&#182;</a>
+                <a class="pilcrow" href="#section-143">&#182;</a>
               </div>
               <p>reached the last refinement, pre-existing?</p>
 
@@ -2900,11 +2876,11 @@ to be delivered upon a call to deliverChangeRecords (truthy)
         </li>
         
         
-        <li id="section-145">
+        <li id="section-144">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-145">&#182;</a>
+                <a class="pilcrow" href="#section-144">&#182;</a>
               </div>
               <p>call all observers or not</p>
 
@@ -2917,11 +2893,11 @@ to be delivered upon a call to deliverChangeRecords (truthy)
         </li>
         
         
-        <li id="section-146">
+        <li id="section-145">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-146">&#182;</a>
+                <a class="pilcrow" href="#section-145">&#182;</a>
               </div>
               <h3 id="sets">sets</h3>
 <p>Overrides Base.sets to hold the call to <em>deliver</em> until
@@ -2930,7 +2906,7 @@ all operations are done</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  sets: <span class="function"><span class="keyword">function</span> <span class="title">sets</span><span class="params">(obj, hold)</span> {</span>
+            <div class="content"><div class='highlight'><pre>  sets: <span class="function"><span class="keyword">function</span><span class="params">(obj, hold)</span> {</span>
     Object.keys(obj).forEach(<span class="function"><span class="keyword">function</span><span class="params">(k)</span> {</span>
       k.indexOf(<span class="string">'.'</span>) === -<span class="number">1</span> ? <span class="keyword">this</span>.set(k, obj[k], <span class="literal">true</span>) :
         <span class="keyword">this</span>.setPath(k, obj[k], <span class="literal">true</span>);      
@@ -2942,11 +2918,11 @@ all operations are done</p>
         </li>
         
         
-        <li id="section-147">
+        <li id="section-146">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-147">&#182;</a>
+                <a class="pilcrow" href="#section-146">&#182;</a>
               </div>
               <h3 id="unobserve">unobserve</h3>
 <p>Remove a particular callback from this observable</p>
@@ -2955,9 +2931,30 @@ all operations are done</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  unobserve: <span class="function"><span class="keyword">function</span> <span class="title">unobserve</span><span class="params">(fn)</span> {</span>
+            <div class="content"><div class='highlight'><pre>  unobserve: <span class="function"><span class="keyword">function</span><span class="params">(fn)</span> {</span>
     <span class="keyword">var</span> cb = <span class="keyword">this</span>.callbacks, i = cb.indexOf(fn);
     <span class="keyword">if</span>(~i) cb.splice(i, <span class="number">1</span>);
+    <span class="keyword">return</span> <span class="keyword">this</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-147">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-147">&#182;</a>
+              </div>
+              <h3 id="unobserves">unobserves</h3>
+<p>Allow an array of callbacks to be unregistered as changeRecord recipients</p>
+<p><code>param</code> {Array} ary
+<code>returns</code> {Object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unobserves: <span class="function"><span class="keyword">function</span><span class="params">(ary)</span> {</span>
+    ary.forEach(<span class="function"><span class="keyword">function</span><span class="params">(fn)</span> {</span><span class="keyword">this</span>.unobserve(fn);}.bind(<span class="keyword">this</span>));
     <span class="keyword">return</span> <span class="keyword">this</span>;
   },</pre></div></div>
             
@@ -2970,17 +2967,18 @@ all operations are done</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-148">&#182;</a>
               </div>
-              <h3 id="unobserves">unobserves</h3>
-<p>Allow an array of callbacks to be unregistered as changeRecord recipients</p>
-<p><code>param</code> {Array} ary
-<code>returns</code> {Object} <code>this</code></p>
+              <h3 id="unset">unset</h3>
+<p>Overrides sudo.Base.unset to check for observers</p>
+<p><code>param</code> {String} <code>key</code>. The name of the key
+<code>param</code> {Bool} <code>hold</code></p>
+<p><code>returns</code> {Object|*} <code>this</code> or calls deliverChangeRecords</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  unobserves: <span class="function"><span class="keyword">function</span> <span class="title">unobserves</span><span class="params">(ary)</span> {</span>
-    ary.forEach(<span class="function"><span class="keyword">function</span><span class="params">(fn)</span> {</span><span class="keyword">this</span>.unobserve(fn);}.bind(<span class="keyword">this</span>));
-    <span class="keyword">return</span> <span class="keyword">this</span>;
-  },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  unset: <span class="function"><span class="keyword">function</span><span class="params">(key, hold)</span> {</span>
+    <span class="keyword">var</span> obj = {name: key, object: <span class="keyword">this</span>.data, type: <span class="string">'deleted'</span>}, 
+      val = !!<span class="keyword">this</span>.data[key];
+    <span class="keyword">delete</span> <span class="keyword">this</span>.data[key];</pre></div></div>
             
         </li>
         
@@ -2990,28 +2988,6 @@ all operations are done</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-149">&#182;</a>
-              </div>
-              <h3 id="unset">unset</h3>
-<p>Overrides sudo.Base.unset to check for observers</p>
-<p><code>param</code> {String} <code>key</code>. The name of the key
-<code>param</code> {Bool} <code>hold</code></p>
-<p><code>returns</code> {Object|*} <code>this</code> or calls deliverChangeRecords</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  unset: <span class="function"><span class="keyword">function</span> <span class="title">unset</span><span class="params">(key, hold)</span> {</span>
-    <span class="keyword">var</span> obj = {name: key, object: <span class="keyword">this</span>.data, type: <span class="string">'deleted'</span>}, 
-      val = !!<span class="keyword">this</span>.data[key];
-    <span class="keyword">delete</span> <span class="keyword">this</span>.data[key];</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-150">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-150">&#182;</a>
               </div>
               <p>call the observers if there was a val to delete</p>
 
@@ -3023,11 +2999,11 @@ all operations are done</p>
         </li>
         
         
-        <li id="section-151">
+        <li id="section-150">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-151">&#182;</a>
+                <a class="pilcrow" href="#section-150">&#182;</a>
               </div>
               <h3 id="_unset_"><em>unset</em></h3>
 <p>Helper for the unset functions</p>
@@ -3035,7 +3011,7 @@ all operations are done</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _unset_: <span class="function"><span class="keyword">function</span> <span class="title">_unset_</span><span class="params">(o, v, h)</span> {</span>
+            <div class="content"><div class='highlight'><pre>  _unset_: <span class="function"><span class="keyword">function</span><span class="params">(o, v, h)</span> {</span>
     <span class="keyword">if</span>(v) {
       <span class="keyword">this</span>.changeRecords.push(o);
       <span class="keyword">if</span>(h) <span class="keyword">return</span> <span class="keyword">this</span>;
@@ -3047,11 +3023,11 @@ all operations are done</p>
         </li>
         
         
-        <li id="section-152">
+        <li id="section-151">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-152">&#182;</a>
+                <a class="pilcrow" href="#section-151">&#182;</a>
               </div>
               <h3 id="setpath">setPath</h3>
 <p>Overrides sudo.Base.unsetPath to check for observers</p>
@@ -3062,7 +3038,7 @@ all operations are done</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  unsetPath: <span class="function"><span class="keyword">function</span> <span class="title">unsetPath</span><span class="params">(path, hold)</span> {</span>
+            <div class="content"><div class='highlight'><pre>  unsetPath: <span class="function"><span class="keyword">function</span><span class="params">(path, hold)</span> {</span>
     <span class="keyword">var</span> obj = {name: path, object: <span class="keyword">this</span>.data, type: <span class="string">'deleted'</span>}, 
       curr = <span class="keyword">this</span>.data, p = path.split(<span class="string">'.'</span>), 
       k, v;
@@ -3072,11 +3048,11 @@ all operations are done</p>
         </li>
         
         
-        <li id="section-153">
+        <li id="section-152">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-153">&#182;</a>
+                <a class="pilcrow" href="#section-152">&#182;</a>
               </div>
               <p>reached the last refinement</p>
 
@@ -3089,11 +3065,11 @@ all operations are done</p>
         </li>
         
         
-        <li id="section-154">
+        <li id="section-153">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-154">&#182;</a>
+                <a class="pilcrow" href="#section-153">&#182;</a>
               </div>
               <p>this can obviously fail, but can be prevented by checking
 with <code>getPath</code> first.</p>
@@ -3109,11 +3085,11 @@ with <code>getPath</code> first.</p>
         </li>
         
         
-        <li id="section-155">
+        <li id="section-154">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-155">&#182;</a>
+                <a class="pilcrow" href="#section-154">&#182;</a>
               </div>
               <h3 id="unsets">unsets</h3>
 <p>Override of Base.unsets to hold the call to <em>deliver</em> until done</p>
@@ -3123,7 +3099,7 @@ with <code>getPath</code> first.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  unsets: <span class="function"><span class="keyword">function</span> <span class="title">unsets</span><span class="params">(ary, hold)</span> {</span>
+            <div class="content"><div class='highlight'><pre>  unsets: <span class="function"><span class="keyword">function</span><span class="params">(ary, hold)</span> {</span>
     ary.forEach(<span class="function"><span class="keyword">function</span><span class="params">(k)</span> {</span>
       k.indexOf(<span class="string">'.'</span>) === -<span class="number">1</span> ? <span class="keyword">this</span>.unset(k, <span class="literal">true</span>) : <span class="keyword">this</span>.unsetPath(k, <span class="literal">true</span>);   
     }.bind(<span class="keyword">this</span>));
@@ -3135,11 +3111,11 @@ with <code>getPath</code> first.</p>
         </li>
         
         
-        <li id="section-156">
+        <li id="section-155">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-156">&#182;</a>
+                <a class="pilcrow" href="#section-155">&#182;</a>
               </div>
               <h2 id="listener-extension-object">Listener Extension Object</h2>
 <p>Handles event binding/unbinding via an events array in the form:
@@ -3167,11 +3143,11 @@ D. fn -&gt; If a {String} bound to the named function on this object, if a
         </li>
         
         
-        <li id="section-157">
+        <li id="section-156">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-157">&#182;</a>
+                <a class="pilcrow" href="#section-156">&#182;</a>
               </div>
               <h3 id="bindevents">bindEvents</h3>
 <p>Bind the events in the data store to this object&#39;s el</p>
@@ -3179,10 +3155,30 @@ D. fn -&gt; If a {String} bound to the named function on this object, if a
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  bindEvents: <span class="function"><span class="keyword">function</span> <span class="title">bindEvents</span><span class="params">()</span> {</span>
+            <div class="content"><div class='highlight'><pre>  bindEvents: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
     <span class="keyword">var</span> e;
     <span class="keyword">if</span>((e = <span class="keyword">this</span>.data.event || <span class="keyword">this</span>.data.events)) <span class="keyword">this</span>._handleEvents_(e, <span class="number">1</span>);
     <span class="keyword">return</span> <span class="keyword">this</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-157">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-157">&#182;</a>
+              </div>
+              <p>Use the cash <code>on</code> or &#39;off&#39; method, optionally delegating to a selector if present
+<code>private</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _handleEvents_: <span class="function"><span class="keyword">function</span><span class="params">(e, which)</span> {</span>
+    Array.isArray(e) ? 
+      e.forEach(<span class="function"><span class="keyword">function</span><span class="params">(ev)</span> {</span><span class="keyword">this</span>._handleEvent_(ev, which);}.bind(<span class="keyword">this</span>)) :
+      <span class="keyword">this</span>._handleEvent_(e, which);
   },</pre></div></div>
             
         </li>
@@ -3194,16 +3190,16 @@ D. fn -&gt; If a {String} bound to the named function on this object, if a
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-158">&#182;</a>
               </div>
-              <p>Use the cash <code>on</code> or &#39;off&#39; method, optionally delegating to a selector if present
+              <p>helper for binding and unbinding an individual event
+<code>param</code> {Object} e. An event descriptor
+<code>param</code> {String} which. <code>on</code> or <code>off</code>
 <code>private</code></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _handleEvents_: <span class="function"><span class="keyword">function</span> <span class="title">_handleEvents_</span><span class="params">(e, which)</span> {</span>
-    Array.isArray(e) ? 
-      e.forEach(<span class="function"><span class="keyword">function</span><span class="params">(ev)</span> {</span><span class="keyword">this</span>._handleEvent_(ev, which);}.bind(<span class="keyword">this</span>)) :
-      <span class="keyword">this</span>._handleEvent_(e, which);
-  },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  _handleEvent_: <span class="function"><span class="keyword">function</span><span class="params">(e, which)</span> {</span>
+    which ?
+      $(<span class="keyword">this</span>.el).on(e.on, <span class="keyword">typeof</span> e.fn === <span class="string">'string'</span> ? <span class="keyword">this</span>[e.fn].bind(<span class="keyword">this</span>) : e.fn, e.sel, e.data) :</pre></div></div>
             
         </li>
         
@@ -3213,26 +3209,6 @@ D. fn -&gt; If a {String} bound to the named function on this object, if a
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-159">&#182;</a>
-              </div>
-              <p>helper for binding and unbinding an individual event
-<code>param</code> {Object} e. An event descriptor
-<code>param</code> {String} which. <code>on</code> or <code>off</code>
-<code>private</code></p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  _handleEvent_: <span class="function"><span class="keyword">function</span> <span class="title">_handleEvent_</span><span class="params">(e, which)</span> {</span>
-    which ?
-      $(<span class="keyword">this</span>.el).on(e.on, <span class="keyword">typeof</span> e.fn === <span class="string">'string'</span> ? <span class="keyword">this</span>[e.fn].bind(<span class="keyword">this</span>) : e.fn, e.sel, e.data) :</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-160">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-160">&#182;</a>
               </div>
               <p>do not send the fn going to off otherwise the unbind will fail
 because of how we bind the string names, if this is ever an issue we
@@ -3246,11 +3222,11 @@ can hash them and look it up, but I don&#39;t see that as necessary atm</p>
         </li>
         
         
-        <li id="section-161">
+        <li id="section-160">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-161">&#182;</a>
+                <a class="pilcrow" href="#section-160">&#182;</a>
               </div>
               <h3 id="rebindevents">rebindEvents</h3>
 <p>Convenience method for <code>this.unbindEvents().bindEvents()</code></p>
@@ -3258,18 +3234,18 @@ can hash them and look it up, but I don&#39;t see that as necessary atm</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  rebindEvents: <span class="function"><span class="keyword">function</span> <span class="title">rebindEvents</span><span class="params">()</span> {</span>
+            <div class="content"><div class='highlight'><pre>  rebindEvents: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
     <span class="keyword">return</span> <span class="keyword">this</span>.unbindEvents().bindEvents();
   },</pre></div></div>
             
         </li>
         
         
-        <li id="section-162">
+        <li id="section-161">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-162">&#182;</a>
+                <a class="pilcrow" href="#section-161">&#182;</a>
               </div>
               <h3 id="unbindevents">unbindEvents</h3>
 <p>Unbind the events in the data store from this object&#39;s el</p>
@@ -3277,7 +3253,7 @@ can hash them and look it up, but I don&#39;t see that as necessary atm</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  unbindEvents: <span class="function"><span class="keyword">function</span> <span class="title">unbindEvents</span><span class="params">()</span> {</span>
+            <div class="content"><div class='highlight'><pre>  unbindEvents: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
     <span class="keyword">var</span> e;
     <span class="keyword">if</span>((e = <span class="keyword">this</span>.data.event || <span class="keyword">this</span>.data.events)) <span class="keyword">this</span>._handleEvents_(e);
     <span class="keyword">return</span> <span class="keyword">this</span>;
@@ -3287,11 +3263,11 @@ can hash them and look it up, but I don&#39;t see that as necessary atm</p>
         </li>
         
         
-        <li id="section-163">
+        <li id="section-162">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-163">&#182;</a>
+                <a class="pilcrow" href="#section-162">&#182;</a>
               </div>
               <h2 id="sudo-persistable-extension">sudo persistable extension</h2>
 <p>A mixin providing restful CRUD operations for a sudo.Model instance.</p>
@@ -3316,11 +3292,11 @@ defaults by passing in a hash of options to any method:
         </li>
         
         
-        <li id="section-164">
+        <li id="section-163">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-164">&#182;</a>
+                <a class="pilcrow" href="#section-163">&#182;</a>
               </div>
               <h3 id="create">create</h3>
 <p>Save this model on the server. If a subset of this model&#39;s attributes
@@ -3332,8 +3308,28 @@ state of the model on the server and set it here (via a success callback).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  create: <span class="function"><span class="keyword">function</span> <span class="title">create</span><span class="params">(params)</span> {</span>
+            <div class="content"><div class='highlight'><pre>  create: <span class="function"><span class="keyword">function</span><span class="params">(params)</span> {</span>
     <span class="keyword">return</span> <span class="keyword">this</span>._sendData_(<span class="string">'POST'</span>, params);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-164">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-164">&#182;</a>
+              </div>
+              <h3 id="destroy">destroy</h3>
+<p>Delete this model on the server</p>
+<p><code>param</code> {object} <code>params</code> Optional hash of options for the XHR
+<code>returns</code> {object} Xhr</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  destroy: <span class="function"><span class="keyword">function</span><span class="params">(params)</span> {</span>
+    <span class="keyword">return</span> <span class="keyword">this</span>._sendData_(<span class="string">'DELETE'</span>, params);
   },</pre></div></div>
             
         </li>
@@ -3345,16 +3341,21 @@ state of the model on the server and set it here (via a success callback).</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-165">&#182;</a>
               </div>
-              <h3 id="destroy">destroy</h3>
-<p>Delete this model on the server</p>
-<p><code>param</code> {object} <code>params</code> Optional hash of options for the XHR
-<code>returns</code> {object} Xhr</p>
+              <h3 id="_normalizeparams_"><em>normalizeParams</em></h3>
+<p>Abstracted logic for preparing the options object. This looks at 
+the set <code>ajax</code> property, allowing any passed in params to override.</p>
+<p>Sets defaults: <code>text</code> responseType and an onload callback that simply <code>sets()</code> the 
+parsed response returned from the server</p>
+<p><code>returns</code> {object} A normalized params object for the XHR call</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  destroy: <span class="function"><span class="keyword">function</span> <span class="title">_delete</span><span class="params">(params)</span> {</span>
-    <span class="keyword">return</span> <span class="keyword">this</span>._sendData_(<span class="string">'DELETE'</span>, params);
-  },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  _normalizeParams_: <span class="function"><span class="keyword">function</span><span class="params">(verb, opts, params)</span> {</span>
+    <span class="keyword">var</span> self = <span class="keyword">this</span>;
+    opts || (opts = $.extend({}, <span class="keyword">this</span>.data.ajax));
+    opts.url || (opts.url = <span class="keyword">this</span>.url(opts.baseUrl));
+    opts.verb || (opts.verb = verb);
+    opts.responseType || (opts.responseType = <span class="string">'text'</span>);</pre></div></div>
             
         </li>
         
@@ -3365,31 +3366,6 @@ state of the model on the server and set it here (via a success callback).</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-166">&#182;</a>
               </div>
-              <h3 id="_normalizeparams_"><em>normalizeParams</em></h3>
-<p>Abstracted logic for preparing the options object. This looks at 
-the set <code>ajax</code> property, allowing any passed in params to override.</p>
-<p>Sets defaults: <code>text</code> responseType and an onload callback that simply <code>sets()</code> the 
-parsed response returned from the server</p>
-<p><code>returns</code> {object} A normalized params object for the XHR call</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  _normalizeParams_: <span class="function"><span class="keyword">function</span> <span class="title">_normalizeParams_</span><span class="params">(verb, opts, params)</span> {</span>
-    <span class="keyword">var</span> self = <span class="keyword">this</span>;
-    opts || (opts = $.extend({}, <span class="keyword">this</span>.data.ajax));
-    opts.url || (opts.url = <span class="keyword">this</span>.url(opts.baseUrl));
-    opts.verb || (opts.verb = verb);
-    opts.responseType || (opts.responseType = <span class="string">'text'</span>);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-167">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-167">&#182;</a>
-              </div>
               <p>used in the <em>sendData</em> to determine a Content-Type header</p>
 
             </div>
@@ -3399,11 +3375,11 @@ parsed response returned from the server</p>
         </li>
         
         
-        <li id="section-168">
+        <li id="section-167">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-168">&#182;</a>
+                <a class="pilcrow" href="#section-167">&#182;</a>
               </div>
               <p>the default success callback is to set the data returned from the server
 or just the status as <code>ajaxStatus</code> if no data was returned</p>
@@ -3415,11 +3391,11 @@ or just the status as <code>ajaxStatus</code> if no data was returned</p>
         </li>
         
         
-        <li id="section-169">
+        <li id="section-168">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-169">&#182;</a>
+                <a class="pilcrow" href="#section-168">&#182;</a>
               </div>
               <p>try to json parse it by default, pass in an &#39;onload&#39; to override</p>
 
@@ -3432,11 +3408,11 @@ or just the status as <code>ajaxStatus</code> if no data was returned</p>
         </li>
         
         
-        <li id="section-170">
+        <li id="section-169">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-170">&#182;</a>
+                <a class="pilcrow" href="#section-169">&#182;</a>
               </div>
               <p>allow the passed in params to override any set in this model&#39;s <code>ajax</code> options</p>
 
@@ -3448,11 +3424,11 @@ or just the status as <code>ajaxStatus</code> if no data was returned</p>
         </li>
         
         
-        <li id="section-171">
+        <li id="section-170">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-171">&#182;</a>
+                <a class="pilcrow" href="#section-170">&#182;</a>
               </div>
               <h3 id="read">read</h3>
 <p>Fetch this models state from the server and set it here. The 
@@ -3466,11 +3442,32 @@ present will override any set in this model&#39;s <code>ajax</code> options obje
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  read: <span class="function"><span class="keyword">function</span> <span class="title">post</span><span class="params">(params)</span> {</span>
+            <div class="content"><div class='highlight'><pre>  read: <span class="function"><span class="keyword">function</span><span class="params">(params)</span> {</span>
     <span class="keyword">var</span> opts = <span class="keyword">this</span>._normalizeParams_(<span class="string">'GET'</span>, <span class="literal">null</span>, params),
       xhr = $.getXhr(opts);
     xhr.send();
     <span class="keyword">return</span> xhr;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-171">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-171">&#182;</a>
+              </div>
+              <h3 id="save">save</h3>
+<p>Convenience method removing the need to know if a model is new (not yet persisted)
+or has been loaded/refreshed from the server. </p>
+<p><code>param</code> {object} <code>params</code> Hash of options for the XHR call
+<code>returns</code> {object} The XHR object</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  save: <span class="function"><span class="keyword">function</span><span class="params">(params)</span> {</span>
+    <span class="keyword">return</span> (<span class="string">'id'</span> <span class="keyword">in</span> <span class="keyword">this</span>.data) ? <span class="keyword">this</span>.update(params) : <span class="keyword">this</span>.create(params);
   },</pre></div></div>
             
         </li>
@@ -3482,16 +3479,18 @@ present will override any set in this model&#39;s <code>ajax</code> options obje
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-172">&#182;</a>
               </div>
-              <h3 id="save">save</h3>
-<p>Convenience method removing the need to know if a model is new (not yet persisted)
-or has been loaded/refreshed from the server. </p>
-<p><code>param</code> {object} <code>params</code> Hash of options for the XHR call
-<code>returns</code> {object} The XHR object</p>
+              <h3 id="_senddata_"><em>sendData</em></h3>
+<p>The Create, Update and Patch methods all send data to the server,
+varying only in their HTTP method. Abstracted logic is here.</p>
+<p><code>returns</code> {object} Xhr</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  save: <span class="function"><span class="keyword">function</span> <span class="title">save</span><span class="params">(params)</span> {</span>
-    <span class="keyword">return</span> (<span class="string">'id'</span> <span class="keyword">in</span> <span class="keyword">this</span>.data) ? <span class="keyword">this</span>.update(params) : <span class="keyword">this</span>.create(params);
+            <div class="content"><div class='highlight'><pre>  _sendData_: <span class="function"><span class="keyword">function</span><span class="params">(verb, params)</span> {</span>
+    <span class="keyword">var</span> opts = <span class="keyword">this</span>._normalizeParams_(verb, <span class="literal">null</span>, params),
+      xhr = $.getXhr(opts);
+    xhr.send(opts.data || JSON.stringify(<span class="keyword">this</span>.data));
+    <span class="keyword">return</span> xhr;
   },</pre></div></div>
             
         </li>
@@ -3502,29 +3501,6 @@ or has been loaded/refreshed from the server. </p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-173">&#182;</a>
-              </div>
-              <h3 id="_senddata_"><em>sendData</em></h3>
-<p>The Create, Update and Patch methods all send data to the server,
-varying only in their HTTP method. Abstracted logic is here.</p>
-<p><code>returns</code> {object} Xhr</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  _sendData_: <span class="function"><span class="keyword">function</span> <span class="title">_sendData_</span><span class="params">(verb, params)</span> {</span>
-    <span class="keyword">var</span> opts = <span class="keyword">this</span>._normalizeParams_(verb, <span class="literal">null</span>, params),
-      xhr = $.getXhr(opts);
-    xhr.send(opts.data || JSON.stringify(<span class="keyword">this</span>.data));
-    <span class="keyword">return</span> xhr;
-  },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-174">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-174">&#182;</a>
               </div>
               <h3 id="update">update</h3>
 <p>If this model has been persisted to/from the server (it has an <code>id</code> attribute)
@@ -3538,7 +3514,7 @@ or use the <code>save()</code> method (that does check).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  update: <span class="function"><span class="keyword">function</span> <span class="title">update</span><span class="params">(params)</span> {</span>
+            <div class="content"><div class='highlight'><pre>  update: <span class="function"><span class="keyword">function</span><span class="params">(params)</span> {</span>
     <span class="keyword">return</span> <span class="keyword">this</span>._sendData_((<span class="keyword">this</span>.data.ajax.patch || params &amp;&amp; params.patch) ? 
       <span class="string">'PATCH'</span> : <span class="string">'PUT'</span>, params);
   },</pre></div></div>
@@ -3546,11 +3522,11 @@ or use the <code>save()</code> method (that does check).</p>
         </li>
         
         
-        <li id="section-175">
+        <li id="section-174">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-175">&#182;</a>
+                <a class="pilcrow" href="#section-174">&#182;</a>
               </div>
               <h3 id="url">url</h3>
 <p>Takes the base url and appends this models id if present
@@ -3560,16 +3536,16 @@ Override if you need to change the format of the calculated url.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  url: <span class="function"><span class="keyword">function</span> <span class="title">url</span><span class="params">(base)</span> {</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  url: <span class="function"><span class="keyword">function</span><span class="params">(base)</span> {</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-176">
+        <li id="section-175">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-176">&#182;</a>
+                <a class="pilcrow" href="#section-175">&#182;</a>
               </div>
               <p>could possibly be 0...</p>
 
@@ -3585,11 +3561,11 @@ Override if you need to change the format of the calculated url.</p>
         </li>
         
         
-        <li id="section-177">
+        <li id="section-176">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-177">&#182;</a>
+                <a class="pilcrow" href="#section-176">&#182;</a>
               </div>
               <p>The base type for both the Data and Change delegates.</p>
 <p><code>param</code> {Object} data</p>
@@ -3604,11 +3580,11 @@ Override if you need to change the format of the calculated url.</p>
         </li>
         
         
-        <li id="section-178">
+        <li id="section-177">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-178">&#182;</a>
+                <a class="pilcrow" href="#section-177">&#182;</a>
               </div>
               <p>The filtered delegate</p>
 
@@ -3619,11 +3595,11 @@ Override if you need to change the format of the calculated url.</p>
         </li>
         
         
-        <li id="section-179">
+        <li id="section-178">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-179">&#182;</a>
+                <a class="pilcrow" href="#section-178">&#182;</a>
               </div>
               <h3 id="addfilter">addFilter</h3>
 <p>Place an entry into this object&#39;s hash of filters</p>
@@ -3633,8 +3609,29 @@ Override if you need to change the format of the calculated url.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.delegates.Filtered.prototype.addFilter = <span class="function"><span class="keyword">function</span> <span class="title">addFilter</span><span class="params">(k, v)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.delegates.Filtered.prototype.addFilter = <span class="function"><span class="keyword">function</span><span class="params">(k, v)</span> {</span>
   <span class="keyword">this</span>.data.filters[k] = v;
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-179">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-179">&#182;</a>
+              </div>
+              <h3 id="removefilter">removeFilter</h3>
+<p>Remove an entry from this object&#39;s hash of filters</p>
+<p><code>param</code> {string} <code>k</code>
+<code>returns</code> {object} this</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.delegates.Filtered.prototype.removeFilter = <span class="function"><span class="keyword">function</span><span class="params">(k)</span> {</span>
+  <span class="keyword">delete</span> <span class="keyword">this</span>.data.filters[k];
   <span class="keyword">return</span> <span class="keyword">this</span>;
 };</pre></div></div>
             
@@ -3647,27 +3644,6 @@ Override if you need to change the format of the calculated url.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-180">&#182;</a>
               </div>
-              <h3 id="removefilter">removeFilter</h3>
-<p>Remove an entry from this object&#39;s hash of filters</p>
-<p><code>param</code> {string} <code>k</code>
-<code>returns</code> {object} this</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>sudo.delegates.Filtered.prototype.removeFilter = <span class="function"><span class="keyword">function</span> <span class="title">removeFilter</span><span class="params">(k)</span> {</span>
-  <span class="keyword">delete</span> <span class="keyword">this</span>.data.filters[k];
-  <span class="keyword">return</span> <span class="keyword">this</span>;
-};</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-181">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-181">&#182;</a>
-              </div>
               <p><code>private</code></p>
 
             </div>
@@ -3677,11 +3653,11 @@ Override if you need to change the format of the calculated url.</p>
         </li>
         
         
-        <li id="section-182">
+        <li id="section-181">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-182">&#182;</a>
+                <a class="pilcrow" href="#section-181">&#182;</a>
               </div>
               <h2 id="change-delegate">Change Delegate</h2>
 <p>Delegates, if present, can override or extend the behavior
@@ -3701,11 +3677,11 @@ on the delegates <code>delegator</code> (bound to the <em>delegator</em> scope)<
         </li>
         
         
-        <li id="section-183">
+        <li id="section-182">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-183">&#182;</a>
+                <a class="pilcrow" href="#section-182">&#182;</a>
               </div>
               <p>Delegates inherit from the Filtered Delegate</p>
 
@@ -3716,11 +3692,11 @@ on the delegates <code>delegator</code> (bound to the <em>delegator</em> scope)<
         </li>
         
         
-        <li id="section-184">
+        <li id="section-183">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-184">&#182;</a>
+                <a class="pilcrow" href="#section-183">&#182;</a>
               </div>
               <h3 id="filter">filter</h3>
 <p>Change records are delivered here and filtered, calling any matching
@@ -3736,18 +3712,18 @@ a hash containing:</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>sudo.delegates.Change.prototype.filter = <span class="function"><span class="keyword">function</span> <span class="title">filter</span><span class="params">(change)</span> {</span>
+            <div class="content"><div class='highlight'><pre>sudo.delegates.Change.prototype.filter = <span class="function"><span class="keyword">function</span><span class="params">(change)</span> {</span>
   <span class="keyword">var</span> filters = <span class="keyword">this</span>.data.filters, name = change.name,
     type = change.type, obj = {};</pre></div></div>
             
         </li>
         
         
-        <li id="section-185">
+        <li id="section-184">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-185">&#182;</a>
+                <a class="pilcrow" href="#section-184">&#182;</a>
               </div>
               <p>does my delegator care about this?</p>
 
@@ -3758,11 +3734,11 @@ a hash containing:</p>
         </li>
         
         
-        <li id="section-186">
+        <li id="section-185">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-186">&#182;</a>
+                <a class="pilcrow" href="#section-185">&#182;</a>
               </div>
               <p>assemble the object to return to the method</p>
 
@@ -3775,11 +3751,11 @@ a hash containing:</p>
         </li>
         
         
-        <li id="section-187">
+        <li id="section-186">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-187">&#182;</a>
+                <a class="pilcrow" href="#section-186">&#182;</a>
               </div>
               <p>delete operations will not have any value so no need to look</p>
 
@@ -3796,11 +3772,11 @@ a hash containing:</p>
         </li>
         
         
-        <li id="section-188">
+        <li id="section-187">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-188">&#182;</a>
+                <a class="pilcrow" href="#section-187">&#182;</a>
               </div>
               <p><code>private</code></p>
 
@@ -3811,11 +3787,11 @@ a hash containing:</p>
         </li>
         
         
-        <li id="section-189">
+        <li id="section-188">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-189">&#182;</a>
+                <a class="pilcrow" href="#section-188">&#182;</a>
               </div>
               <h2 id="data-delegate">Data Delegate</h2>
 <p>Delegates, if present, can extend the behavior
@@ -3835,11 +3811,11 @@ and returning values for those if found</p>
         </li>
         
         
-        <li id="section-190">
+        <li id="section-189">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-190">&#182;</a>
+                <a class="pilcrow" href="#section-189">&#182;</a>
               </div>
               <p>inherits from the Filtered Delegate</p>
 
@@ -3850,11 +3826,11 @@ and returning values for those if found</p>
         </li>
         
         
-        <li id="section-191">
+        <li id="section-190">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-191">&#182;</a>
+                <a class="pilcrow" href="#section-190">&#182;</a>
               </div>
               <h3 id="filter">filter</h3>
 <p>iterates over a given object literal and returns a value (if present)
@@ -3870,11 +3846,11 @@ located at a given key or path</p>
         </li>
         
         
-        <li id="section-192">
+        <li id="section-191">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-192">&#182;</a>
+                <a class="pilcrow" href="#section-191">&#182;</a>
               </div>
               <p>keys and paths need different handling</p>
 
@@ -3887,11 +3863,11 @@ located at a given key or path</p>
         </li>
         
         
-        <li id="section-193">
+        <li id="section-192">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-193">&#182;</a>
+                <a class="pilcrow" href="#section-192">&#182;</a>
               </div>
               <p>the chars after the last refinement are the key we need to check for</p>
 
@@ -3902,11 +3878,11 @@ located at a given key or path</p>
         </li>
         
         
-        <li id="section-194">
+        <li id="section-193">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-194">&#182;</a>
+                <a class="pilcrow" href="#section-193">&#182;</a>
               </div>
               <p>and the ones prior are the object</p>
 
@@ -3921,11 +3897,11 @@ located at a given key or path</p>
         </li>
         
         
-        <li id="section-195">
+        <li id="section-194">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-195">&#182;</a>
+                <a class="pilcrow" href="#section-194">&#182;</a>
               </div>
               <p><code>private</code></p>
 

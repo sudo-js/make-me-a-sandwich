@@ -15,7 +15,7 @@ sudo.inherit(sudo.Base, sudo.delegates.Filtered);
 // `param` {string} `k`
 // `param` {string} `v`
 // `returns` {object} this
-sudo.delegates.Filtered.prototype.addFilter = function addFilter(k, v) {
+sudo.delegates.Filtered.prototype.addFilter = function(k, v) {
   this.data.filters[k] = v;
   return this;
 };
@@ -24,7 +24,7 @@ sudo.delegates.Filtered.prototype.addFilter = function addFilter(k, v) {
 //
 // `param` {string} `k`
 // `returns` {object} this
-sudo.delegates.Filtered.prototype.removeFilter = function removeFilter(k) {
+sudo.delegates.Filtered.prototype.removeFilter = function(k) {
   delete this.data.filters[k];
   return this;
 };

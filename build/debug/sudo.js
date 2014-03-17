@@ -118,7 +118,7 @@ sudo.Base = function() {
 //
 // `param` {Object} `del`. An instance of a sudo.delegates Class Object
 // `returns` {Object} `this`
-sudo.Base.prototype.addDelegate = function addDelegate(del) {
+sudo.Base.prototype.addDelegate = function(del) {
   del.delegator = this;
   this.delegates.push(del);
   if('addedAsDelegate' in del) del.addedAsDelegate(this);
@@ -132,7 +132,7 @@ sudo.Base.prototype.addDelegate = function addDelegate(del) {
 //
 // `params` {*} any other number of arguments to be passed to the looked up method
 // along with the initial method name
-sudo.Base.prototype.base = function base() {
+sudo.Base.prototype.base = function() {
   var args = Array.prototype.slice.call(arguments),
     name = args.shift(), 
     found = false,
@@ -151,7 +151,7 @@ sudo.Base.prototype.base = function base() {
 // A convenience method that alleviates the need to place:
 // `Object.getPrototypeOf(this).consturctor.apply(this, arguments)`
 // in every constructor
-sudo.Base.prototype.construct = function construct() {
+sudo.Base.prototype.construct = function() {
   Object.getPrototypeOf(this).constructor.apply(this, arguments || []);
 };
 // ###delegate
@@ -163,7 +163,7 @@ sudo.Base.prototype.construct = function construct() {
 // `param` {String} `role` The role property to match in this object's delegates list
 // `param` {String} `meth` Optional method to bind to the action this delegate is being used for
 // `returns`
-sudo.Base.prototype.delegate = function delegate(role, meth) {
+sudo.Base.prototype.delegate = function(role, meth) {
   var del = this.delegates, i;
   for(i = 0; i < del.length; i++) {
     if(del[i].role === role) {
@@ -179,16 +179,14 @@ sudo.Base.prototype.delegate = function delegate(role, meth) {
 //
 // `param` {String} `role`
 // 'returns' {Object|undefined}
-sudo.Base.prototype.getDelegate = function getDelegate(role) {
-  return this.delegate(role);
-};
+sudo.Base.prototype.getDelegate = function(role) {return this.delegate(role);};
 // ###removeDelegate
 // From this objects `delegates` list remove the object (there should only ever be 1)
 // whose role matches the passed in argument
 //
 // `param` {String} `role`
 // `returns` {Object} `this`
-sudo.Base.prototype.removeDelegate = function removeDelegate(role) {
+sudo.Base.prototype.removeDelegate = function(role) {
   var del = this.delegates, i;
   for(i = 0; i < del.length; i++) {
     if(del[i].role === role) {
@@ -201,8 +199,7 @@ sudo.Base.prototype.removeDelegate = function removeDelegate(role) {
   return this;
 };
 // `private`
-sudo.Base.prototype.role = 'base';
-// ##Model Class Object
+sudo.Base.prototype.role = 'base';// ##Model Class Object
 //
 // Model Objects expose methods for setting and getting data, and
 // can be observed if implementing the `Observable Extension`
@@ -225,16 +222,14 @@ sudo.inherit(sudo.Base, sudo.Model);
 //
 // `param` {String} `k`. The name of the key
 // `returns` {*}. The value associated with the key or false if not found.
-sudo.Model.prototype.get = function get(k) {
-  return this.data[k];
-};
+sudo.Model.prototype.get = function(k) {return this.data[k];};
 // ###getPath
 // Uses the sudo namespace's getpath function operating on the model's
 // data hash.
 //
 // `param` {string} `path`
 // `returns` {*|undefined}. The value at keypath or undefined if not found.
-sudo.Model.prototype.getPath = function getPath(path) {
+sudo.Model.prototype.getPath = function(path) {
   return sudo.getPath(path, this.data);
 };
 // ###gets
@@ -243,7 +238,7 @@ sudo.Model.prototype.getPath = function getPath(path) {
 //
 // `param` {array} `ary`. An array of keys.
 // `returns` {object}
-sudo.Model.prototype.gets = function gets(ary) {
+sudo.Model.prototype.gets = function(ary) {
   var obj = {};
   ary.forEach(function(str) {
     obj[str] = str.indexOf('.') === -1 ? this.get(str) : this.getPath(str);
@@ -258,7 +253,7 @@ sudo.Model.prototype.role = 'model';
 // `param` {String} `k`. The name of the key.
 // `param` {*} `v`. The value associated with the key.
 // `returns` {Object} `this`
-sudo.Model.prototype.set = function set(k, v) {
+sudo.Model.prototype.set = function(k, v) {
   // _NOTE: intentional possibilty of setting a falsy value_
   this.data[k] = v;
   return this;
@@ -270,7 +265,7 @@ sudo.Model.prototype.set = function set(k, v) {
 // `param` {String} `path`
 // `param` {*} `v`
 // `returns` {Object} this.
-sudo.Model.prototype.setPath = function setPath(path, v) {
+sudo.Model.prototype.setPath = function(path, v) {
   sudo.setPath(path, v, this.data);
   return this;
 };
@@ -280,7 +275,7 @@ sudo.Model.prototype.setPath = function setPath(path, v) {
 //
 // `param` {Object} `obj`. The keys and values to set.
 // `returns` {Object} `this`
-sudo.Model.prototype.sets = function sets(obj) {
+sudo.Model.prototype.sets = function(obj) {
   Object.keys(obj).forEach(function(k) {
     k.indexOf('.') === -1 ? this.set(k, obj[k]) : this.setPath(k, obj[k]);
   }.bind(this));
@@ -291,7 +286,7 @@ sudo.Model.prototype.sets = function sets(obj) {
 //
 // `param` {String} `k`
 // `returns` {Object} `this`
-sudo.Model.prototype.unset = function unset(k) {
+sudo.Model.prototype.unset = function(k) {
   delete this.data[k];
   return this;
 };
@@ -300,7 +295,7 @@ sudo.Model.prototype.unset = function unset(k) {
 //
 // `param` {String} path
 // `returns` {Object} `this`
-sudo.Model.prototype.unsetPath = function unsetPath(path) {
+sudo.Model.prototype.unsetPath = function(path) {
   sudo.unsetPath(path, this.data);
   return this;
 };
@@ -309,7 +304,7 @@ sudo.Model.prototype.unsetPath = function unsetPath(path) {
 //
 // `param` {array} `ary`. An array of keys or paths.
 // `returns` {Objaect} `this`
-sudo.Model.prototype.unsets = function unsets(ary) {
+sudo.Model.prototype.unsets = function(ary) {
   ary.forEach(function(k) {
     k.indexOf('.') === -1 ? this.unset(k) : this.unsetPath(k);
   }.bind(this));
@@ -341,7 +336,7 @@ sudo.inherit(sudo.Base, sudo.Container);
 // `param` {Object} `c`. View (or View subclass) instance.
 // `param` {String} `name`. An optional name for the child that will go in the childNames hash.
 // `returns` {Object} `this`
-sudo.Container.prototype.addChild = function addChild(c, name) {
+sudo.Container.prototype.addChild = function(c, name) {
   var ch = this.children;
   c.parent = this;
   c.index = ch.length;
@@ -362,7 +357,7 @@ sudo.Container.prototype.addChild = function addChild(c, name) {
 // `param` {Array|Object} `arg`. An array of children to add or an
 // Object literal in the form {name: child}
 // `returns` {Object} `this` 
-sudo.Container.prototype.addChildren = function addChildren(arg) {
+sudo.Container.prototype.addChildren = function(arg) {
   // normalize the arg
   var keys = Array.isArray(arg) ? undefined : Object.keys(arg),
     ary = keys || arg;
@@ -375,7 +370,7 @@ sudo.Container.prototype.addChildren = function addChildren(arg) {
 // By default, `bubble` returns the current view's parent (if it has one)
 //
 // `returns` {Object|undefined}
-sudo.Container.prototype.bubble = function bubble() {return this.parent;};
+sudo.Container.prototype.bubble = function() {return this.parent;};
 // ###eachChild
 // Call a named method and pass any args to each child in a container's
 // collection of children
@@ -383,7 +378,7 @@ sudo.Container.prototype.bubble = function bubble() {return this.parent;};
 // `param` {*} Any number of arguments the first of which must be
 // The named method to look for and call. Other args are passed through
 // `returns` {object} `this`
-sudo.Container.prototype.eachChild = function eachChild(/*args*/) {
+sudo.Container.prototype.eachChild = function(/*args*/) {
   var args = Array.prototype.slice.call(arguments), meth = args.shift();
   this.children.forEach(function(c) {if(meth in c) c[meth].apply(c, args);});
   return this;
@@ -395,7 +390,7 @@ sudo.Container.prototype.eachChild = function eachChild(/*args*/) {
 //
 // `param` {String|Number} `id`. The string `name` or numeric `index` of the child to fetch.
 // `returns` {Object|undefined} The found child
-sudo.Container.prototype.getChild = function getChild(id) {
+sudo.Container.prototype.getChild = function(id) {
   return typeof id === 'string' ? this.children[this.childNames[id]] :
     this.children[id];
 };
@@ -404,7 +399,7 @@ sudo.Container.prototype.getChild = function getChild(id) {
 // Beginning at `i` decrement subview indices.
 // `param` {Number} `i`
 // `private`
-sudo.Container.prototype._indexChildren_ = function _indexChildren_(i) {
+sudo.Container.prototype._indexChildren_ = function(i) {
   var c = this.children, obj = this.childNames, len;
   for (len = c.length; i < len; i++) {
     c[i].index--;
@@ -417,11 +412,14 @@ sudo.Container.prototype._indexChildren_ = function _indexChildren_(i) {
 // remaining children. This method does not remove the child's DOM.
 // Override this method, doing whatever you want to the child's DOM, then call `base('removeChild')` to do so.
 //
+// If the child being removed has a `removedFromParent` method it will be called after the parenth has
+// finished, passing itself(the parent) as an argument.
+//
 // `param` {String|Number|Object} `arg`. Children will always have an `index` number, and optionally a `name`.
 // If passed a string `name` is assumed, so be sure to pass an actual number if expecting to use index.
 // An object will be assumed to be an actual sudo Class Object.
 // `returns` {Object} `this`
-sudo.Container.prototype.removeChild = function removeChild(arg) {
+sudo.Container.prototype.removeChild = function(arg) {
   var i, t = typeof arg, c;
   // normalize the input
   if(t === 'object') c = arg; 
@@ -436,6 +434,7 @@ sudo.Container.prototype.removeChild = function removeChild(arg) {
   delete c.index;
   delete c.name;
   this._indexChildren_(i);
+  if('removedFromParent' in c) c.removedFromParent(this);
   return this;
 };
 // ###removeChildren
@@ -444,20 +443,13 @@ sudo.Container.prototype.removeChild = function removeChild(arg) {
 //
 // see `removeChild`
 // `returns` {object} `this`
-sudo.Container.prototype.removeChildren = function removeChildren() {
+sudo.Container.prototype.removeChildren = function() {
   Object.keys(this.childNames).forEach(function(n) {
-    this.getChild(n).removeFromParent();
+    this.removeChild(this.getChild(n));
   }.bind(this));
-};
-// ###removeFromParent
-// Remove this object from its parents list of children.
-// Does not alter the dom - do that yourself by overriding this method
-// or chaining method calls
-sudo.Container.prototype.removeFromParent = function removeFromParent() {
-  // will error without a parent, but that would be your fault...
-  this.parent.removeChild(this);
   return this;
 };
+// This is a container, yes.
 sudo.Container.prototype.role = 'container';
 // ###send
 // The call to the specific method on a (un)specified target happens here.
@@ -476,7 +468,7 @@ sudo.Container.prototype.role = 'container';
 // In the case a specified target exists at `this.data.sendTarget` it will be used
 // Any other args will be passed to the sendMethod after `this`
 // `returns` {Object} `this`
-sudo.Container.prototype.send = function send(/*args*/) {
+sudo.Container.prototype.send = function(/*args*/) {
   var args = Array.prototype.slice.call(arguments),
     d = this.data, meth, targ, fn;
   // normalize the input, common use cases first
@@ -532,7 +524,7 @@ sudo.View = function(el, data) {
 sudo.inherit(sudo.Container, sudo.View);
 // the el needs to be normalized before use
 // `private`
-sudo.View.prototype._normalizedEl_ = function _normalizedEl_(el) {
+sudo.View.prototype._normalizedEl_ = function(el) {
   var _el = typeof el === 'string' ? document.querySelector(el) : el;
     // if there is not a top level query returned the desired node may be 
     // in a document fragment not in the DOM yet. We will check the parent's el
@@ -547,7 +539,7 @@ sudo.View.prototype.role = 'view';
 //
 // `param` {string=|element} `el`
 // `returns` {Object} `this`
-sudo.View.prototype.setEl = function setEl(el) {
+sudo.View.prototype.setEl = function(el) {
   var d = this.data, a, t;
   if(!el) {
     // normalize any relevant data
@@ -720,21 +712,19 @@ sudo.inherit(sudo.View, sudo.DataView);
 //
 // `param` {object} `parent` this view's parent
 // `returns` {object} `this`
-sudo.DataView.prototype.addedToParent = function(parent) {
+sudo.DataView.prototype.addedToParent = function() {
   this.bindEvents();
   if(this.data.renderOnAddedToParent) return this.render();
   return this;
 };
-// ###removeFromParent
-// Remove this object from the DOM and its parent's list of children.
-// Overrides `sudo.View.removeFromParent` to unbind events and `remove` its el 
+// ###removedFromParent
+// Remove this object from the DOM, called from the parent's removeChild method.
 //
 // `returns` {Object} `this`
-sudo.DataView.prototype.removeFromParent = function removeFromParent() {
-  this.parent.removeChild(this);
+sudo.DataView.prototype.removedFromParent = function() {
   this.unbindEvents();
   this.el.parentNode && this.el.parentNode.removeChild(this.el);
-  // in the case that this.model is 'foreign'
+  // a render on model change type
   if(this.observer) {
     this.data.model && this.data.model.unobserve(this.observer);
     delete this.observer;
@@ -751,7 +741,7 @@ sudo.DataView.prototype.removeFromParent = function removeFromParent() {
 //
 // `param` {object} `change` dataviews may be observing a model if `renderOnModelChange: true`
 // `returns` {Object} `this`
-sudo.DataView.prototype.render = function render(change) {
+sudo.DataView.prototype.render = function(change) {
   var d = this.data;
   // (re)hydrate the innerHTML
   if(typeof d.template === 'string') d.template = sudo.template(d.template);
@@ -786,7 +776,7 @@ sudo.Navigator.prototype = Object.create(sudo.Model.prototype);
 //
 // `params` {*} N number of path fragments
 // `returns` {string} /a/completed/path?withParams=ifPresent
-sudo.Navigator.prototype.buildPath = function getPath() {
+sudo.Navigator.prototype.buildPath = function() {
   var args = Array.prototype.slice.call(arguments), query;
   // check if the last arg is a hash
   if($.isObject(args[args.length - 1])) {query = this.getQuery(args.pop());}
@@ -798,7 +788,7 @@ sudo.Navigator.prototype.buildPath = function getPath() {
 //
 // `params` {*} N number of path fragments
 // `returns` {string} /a/completed/path?withParams=ifPresent
-sudo.Navigator.prototype.buildRelativePath = function getRelativePath() {
+sudo.Navigator.prototype.buildRelativePath = function() {
   var args = Array.prototype.slice.call(arguments);
   args.unshift(this.data.fragment);
   return this.buildPath.apply(this, args);
@@ -809,7 +799,7 @@ sudo.Navigator.prototype.buildRelativePath = function getRelativePath() {
 //
 // `returns` {String} `fragment`
 // `returns` {String} the normalized current fragment
-sudo.Navigator.prototype.getFragment = function getFragment(fragment) {
+sudo.Navigator.prototype.getFragment = function(fragment) {
   var root = this.data.root;
   if(!fragment) {
     // intentional use of coersion
@@ -829,7 +819,7 @@ sudo.Navigator.prototype.getFragment = function getFragment(fragment) {
 //
 // `param` {string} `fragment` Optional fragment to check
 // `returns` {string} the normalized current `hash`
-sudo.Navigator.prototype.getHash = function getHash(fragment) {
+sudo.Navigator.prototype.getHash = function(fragment) {
   fragment || (fragment = window.location.href);
   var match = fragment.match(/#(.*)$/);
   return match ? match[1] : '';
@@ -839,7 +829,7 @@ sudo.Navigator.prototype.getHash = function getHash(fragment) {
 //
 // `param` {object} `obj`
 // `returns` {string} the serialized query string
-sudo.Navigator.prototype.getQuery = function getQuery(obj) {
+sudo.Navigator.prototype.getQuery = function(obj) {
   return '?' + ($.serialize(obj));
 };
 
@@ -849,7 +839,7 @@ sudo.Navigator.prototype.getQuery = function getQuery(obj) {
 //
 // `param` {string} `fragment` Optional fragment to check
 // `returns` {String} the normalized current `search`
-sudo.Navigator.prototype.getSearch = function getSearch(fragment) {
+sudo.Navigator.prototype.getSearch = function(fragment) {
   fragment || (fragment = window.location.href);
   var match = fragment.match(/\?(.*)$/);
   return match ? match[1] : '';
@@ -858,7 +848,7 @@ sudo.Navigator.prototype.getSearch = function getSearch(fragment) {
 // fetch the URL in the form <root + fragment>
 //
 // `returns` {String}
-sudo.Navigator.prototype.getUrl = function getUrl() {
+sudo.Navigator.prototype.getUrl = function() {
   // note that delegate(_role_) returns the deleagte
   return this.data.root + this.data.fragment;
 };
@@ -868,7 +858,7 @@ sudo.Navigator.prototype.getUrl = function getUrl() {
 //
 // `param` {string} `fragment`
 // `returns` {*} call to `setData`
-sudo.Navigator.prototype.go = function go(fragment) {
+sudo.Navigator.prototype.go = function(fragment) {
   if(!this.started) return false;
   if(!this.urlChanged(fragment)) return;
   // TODO ever use replaceState?
@@ -885,7 +875,7 @@ sudo.Navigator.prototype.go = function go(fragment) {
 // triggering change observers
 //
 // `returns` {*} call to `setData` or undefined
-sudo.Navigator.prototype.handleChange = function handleChange() {
+sudo.Navigator.prototype.handleChange = function() {
   if(this.urlChanged()) {
     return this.setData();
   }
@@ -895,14 +885,14 @@ sudo.Navigator.prototype.handleChange = function handleChange() {
 // the current `query`
 //
 // `returns` {object}
-sudo.Navigator.prototype.parseQuery = function parseQuery() {return $.deserialize(this.data.query);};
+sudo.Navigator.prototype.parseQuery = function() {return $.deserialize(this.data.query);};
 // ###setData
 // Using the current `fragment` (minus any search or hash data) as a key,
 // use `parseQuery` as the value for the key, setting it into the specified
 // model (a stated `Observable` or `this.data`)
 //
 // `returns` {object} `this`
-sudo.Navigator.prototype.setData = function setData() {
+sudo.Navigator.prototype.setData = function() {
   var frag = this.data.fragment,
     // data is set in a specified model or in self
     observable = this.data.observable || this;
@@ -920,7 +910,7 @@ sudo.Navigator.prototype.setData = function setData() {
 // vs pushState) normalize it and set accordingly (or don't).
 //
 // `returns` {object} `this`
-sudo.Navigator.prototype.start = function start() {
+sudo.Navigator.prototype.start = function() {
   var hasPushState, atRoot, tmp;
   if(this.started) return;
   hasPushState = window.history && window.history.pushState;
@@ -964,7 +954,7 @@ sudo.Navigator.prototype.start = function start() {
 //
 // `param` {String} `fragment`
 // `returns` {bool} 
-sudo.Navigator.prototype.urlChanged = function urlChanged(fragment) {
+sudo.Navigator.prototype.urlChanged = function(fragment) {
   var current = this.getFragment(fragment);
   // nothing has changed
   if (current === this.data.fragment) return false;
@@ -985,7 +975,7 @@ sudo.extensions.observable = {
   // changeRecords to observers.
   //
   // `private`
-  _deliver_: function _deliver_(obj) {
+  _deliver_: function(obj) {
     this.callbacks.forEach(function(cb) {
       cb(obj);
     });
@@ -995,7 +985,7 @@ sudo.extensions.observable = {
   // observers. You can override this method to change the standard delivery behavior.
   //
   // `returns` {Object} `this`
-  deliverChangeRecords: function deliverChangeRecords() {
+  deliverChangeRecords: function() {
     var rec, cr = this.changeRecords;
     // FIFO
     for(rec; cr.length && (rec = cr.shift());) {this._deliver_(rec);}
@@ -1016,7 +1006,7 @@ sudo.extensions.observable = {
   //
   // `param` {Function} `fn` The callback to be called with changeRecord(s)
   // `returns` {Function} the Function passed in as an argument
-  observe: function observe(fn) {
+  observe: function(fn) {
     // this will fail if mixed-in and no `callbacks` created so don't do that.
     // Per the spec, do not allow the same callback to be added
     var d = this.callbacks;
@@ -1028,7 +1018,7 @@ sudo.extensions.observable = {
   //
   // `param` {Array} ary
   // `returns` {Array} the Array passed in to observe
-  observes: function observes(ary) {
+  observes: function(ary) {
     ary.forEach(function(fn) {this.observe(fn);}.bind(this));
     return ary;
   },
@@ -1041,7 +1031,7 @@ sudo.extensions.observable = {
   // to be delivered upon a call to deliverChangeRecords (truthy)
   //
   // `returns` {Object|*} `this` or calls deliverChangeRecords
-  set: function set(k, v, hold) {
+  set: function(k, v, hold) {
     var obj = {name: k, object: this.data};
     // did this key exist already
     if(k in this.data) {
@@ -1069,7 +1059,7 @@ sudo.extensions.observable = {
   // `param` {Bool} `hold` Call _deliver_ (falsy) or store the change notification
   // to be delivered upon a call to deliverChangeRecords (truthy)
   // `returns` {Object|*} `this` or calls deliverChangeRecords
-  setPath: function setPath(path, v, hold) {
+  setPath: function(path, v, hold) {
     var curr = this.data, obj = {name: path, object: this.data},
       p = path.split('.'), k;
     for(k; p.length && (k = p.shift());) {
@@ -1096,7 +1086,7 @@ sudo.extensions.observable = {
   // all operations are done
   //
   // `returns` {Object|*} `this` or calls deliverChangeRecords
-  sets: function sets(obj, hold) {
+  sets: function(obj, hold) {
     Object.keys(obj).forEach(function(k) {
       k.indexOf('.') === -1 ? this.set(k, obj[k], true) :
         this.setPath(k, obj[k], true);      
@@ -1109,7 +1099,7 @@ sudo.extensions.observable = {
   //
   // `param` {Function} the function passed in to `observe`
   // `returns` {Object} `this`
-  unobserve: function unobserve(fn) {
+  unobserve: function(fn) {
     var cb = this.callbacks, i = cb.indexOf(fn);
     if(~i) cb.splice(i, 1);
     return this;
@@ -1119,7 +1109,7 @@ sudo.extensions.observable = {
   //
   // `param` {Array} ary
   // `returns` {Object} `this`
-  unobserves: function unobserves(ary) {
+  unobserves: function(ary) {
     ary.forEach(function(fn) {this.unobserve(fn);}.bind(this));
     return this;
   },
@@ -1130,7 +1120,7 @@ sudo.extensions.observable = {
   // `param` {Bool} `hold`
   //
   // `returns` {Object|*} `this` or calls deliverChangeRecords
-  unset: function unset(key, hold) {
+  unset: function(key, hold) {
     var obj = {name: key, object: this.data, type: 'deleted'}, 
       val = !!this.data[key];
     delete this.data[key];
@@ -1141,7 +1131,7 @@ sudo.extensions.observable = {
   // Helper for the unset functions
   //
   // `private`
-  _unset_: function _unset_(o, v, h) {
+  _unset_: function(o, v, h) {
     if(v) {
       this.changeRecords.push(o);
       if(h) return this;
@@ -1157,7 +1147,7 @@ sudo.extensions.observable = {
   // `param` {bool} `hold`
   //
   // `returns` {Object|*} `this` or calls deliverChangeRecords
-  unsetPath: function unsetPath(path, hold) {
+  unsetPath: function(path, hold) {
     var obj = {name: path, object: this.data, type: 'deleted'}, 
       curr = this.data, p = path.split('.'), 
       k, v;
@@ -1180,7 +1170,7 @@ sudo.extensions.observable = {
   // `param` ary 
   // `param` hold
   // `returns` {Object|*} `this` or calls deliverChangeRecords
-  unsets: function unsets(ary, hold) {
+  unsets: function(ary, hold) {
     ary.forEach(function(k) {
       k.indexOf('.') === -1 ? this.unset(k, true) : this.unsetPath(k, true);   
     }.bind(this));
@@ -1212,14 +1202,14 @@ sudo.extensions.listener = {
   // Bind the events in the data store to this object's el
   //
   // `returns` {Object} `this`
-  bindEvents: function bindEvents() {
+  bindEvents: function() {
     var e;
     if((e = this.data.event || this.data.events)) this._handleEvents_(e, 1);
     return this;
   },
   // Use the cash `on` or 'off' method, optionally delegating to a selector if present
   // `private`
-  _handleEvents_: function _handleEvents_(e, which) {
+  _handleEvents_: function(e, which) {
     Array.isArray(e) ? 
       e.forEach(function(ev) {this._handleEvent_(ev, which);}.bind(this)) :
       this._handleEvent_(e, which);
@@ -1228,7 +1218,7 @@ sudo.extensions.listener = {
   // `param` {Object} e. An event descriptor
   // `param` {String} which. `on` or `off`
   // `private`
-  _handleEvent_: function _handleEvent_(e, which) {
+  _handleEvent_: function(e, which) {
     which ?
       $(this.el).on(e.on, typeof e.fn === 'string' ? this[e.fn].bind(this) : e.fn, e.sel, e.data) :
       // do not send the fn going to off otherwise the unbind will fail
@@ -1240,14 +1230,14 @@ sudo.extensions.listener = {
   // Convenience method for `this.unbindEvents().bindEvents()`
   //
   // 'returns' {object} 'this'
-  rebindEvents: function rebindEvents() {
+  rebindEvents: function() {
     return this.unbindEvents().bindEvents();
   },
   // ###unbindEvents
   // Unbind the events in the data store from this object's el
   //
   // `returns` {Object} `this`
-  unbindEvents: function unbindEvents() {
+  unbindEvents: function() {
     var e;
     if((e = this.data.event || this.data.events)) this._handleEvents_(e);
     return this;
@@ -1282,7 +1272,7 @@ sudo.extensions.persistable = {
   //
   // `param` {object} `params` Hash of options for the XHR call
   // `returns` {object} The XHR object
-  create: function create(params) {
+  create: function(params) {
     return this._sendData_('POST', params);
   },
   // ###destroy
@@ -1291,7 +1281,7 @@ sudo.extensions.persistable = {
   //
   // `param` {object} `params` Optional hash of options for the XHR
   // `returns` {object} Xhr
-  destroy: function _delete(params) {
+  destroy: function(params) {
     return this._sendData_('DELETE', params);
   },
   // ###_normalizeParams_
@@ -1302,7 +1292,7 @@ sudo.extensions.persistable = {
   // parsed response returned from the server
   //
   // `returns` {object} A normalized params object for the XHR call
-  _normalizeParams_: function _normalizeParams_(verb, opts, params) {
+  _normalizeParams_: function(verb, opts, params) {
     var self = this;
     opts || (opts = $.extend({}, this.data.ajax));
     opts.url || (opts.url = this.url(opts.baseUrl));
@@ -1332,7 +1322,7 @@ sudo.extensions.persistable = {
   // `param` {object} `params`. Optional info for the XHR call. If
   // present will override any set in this model's `ajax` options object.
   // `returns` {object} The XHR object
-  read: function post(params) {
+  read: function(params) {
     var opts = this._normalizeParams_('GET', null, params),
       xhr = $.getXhr(opts);
     xhr.send();
@@ -1345,7 +1335,7 @@ sudo.extensions.persistable = {
   //
   // `param` {object} `params` Hash of options for the XHR call
   // `returns` {object} The XHR object
-  save: function save(params) {
+  save: function(params) {
     return ('id' in this.data) ? this.update(params) : this.create(params);
   },
   // ###_sendData_
@@ -1353,7 +1343,7 @@ sudo.extensions.persistable = {
   // varying only in their HTTP method. Abstracted logic is here.
   //
   // `returns` {object} Xhr
-  _sendData_: function _sendData_(verb, params) {
+  _sendData_: function(verb, params) {
     var opts = this._normalizeParams_(verb, null, params),
       xhr = $.getXhr(opts);
     xhr.send(opts.data || JSON.stringify(this.data));
@@ -1371,7 +1361,7 @@ sudo.extensions.persistable = {
   //
   // `param` {object} `params` Optional hash of options for the XHR
   // `returns` {object|bool} the Xhr if called false if not
-  update: function update(params) {
+  update: function(params) {
     return this._sendData_((this.data.ajax.patch || params && params.patch) ? 
       'PATCH' : 'PUT', params);
   },
@@ -1382,7 +1372,7 @@ sudo.extensions.persistable = {
   // Override if you need to change the format of the calculated url.
   //
   // `param` {string} `base` the baseUrl set in this models ajax options
-  url: function url(base) {
+  url: function(base) {
     // could possibly be 0...
     if('id' in this.data) {
       return base + (base.charAt(base.length - 1) === '/' ? 
@@ -1406,7 +1396,7 @@ sudo.inherit(sudo.Base, sudo.delegates.Filtered);
 // `param` {string} `k`
 // `param` {string} `v`
 // `returns` {object} this
-sudo.delegates.Filtered.prototype.addFilter = function addFilter(k, v) {
+sudo.delegates.Filtered.prototype.addFilter = function(k, v) {
   this.data.filters[k] = v;
   return this;
 };
@@ -1415,7 +1405,7 @@ sudo.delegates.Filtered.prototype.addFilter = function addFilter(k, v) {
 //
 // `param` {string} `k`
 // `returns` {object} this
-sudo.delegates.Filtered.prototype.removeFilter = function removeFilter(k) {
+sudo.delegates.Filtered.prototype.removeFilter = function(k) {
   delete this.data.filters[k];
   return this;
 };
@@ -1446,7 +1436,7 @@ sudo.delegates.Change.prototype = Object.create(sudo.delegates.Filtered.prototyp
 // 2. the `name` of the changed property
 // 3. the value located at the key/path
 // 4. the `oldValue` of the key if present
-sudo.delegates.Change.prototype.filter = function filter(change) {
+sudo.delegates.Change.prototype.filter = function(change) {
   var filters = this.data.filters, name = change.name,
     type = change.type, obj = {};
   // does my delegator care about this?

@@ -27,7 +27,7 @@ sudo.View = function(el, data) {
 sudo.inherit(sudo.Container, sudo.View);
 // the el needs to be normalized before use
 // `private`
-sudo.View.prototype._normalizedEl_ = function _normalizedEl_(el) {
+sudo.View.prototype._normalizedEl_ = function(el) {
   var _el = typeof el === 'string' ? document.querySelector(el) : el;
     // if there is not a top level query returned the desired node may be 
     // in a document fragment not in the DOM yet. We will check the parent's el
@@ -42,7 +42,7 @@ sudo.View.prototype.role = 'view';
 //
 // `param` {string=|element} `el`
 // `returns` {Object} `this`
-sudo.View.prototype.setEl = function setEl(el) {
+sudo.View.prototype.setEl = function(el) {
   var d = this.data, a, t;
   if(!el) {
     // normalize any relevant data

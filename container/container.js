@@ -24,7 +24,7 @@ sudo.inherit(sudo.Base, sudo.Container);
 // `param` {Object} `c`. View (or View subclass) instance.
 // `param` {String} `name`. An optional name for the child that will go in the childNames hash.
 // `returns` {Object} `this`
-sudo.Container.prototype.addChild = function addChild(c, name) {
+sudo.Container.prototype.addChild = function(c, name) {
   var ch = this.children;
   c.parent = this;
   c.index = ch.length;
@@ -45,7 +45,7 @@ sudo.Container.prototype.addChild = function addChild(c, name) {
 // `param` {Array|Object} `arg`. An array of children to add or an
 // Object literal in the form {name: child}
 // `returns` {Object} `this` 
-sudo.Container.prototype.addChildren = function addChildren(arg) {
+sudo.Container.prototype.addChildren = function(arg) {
   // normalize the arg
   var keys = Array.isArray(arg) ? undefined : Object.keys(arg),
     ary = keys || arg;
@@ -58,7 +58,7 @@ sudo.Container.prototype.addChildren = function addChildren(arg) {
 // By default, `bubble` returns the current view's parent (if it has one)
 //
 // `returns` {Object|undefined}
-sudo.Container.prototype.bubble = function bubble() {return this.parent;};
+sudo.Container.prototype.bubble = function() {return this.parent;};
 // ###eachChild
 // Call a named method and pass any args to each child in a container's
 // collection of children
@@ -66,7 +66,7 @@ sudo.Container.prototype.bubble = function bubble() {return this.parent;};
 // `param` {*} Any number of arguments the first of which must be
 // The named method to look for and call. Other args are passed through
 // `returns` {object} `this`
-sudo.Container.prototype.eachChild = function eachChild(/*args*/) {
+sudo.Container.prototype.eachChild = function(/*args*/) {
   var args = Array.prototype.slice.call(arguments), meth = args.shift();
   this.children.forEach(function(c) {if(meth in c) c[meth].apply(c, args);});
   return this;
@@ -78,7 +78,7 @@ sudo.Container.prototype.eachChild = function eachChild(/*args*/) {
 //
 // `param` {String|Number} `id`. The string `name` or numeric `index` of the child to fetch.
 // `returns` {Object|undefined} The found child
-sudo.Container.prototype.getChild = function getChild(id) {
+sudo.Container.prototype.getChild = function(id) {
   return typeof id === 'string' ? this.children[this.childNames[id]] :
     this.children[id];
 };
@@ -87,7 +87,7 @@ sudo.Container.prototype.getChild = function getChild(id) {
 // Beginning at `i` decrement subview indices.
 // `param` {Number} `i`
 // `private`
-sudo.Container.prototype._indexChildren_ = function _indexChildren_(i) {
+sudo.Container.prototype._indexChildren_ = function(i) {
   var c = this.children, obj = this.childNames, len;
   for (len = c.length; i < len; i++) {
     c[i].index--;
@@ -100,11 +100,14 @@ sudo.Container.prototype._indexChildren_ = function _indexChildren_(i) {
 // remaining children. This method does not remove the child's DOM.
 // Override this method, doing whatever you want to the child's DOM, then call `base('removeChild')` to do so.
 //
+// If the child being removed has a `removedFromParent` method it will be called after the parenth has
+// finished, passing itself(the parent) as an argument.
+//
 // `param` {String|Number|Object} `arg`. Children will always have an `index` number, and optionally a `name`.
 // If passed a string `name` is assumed, so be sure to pass an actual number if expecting to use index.
 // An object will be assumed to be an actual sudo Class Object.
 // `returns` {Object} `this`
-sudo.Container.prototype.removeChild = function removeChild(arg) {
+sudo.Container.prototype.removeChild = function(arg) {
   var i, t = typeof arg, c;
   // normalize the input
   if(t === 'object') c = arg; 
@@ -119,6 +122,7 @@ sudo.Container.prototype.removeChild = function removeChild(arg) {
   delete c.index;
   delete c.name;
   this._indexChildren_(i);
+  if('removedFromParent' in c) c.removedFromParent(this);
   return this;
 };
 // ###removeChildren
@@ -127,20 +131,13 @@ sudo.Container.prototype.removeChild = function removeChild(arg) {
 //
 // see `removeChild`
 // `returns` {object} `this`
-sudo.Container.prototype.removeChildren = function removeChildren() {
+sudo.Container.prototype.removeChildren = function() {
   Object.keys(this.childNames).forEach(function(n) {
-    this.getChild(n).removeFromParent();
+    this.removeChild(this.getChild(n));
   }.bind(this));
-};
-// ###removeFromParent
-// Remove this object from its parents list of children.
-// Does not alter the dom - do that yourself by overriding this method
-// or chaining method calls
-sudo.Container.prototype.removeFromParent = function removeFromParent() {
-  // will error without a parent, but that would be your fault...
-  this.parent.removeChild(this);
   return this;
 };
+// This is a container, yes.
 sudo.Container.prototype.role = 'container';
 // ###send
 // The call to the specific method on a (un)specified target happens here.
@@ -159,7 +156,7 @@ sudo.Container.prototype.role = 'container';
 // In the case a specified target exists at `this.data.sendTarget` it will be used
 // Any other args will be passed to the sendMethod after `this`
 // `returns` {Object} `this`
-sudo.Container.prototype.send = function send(/*args*/) {
+sudo.Container.prototype.send = function(/*args*/) {
   var args = Array.prototype.slice.call(arguments),
     d = this.data, meth, targ, fn;
   // normalize the input, common use cases first

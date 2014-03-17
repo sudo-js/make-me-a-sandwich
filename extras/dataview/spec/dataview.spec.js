@@ -131,7 +131,7 @@ describe('sudo.js Dataview Object', function() {
     vc.addChild(dv2);
     expect(document.querySelector('#testTarget').innerHTML).toBeTruthy();
 
-    dv2.removeFromParent();
+    vc.removeChild(dv2);
     expect(document.querySelector('#testTarget').innerHTML).toBeFalsy();
   });
   
@@ -141,7 +141,6 @@ describe('sudo.js Dataview Object', function() {
         id: 'spam', 
         'class': 'eggs'
       },
-      model: mod,
       template: '<div id="two"></div>'
     });
 

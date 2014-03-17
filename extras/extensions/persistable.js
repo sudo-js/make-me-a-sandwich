@@ -27,7 +27,7 @@ sudo.extensions.persistable = {
   //
   // `param` {object} `params` Hash of options for the XHR call
   // `returns` {object} The XHR object
-  create: function create(params) {
+  create: function(params) {
     return this._sendData_('POST', params);
   },
   // ###destroy
@@ -36,7 +36,7 @@ sudo.extensions.persistable = {
   //
   // `param` {object} `params` Optional hash of options for the XHR
   // `returns` {object} Xhr
-  destroy: function _delete(params) {
+  destroy: function(params) {
     return this._sendData_('DELETE', params);
   },
   // ###_normalizeParams_
@@ -47,7 +47,7 @@ sudo.extensions.persistable = {
   // parsed response returned from the server
   //
   // `returns` {object} A normalized params object for the XHR call
-  _normalizeParams_: function _normalizeParams_(verb, opts, params) {
+  _normalizeParams_: function(verb, opts, params) {
     var self = this;
     opts || (opts = $.extend({}, this.data.ajax));
     opts.url || (opts.url = this.url(opts.baseUrl));
@@ -77,7 +77,7 @@ sudo.extensions.persistable = {
   // `param` {object} `params`. Optional info for the XHR call. If
   // present will override any set in this model's `ajax` options object.
   // `returns` {object} The XHR object
-  read: function post(params) {
+  read: function(params) {
     var opts = this._normalizeParams_('GET', null, params),
       xhr = $.getXhr(opts);
     xhr.send();
@@ -90,7 +90,7 @@ sudo.extensions.persistable = {
   //
   // `param` {object} `params` Hash of options for the XHR call
   // `returns` {object} The XHR object
-  save: function save(params) {
+  save: function(params) {
     return ('id' in this.data) ? this.update(params) : this.create(params);
   },
   // ###_sendData_
@@ -98,7 +98,7 @@ sudo.extensions.persistable = {
   // varying only in their HTTP method. Abstracted logic is here.
   //
   // `returns` {object} Xhr
-  _sendData_: function _sendData_(verb, params) {
+  _sendData_: function(verb, params) {
     var opts = this._normalizeParams_(verb, null, params),
       xhr = $.getXhr(opts);
     xhr.send(opts.data || JSON.stringify(this.data));
@@ -116,7 +116,7 @@ sudo.extensions.persistable = {
   //
   // `param` {object} `params` Optional hash of options for the XHR
   // `returns` {object|bool} the Xhr if called false if not
-  update: function update(params) {
+  update: function(params) {
     return this._sendData_((this.data.ajax.patch || params && params.patch) ? 
       'PATCH' : 'PUT', params);
   },
@@ -127,7 +127,7 @@ sudo.extensions.persistable = {
   // Override if you need to change the format of the calculated url.
   //
   // `param` {string} `base` the baseUrl set in this models ajax options
-  url: function url(base) {
+  url: function(base) {
     // could possibly be 0...
     if('id' in this.data) {
       return base + (base.charAt(base.length - 1) === '/' ? 

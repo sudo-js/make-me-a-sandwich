@@ -35,21 +35,19 @@ sudo.inherit(sudo.View, sudo.DataView);
 //
 // `param` {object} `parent` this view's parent
 // `returns` {object} `this`
-sudo.DataView.prototype.addedToParent = function(parent) {
+sudo.DataView.prototype.addedToParent = function() {
   this.bindEvents();
   if(this.data.renderOnAddedToParent) return this.render();
   return this;
 };
-// ###removeFromParent
-// Remove this object from the DOM and its parent's list of children.
-// Overrides `sudo.View.removeFromParent` to unbind events and `remove` its el 
+// ###removedFromParent
+// Remove this object from the DOM, called from the parent's removeChild method.
 //
 // `returns` {Object} `this`
-sudo.DataView.prototype.removeFromParent = function removeFromParent() {
-  this.parent.removeChild(this);
+sudo.DataView.prototype.removedFromParent = function() {
   this.unbindEvents();
   this.el.parentNode && this.el.parentNode.removeChild(this.el);
-  // in the case that this.model is 'foreign'
+  // a render on model change type
   if(this.observer) {
     this.data.model && this.data.model.unobserve(this.observer);
     delete this.observer;
@@ -66,7 +64,7 @@ sudo.DataView.prototype.removeFromParent = function removeFromParent() {
 //
 // `param` {object} `change` dataviews may be observing a model if `renderOnModelChange: true`
 // `returns` {Object} `this`
-sudo.DataView.prototype.render = function render(change) {
+sudo.DataView.prototype.render = function(change) {
   var d = this.data;
   // (re)hydrate the innerHTML
   if(typeof d.template === 'string') d.template = sudo.template(d.template);
