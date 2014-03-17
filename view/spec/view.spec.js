@@ -63,11 +63,12 @@ describe('sudo.js View Object', function() {
   it('can remove itself from a parent', function() {
     var vc = new _.View();
     v2.addedToParent = function(parent) {parent.el.appendChild(this.el);};
+    v2.removedFromParent = function(parent) {this.el.parentNode.removeChild(this.el);};
     vc.addChild(v2);
     expect(vc.children.length).toBe(1);
     expect(vc.qsa('#spam').length).toBe(1);
-
-    v2.removeFromParent().el.parentNode.removeChild(v2.el);
+    
+    vc.removeChild(v2);
 
     expect(vc.children.length).toBe(0);
     expect(vc.qsa('#spam').length).toBe(0);

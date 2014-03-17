@@ -445,7 +445,7 @@ sudo.Container.prototype.removeChild = function(arg) {
 // `returns` {object} `this`
 sudo.Container.prototype.removeChildren = function() {
   Object.keys(this.childNames).forEach(function(n) {
-    this.getChild(n).removeFromParent();
+    this.removeChild(this.getChild(n));
   }.bind(this));
   return this;
 };
