@@ -22,14 +22,14 @@ sudo.extensions.listener = {
   // Bind the events in the data store to this object's el
   //
   // `returns` {Object} `this`
-  bindEvents: function bindEvents() {
+  bindEvents: function() {
     var e;
     if((e = this.data.event || this.data.events)) this._handleEvents_(e, 1);
     return this;
   },
   // Use the cash `on` or 'off' method, optionally delegating to a selector if present
   // `private`
-  _handleEvents_: function _handleEvents_(e, which) {
+  _handleEvents_: function(e, which) {
     Array.isArray(e) ? 
       e.forEach(function(ev) {this._handleEvent_(ev, which);}.bind(this)) :
       this._handleEvent_(e, which);
@@ -38,7 +38,7 @@ sudo.extensions.listener = {
   // `param` {Object} e. An event descriptor
   // `param` {String} which. `on` or `off`
   // `private`
-  _handleEvent_: function _handleEvent_(e, which) {
+  _handleEvent_: function(e, which) {
     which ?
       $(this.el).on(e.on, typeof e.fn === 'string' ? this[e.fn].bind(this) : e.fn, e.sel, e.data) :
       // do not send the fn going to off otherwise the unbind will fail
@@ -50,14 +50,14 @@ sudo.extensions.listener = {
   // Convenience method for `this.unbindEvents().bindEvents()`
   //
   // 'returns' {object} 'this'
-  rebindEvents: function rebindEvents() {
+  rebindEvents: function() {
     return this.unbindEvents().bindEvents();
   },
   // ###unbindEvents
   // Unbind the events in the data store from this object's el
   //
   // `returns` {Object} `this`
-  unbindEvents: function unbindEvents() {
+  unbindEvents: function() {
     var e;
     if((e = this.data.event || this.data.events)) this._handleEvents_(e);
     return this;

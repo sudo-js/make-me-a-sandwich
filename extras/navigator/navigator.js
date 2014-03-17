@@ -19,7 +19,7 @@ sudo.Navigator.prototype = Object.create(sudo.Model.prototype);
 //
 // `params` {*} N number of path fragments
 // `returns` {string} /a/completed/path?withParams=ifPresent
-sudo.Navigator.prototype.buildPath = function getPath() {
+sudo.Navigator.prototype.buildPath = function() {
   var args = Array.prototype.slice.call(arguments), query;
   // check if the last arg is a hash
   if($.isObject(args[args.length - 1])) {query = this.getQuery(args.pop());}
@@ -31,7 +31,7 @@ sudo.Navigator.prototype.buildPath = function getPath() {
 //
 // `params` {*} N number of path fragments
 // `returns` {string} /a/completed/path?withParams=ifPresent
-sudo.Navigator.prototype.buildRelativePath = function getRelativePath() {
+sudo.Navigator.prototype.buildRelativePath = function() {
   var args = Array.prototype.slice.call(arguments);
   args.unshift(this.data.fragment);
   return this.buildPath.apply(this, args);
@@ -42,7 +42,7 @@ sudo.Navigator.prototype.buildRelativePath = function getRelativePath() {
 //
 // `returns` {String} `fragment`
 // `returns` {String} the normalized current fragment
-sudo.Navigator.prototype.getFragment = function getFragment(fragment) {
+sudo.Navigator.prototype.getFragment = function(fragment) {
   var root = this.data.root;
   if(!fragment) {
     // intentional use of coersion
@@ -62,7 +62,7 @@ sudo.Navigator.prototype.getFragment = function getFragment(fragment) {
 //
 // `param` {string} `fragment` Optional fragment to check
 // `returns` {string} the normalized current `hash`
-sudo.Navigator.prototype.getHash = function getHash(fragment) {
+sudo.Navigator.prototype.getHash = function(fragment) {
   fragment || (fragment = window.location.href);
   var match = fragment.match(/#(.*)$/);
   return match ? match[1] : '';
@@ -72,7 +72,7 @@ sudo.Navigator.prototype.getHash = function getHash(fragment) {
 //
 // `param` {object} `obj`
 // `returns` {string} the serialized query string
-sudo.Navigator.prototype.getQuery = function getQuery(obj) {
+sudo.Navigator.prototype.getQuery = function(obj) {
   return '?' + ($.serialize(obj));
 };
 
@@ -82,7 +82,7 @@ sudo.Navigator.prototype.getQuery = function getQuery(obj) {
 //
 // `param` {string} `fragment` Optional fragment to check
 // `returns` {String} the normalized current `search`
-sudo.Navigator.prototype.getSearch = function getSearch(fragment) {
+sudo.Navigator.prototype.getSearch = function(fragment) {
   fragment || (fragment = window.location.href);
   var match = fragment.match(/\?(.*)$/);
   return match ? match[1] : '';
@@ -91,7 +91,7 @@ sudo.Navigator.prototype.getSearch = function getSearch(fragment) {
 // fetch the URL in the form <root + fragment>
 //
 // `returns` {String}
-sudo.Navigator.prototype.getUrl = function getUrl() {
+sudo.Navigator.prototype.getUrl = function() {
   // note that delegate(_role_) returns the deleagte
   return this.data.root + this.data.fragment;
 };
@@ -101,7 +101,7 @@ sudo.Navigator.prototype.getUrl = function getUrl() {
 //
 // `param` {string} `fragment`
 // `returns` {*} call to `setData`
-sudo.Navigator.prototype.go = function go(fragment) {
+sudo.Navigator.prototype.go = function(fragment) {
   if(!this.started) return false;
   if(!this.urlChanged(fragment)) return;
   // TODO ever use replaceState?
@@ -118,7 +118,7 @@ sudo.Navigator.prototype.go = function go(fragment) {
 // triggering change observers
 //
 // `returns` {*} call to `setData` or undefined
-sudo.Navigator.prototype.handleChange = function handleChange() {
+sudo.Navigator.prototype.handleChange = function() {
   if(this.urlChanged()) {
     return this.setData();
   }
@@ -128,14 +128,14 @@ sudo.Navigator.prototype.handleChange = function handleChange() {
 // the current `query`
 //
 // `returns` {object}
-sudo.Navigator.prototype.parseQuery = function parseQuery() {return $.deserialize(this.data.query);};
+sudo.Navigator.prototype.parseQuery = function() {return $.deserialize(this.data.query);};
 // ###setData
 // Using the current `fragment` (minus any search or hash data) as a key,
 // use `parseQuery` as the value for the key, setting it into the specified
 // model (a stated `Observable` or `this.data`)
 //
 // `returns` {object} `this`
-sudo.Navigator.prototype.setData = function setData() {
+sudo.Navigator.prototype.setData = function() {
   var frag = this.data.fragment,
     // data is set in a specified model or in self
     observable = this.data.observable || this;
@@ -153,7 +153,7 @@ sudo.Navigator.prototype.setData = function setData() {
 // vs pushState) normalize it and set accordingly (or don't).
 //
 // `returns` {object} `this`
-sudo.Navigator.prototype.start = function start() {
+sudo.Navigator.prototype.start = function() {
   var hasPushState, atRoot, tmp;
   if(this.started) return;
   hasPushState = window.history && window.history.pushState;
@@ -197,7 +197,7 @@ sudo.Navigator.prototype.start = function start() {
 //
 // `param` {String} `fragment`
 // `returns` {bool} 
-sudo.Navigator.prototype.urlChanged = function urlChanged(fragment) {
+sudo.Navigator.prototype.urlChanged = function(fragment) {
   var current = this.getFragment(fragment);
   // nothing has changed
   if (current === this.data.fragment) return false;
