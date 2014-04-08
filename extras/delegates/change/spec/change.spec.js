@@ -67,4 +67,10 @@ describe('Sudo Change Delegate', function() {
     expect(view.delegates.length).toBe(0);
     expect(del.delegator).toBeFalsy();
   });
+
+  it('returns change.object from filter', function() {
+    var spy = spyOn(view, 'denyDivinity');
+    model.set('is.messiah', false);
+    expect(spy.mostRecentCall.args[0].object).toBeTruthy();
+  });
 });

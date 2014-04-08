@@ -15,7 +15,7 @@ sudo.delegates.Change = function(data) {
 sudo.delegates.Change.prototype = Object.create(sudo.delegates.Filtered.prototype);
 // ###filter
 // Change records are delivered here and filtered, calling any matching
-// methods specified in `this.get('filters').
+// methods specified in `this.get('filters')`.
 //
 // `returns` {Object} a call to the specified _delegator_ method, passing
 // a hash containing:
@@ -23,9 +23,10 @@ sudo.delegates.Change.prototype = Object.create(sudo.delegates.Filtered.prototyp
 // 2. the `name` of the changed property
 // 3. the value located at the key/path
 // 4. the `oldValue` of the key if present
-sudo.delegates.Change.prototype.filter = function(change) {
+// 5. the `object` that was changed
+sudo.delegates.Change.prototype.filter = function filter(change) {
   var filters = this.data.filters, name = change.name,
-    type = change.type, obj = {};
+    type = change.type, obj = { object: change && change.object };
   // does my delegator care about this?
   if(name in filters && filters.hasOwnProperty(name)) {
     // assemble the object to return to the method
