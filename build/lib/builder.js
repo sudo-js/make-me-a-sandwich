@@ -37,7 +37,11 @@ Builder.prototype.readerScriptsParsed = function(change) {
       this.get('pathfinder'));
     this.printline("Writing `debug version` of file: " + FW.get('filename'));
     // include the version number in the string data
-    FW.writeDebug(this.FR.get('concat_source') + version);
+    FW.writeDebug(this.FR.getAlpha(), this.FR.get('concat_source') + version, 
+      this.FR.getOmega());
+      
+    console.log(' - stripping JSHint globals');
+    FW.stripGlobals();
     console.log(" - debug file written");	
   }
 };

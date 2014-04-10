@@ -1,0 +1,3 @@
+(function(window) {
+var slice = Array.prototype.slice, isArray = Array.isArray, keys = Object.keys, 
+getProto = Object.getPrototypeOf, create = Object.create;

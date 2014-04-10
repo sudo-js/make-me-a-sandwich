@@ -1,3 +1,5 @@
+/*global slice*/
+
 // ##Navigator Class Object
 
 // Abstracts location and history events, parsing their information into a 
@@ -20,7 +22,7 @@ sudo.Navigator.prototype = Object.create(sudo.Model.prototype);
 // `params` {*} N number of path fragments
 // `returns` {string} /a/completed/path?withParams=ifPresent
 sudo.Navigator.prototype.buildPath = function() {
-  var args = Array.prototype.slice.call(arguments), query;
+  var args = slice.call(arguments), query;
   // check if the last arg is a hash
   if($.isObject(args[args.length - 1])) {query = this.getQuery(args.pop());}
   return this.data.root + args.join('/') + (query || '');
@@ -32,7 +34,7 @@ sudo.Navigator.prototype.buildPath = function() {
 // `params` {*} N number of path fragments
 // `returns` {string} /a/completed/path?withParams=ifPresent
 sudo.Navigator.prototype.buildRelativePath = function() {
-  var args = Array.prototype.slice.call(arguments);
+  var args = slice.call(arguments);
   args.unshift(this.data.fragment);
   return this.buildPath.apply(this, args);
 };

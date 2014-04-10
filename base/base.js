@@ -1,3 +1,5 @@
+/*global slice getProto*/
+
 // ##Base Class Object
 //
 // All sudo.js objects inherit base, giving the ability
@@ -31,14 +33,14 @@ sudo.Base.prototype.addDelegate = function(del) {
 // `params` {*} any other number of arguments to be passed to the looked up method
 // along with the initial method name
 sudo.Base.prototype.base = function() {
-  var args = Array.prototype.slice.call(arguments),
-    name = args.shift(), 
+  var args = slice.call(arguments),
+    name = args.shift(),
     found = false,
     obj = this,
     curr;
   // find method on the prototype, excluding the caller
   while(!found) {
-    curr = Object.getPrototypeOf(obj);
+    curr = getProto(obj);
     if(curr[name] && curr[name] !== this[name]) found = true;
     // keep digging
     else obj = curr;
@@ -50,7 +52,7 @@ sudo.Base.prototype.base = function() {
 // `Object.getPrototypeOf(this).consturctor.apply(this, arguments)`
 // in every constructor
 sudo.Base.prototype.construct = function() {
-  Object.getPrototypeOf(this).constructor.apply(this, arguments || []);
+  getProto(this).constructor.apply(this, arguments || []);
 };
 // ###delegate
 // From this object's list of delegates find the object whose `_role_` matches

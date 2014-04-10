@@ -1,3 +1,5 @@
+/*global keys*/
+
 // ## Observable Extension Object
 //
 // Implementaion of the ES6 Harmony Observer pattern.
@@ -44,7 +46,7 @@ sudo.extensions.observable = {
     // this will fail if mixed-in and no `callbacks` created so don't do that.
     // Per the spec, do not allow the same callback to be added
     var d = this.callbacks;
-    if(d.indexOf(fn) === -1) d.push(fn);
+    if(!~d.indexOf(fn)) d.push(fn);
     return fn;
   },
   // ###observes
@@ -121,8 +123,8 @@ sudo.extensions.observable = {
   //
   // `returns` {Object|*} `this` or calls deliverChangeRecords
   sets: function(obj, hold) {
-    Object.keys(obj).forEach(function(k) {
-      k.indexOf('.') === -1 ? this.set(k, obj[k], true) :
+    keys(obj).forEach(function(k) {
+      !~k.indexOf('.') ? this.set(k, obj[k], true) :
         this.setPath(k, obj[k], true);      
     }.bind(this));
     if(hold) return this;
@@ -206,7 +208,7 @@ sudo.extensions.observable = {
   // `returns` {Object|*} `this` or calls deliverChangeRecords
   unsets: function(ary, hold) {
     ary.forEach(function(k) {
-      k.indexOf('.') === -1 ? this.unset(k, true) : this.unsetPath(k, true);   
+      !~k.indexOf('.') ? this.unset(k, true) : this.unsetPath(k, true);   
     }.bind(this));
     if(hold) return this;
     return this.deliverChangeRecords();	

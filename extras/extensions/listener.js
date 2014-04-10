@@ -1,3 +1,5 @@
+/*global isArray*/
+
 // ##Listener Extension Object
 
 // Handles event binding/unbinding via an events array in the form:
@@ -30,7 +32,7 @@ sudo.extensions.listener = {
   // Use the cash `on` or 'off' method, optionally delegating to a selector if present
   // `private`
   _handleEvents_: function(e, which) {
-    Array.isArray(e) ? 
+    isArray(e) ? 
       e.forEach(function(ev) {this._handleEvent_(ev, which);}.bind(this)) :
       this._handleEvent_(e, which);
   },

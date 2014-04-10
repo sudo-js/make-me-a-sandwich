@@ -1,3 +1,5 @@
+/*global keys*/
+
 //##Data Delegate
 
 // Delegates, if present, can extend the behavior
@@ -20,9 +22,9 @@ sudo.delegates.Data.prototype = Object.create(sudo.delegates.Filtered.prototype)
 // `param` {Object} `obj`
 sudo.delegates.Data.prototype.filter = function(obj) {
   var filters = this.data.filters, sl, o;
-  Object.keys(filters).forEach(function(k) {
+  keys(filters).forEach(function(k) {
     // keys and paths need different handling
-    if(k.indexOf('.') === -1) {
+    if(!~k.indexOf('.')) {
       if(k in obj) this.delegator[filters[k]].call(this.delegator, obj[k]);	
     } else {
       // the chars after the last refinement are the key we need to check for

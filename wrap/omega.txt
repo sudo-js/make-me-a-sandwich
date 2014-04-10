@@ -1,0 +1,3 @@
+window.sudo = sudo;
+window._ = sudo;
+}(window));'

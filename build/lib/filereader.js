@@ -1,5 +1,4 @@
 var fs = require('fs'),
-  path = require('path'),
   $ = require('sudoclass'),
   jsdom = require('jsdom');
 
@@ -33,6 +32,14 @@ Filereader.prototype.concatonateSources = function() {
     }
   }
   this.set('concat_source', combined);
+};
+
+Filereader.prototype.getAlpha = function() {
+  return fs.readFileSync(this.get('pathfinder').get('wrap_path') + '/alpha.txt', 'utf8');
+};
+
+Filereader.prototype.getOmega = function() {
+  return fs.readFileSync(this.get('pathfinder').get('wrap_path') + '/omega.txt', 'utf8');
 };
 
 Filereader.prototype.parseHtmlFile = function() {

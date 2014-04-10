@@ -1,3 +1,5 @@
+/*global keys slice isArray*/
+
 // ##Container Class Object
 //
 // A container is any object that can both contain other objects and
@@ -47,10 +49,9 @@ sudo.Container.prototype.addChild = function(c, name) {
 // `returns` {Object} `this` 
 sudo.Container.prototype.addChildren = function(arg) {
   // normalize the arg
-  var keys = Array.isArray(arg) ? undefined : Object.keys(arg),
-    ary = keys || arg;
+  var _keys = isArray(arg) ? undefined : keys(arg), ary = _keys || arg;
   ary.forEach(function(c) {
-    keys ? this.addChild(arg[c], c) : this.addChild(c);
+    _keys ? this.addChild(arg[c], c) : this.addChild(c);
   }.bind(this));
   return this;
 };
@@ -67,7 +68,7 @@ sudo.Container.prototype.bubble = function() {return this.parent;};
 // The named method to look for and call. Other args are passed through
 // `returns` {object} `this`
 sudo.Container.prototype.eachChild = function(/*args*/) {
-  var args = Array.prototype.slice.call(arguments), meth = args.shift();
+  var args = slice.call(arguments), meth = args.shift();
   this.children.forEach(function(c) {if(meth in c) c[meth].apply(c, args);});
   return this;
 };
@@ -132,7 +133,7 @@ sudo.Container.prototype.removeChild = function(arg) {
 // see `removeChild`
 // `returns` {object} `this`
 sudo.Container.prototype.removeChildren = function() {
-  Object.keys(this.childNames).forEach(function(n) {
+  keys(this.childNames).forEach(function(n) {
     this.removeChild(this.getChild(n));
   }.bind(this));
   return this;
@@ -157,7 +158,7 @@ sudo.Container.prototype.role = 'container';
 // Any other args will be passed to the sendMethod after `this`
 // `returns` {Object} `this`
 sudo.Container.prototype.send = function(/*args*/) {
-  var args = Array.prototype.slice.call(arguments),
+  var args = slice.call(arguments),
     d = this.data, meth, targ, fn;
   // normalize the input, common use cases first
   if(d && 'sendMethod' in d) meth = d.sendMethod;

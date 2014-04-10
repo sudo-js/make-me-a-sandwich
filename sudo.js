@@ -1,3 +1,5 @@
+/*global create*/
+
 // #Sudo Namespace
 var sudo = {
   // Namespace for `Delegate` Class Objects used to delegate functionality
@@ -37,7 +39,7 @@ var sudo = {
   // `param` {function} `parent`
   // `param` {function} `child`
   inherit: function inherit(parent, child) {
-    child.prototype = Object.create(parent.prototype);
+    child.prototype = create(parent.prototype);
     child.prototype.constructor = child;
   },
   // ###makeMeASandwich

@@ -25,20 +25,24 @@ Filewriter.prototype.extToJs = function(filename) {
   this.set('filename', bse + '.js');
 };
 
-Filewriter.prototype.writeDebug = function(data) {
-  var a = '(function(window) {\n',
-    // TODO provide a command line flag to leave out the underscore alias
-    b = this.get('noUnderscore') ?
-      'window.sudo = sudo;\n}).call(this, this);' :
-      'window.sudo = sudo;\nif(typeof window._ === "undefined") window._ = sudo;\n}).call(this, this);',
-    c = a + data + b,
-  // assemble a full path
-    debug = this.get('pathfinder').get('debug_path'),
-    stat = fs.statSync(debug), 
-    full = debug + '/' + this.get('filename');
+Filewriter.prototype.stripGlobals = function() {
+  var full = this.debug + '/' + this.get('filename');
+  fs.readFileSync(this.tmp).toString().split('\n').forEach(function (line) { 
+    if(!(/\/*global/.test(line))) {
+      fs.appendFileSync(full, line.toString() + "\n");
+    }
+  });
+};
+
+Filewriter.prototype.writeDebug = function(alpha, data, omega) {
+  var content = alpha + data + omega, stat;
+  this.debug = this.get('pathfinder').get('debug_path');
+  stat = fs.statSync(this.debug);
+  this.tmp = this.debug + '/tmp.txt';
+    
   // make sure its a directory
   if(stat.isDirectory()) {
-    fs.writeFileSync(full, c, 'utf8');
+    fs.writeFileSync(this.tmp, content, 'utf8');
   }
 };
 

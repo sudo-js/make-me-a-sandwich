@@ -16,8 +16,8 @@ var Pathfinder = function(config) {
     dirname: __dirname,
     rel_build_path: '..',
     rel_root_path: '../..',
-    rel_debug_path: '../debug'//,
-    //rel_release_path: '../release'
+    rel_debug_path: '../debug',
+    rel_wrap_path: '../../wrap'
   });
   // the config can override these
   if(config) this.sets(config);
@@ -25,8 +25,8 @@ var Pathfinder = function(config) {
   this.sets({
     build_path: fs.realpathSync(this.get('rel_build_path')),
     root_path: fs.realpathSync(this.get('rel_root_path')),
-    debug_path: fs.realpathSync(this.get('rel_debug_path'))//,
-    //release_path: fs.realpathSync(this.get('rel_release_path'))
+    debug_path: fs.realpathSync(this.get('rel_debug_path')),
+    wrap_path: fs.realpathSync(this.get('rel_wrap_path'))
   });	
 };
 

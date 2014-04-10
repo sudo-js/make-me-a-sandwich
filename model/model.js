@@ -1,3 +1,5 @@
+/*global keys*/
+
 // ##Model Class Object
 //
 // Model Objects expose methods for setting and getting data, and
@@ -75,7 +77,7 @@ sudo.Model.prototype.setPath = function(path, v) {
 // `param` {Object} `obj`. The keys and values to set.
 // `returns` {Object} `this`
 sudo.Model.prototype.sets = function(obj) {
-  Object.keys(obj).forEach(function(k) {
+  keys(obj).forEach(function(k) {
     k.indexOf('.') === -1 ? this.set(k, obj[k]) : this.setPath(k, obj[k]);
   }.bind(this));
   return this;

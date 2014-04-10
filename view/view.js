@@ -1,3 +1,5 @@
+/*global keys*/
+
 // ##View Class Object
 
 // Create an instance of a sudo.View object. A view is any object
@@ -50,7 +52,7 @@ sudo.View.prototype.setEl = function(el) {
     this.el = document.createElement(t);
     if(d && (a = d.attributes)) {
       // iterate and set the attributes
-      Object.keys(a).forEach(function(k) {
+      keys(a).forEach(function(k) {
         this.el.setAttribute(k, a[k]);
       }.bind(this));
     }
