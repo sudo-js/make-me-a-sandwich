@@ -1,0 +1,3483 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>sudo.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>sudo.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>(<span class="function"><span class="keyword">function</span><span class="params">(window)</span> {</span>
+<span class="keyword">var</span> slice = Array.prototype.slice, isArray = Array.isArray, keys = Object.keys, 
+getProto = Object.getPrototypeOf, create = Object.create, escapes = {},
+htmlEscapes = {<span class="string">'&amp;'</span>: <span class="string">'&amp;amp;'</span>,<span class="string">'&lt;'</span>: <span class="string">'&amp;lt;'</span>,<span class="string">'&gt;'</span>: <span class="string">'&amp;gt;'</span>,<span class="string">'"'</span>: <span class="string">'&amp;quot;'</span>,<span class="string">"'"</span>: <span class="string">'&amp;#x27;'</span>,<span class="string">'/'</span>: <span class="string">'&amp;#x2F;'</span>},
+escaper = <span class="regexp">/\\|'|\r|\n|\t|\u2028|\u2029/g</span>, htmlEscaper = <span class="regexp">/[&amp;&lt;&gt;"'\/]/g</span>,
+unescaper = <span class="regexp">/\\(\\|'|r|n|t|u2028|u2029)/g</span>, sudo;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h1 id="sudo-namespace">Sudo Namespace</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Namespace for <code>Delegate</code> Class Objects used to delegate functionality
+from a <code>delegator</code></p>
+<p><code>namespace</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  delegates: {},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>The sudo.extensions namespace holds the objects that are stand alone <code>modules</code> which
+can be <code>implemented</code> (mixed-in) in sudo Class Objects</p>
+<p><code>namespace</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  extensions: {},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h3 id="getpath">getPath</h3>
+<p>Extract a value located at <code>path</code> relative to the passed in object</p>
+<p><code>param</code> {String} <code>path</code>. The key in the form of a dot-delimited path.
+<code>param</code> {object} <code>obj</code>. An object literal to operate on.</p>
+<p><code>returns</code> {*|undefined}. The value at keypath or undefined if not found.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  getPath: <span class="function"><span class="keyword">function</span> <span class="title">getPath</span><span class="params">(path, obj)</span> {</span>
+    <span class="keyword">var</span> key, p;
+    p = path.split(<span class="string">'.'</span>);
+    <span class="keyword">for</span> (; p.length &amp;&amp; (key = p.shift());) {
+      <span class="keyword">if</span>(!p.length) <span class="keyword">return</span> obj[key];
+      <span class="keyword">else</span> obj = obj[key] || {};
+    }
+    <span class="keyword">return</span> obj;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h3 id="inherit">inherit</h3>
+<p>Inherit the prototype from a parent to a child.
+Set the childs constructor for subclasses of child.
+Subclasses of the library base classes will not 
+want to use this function in <em>most</em> use-cases. Why? User Sudo Class Objects
+possess their own constructors and any call back to a <code>superclass</code> constructor
+will generally be looking for the library Object&#39;s constructor.</p>
+<p><code>param</code> {function} <code>parent</code>
+<code>param</code> {function} <code>child</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  inherit: <span class="function"><span class="keyword">function</span> <span class="title">inherit</span><span class="params">(parent, child)</span> {</span>
+    child.prototype = create(parent.prototype);
+    child.prototype.constructor = child;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h3 id="makemeasandwich">makeMeASandwich</h3>
+<p>Notice there is no need to extrinsically instruct <em>how</em> to
+make the sandwich, just the elegant single command.</p>
+<p><code>returns</code> {string}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  makeMeASandwich: <span class="function"><span class="keyword">function</span> <span class="title">makeMeASandwich</span><span class="params">()</span> {</span><span class="keyword">return</span> <span class="string">'Okay.'</span>;},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h3 id="namespace">namespace</h3>
+<p>Method for assuring a Namespace is defined.</p>
+<p><code>param</code> {string} <code>path</code>. The path that leads to a blank Object.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  namespace: <span class="function"><span class="keyword">function</span> <span class="title">namespace</span><span class="params">(path)</span> {</span>
+    <span class="keyword">if</span> (!<span class="keyword">this</span>.getPath(path, window)) {
+      <span class="keyword">this</span>.setPath(path, {}, window);
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h3 id="setpath">setPath</h3>
+<p>Traverse the keypath and get each object 
+(or make blank ones) eventually setting the value 
+at the end of the path</p>
+<p><code>param</code> {string} <code>path</code>. The path to traverse when setting a value.
+<code>param</code> {*} <code>value</code>. What to set.
+<code>param</code> {Object} <code>obj</code>. The object literal to operate on.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  setPath: <span class="function"><span class="keyword">function</span> <span class="title">setPath</span><span class="params">(path, value, obj)</span> {</span>
+    <span class="keyword">var</span> p = path.split(<span class="string">'.'</span>), key;
+    <span class="keyword">for</span> (; p.length &amp;&amp; (key = p.shift());) {
+      <span class="keyword">if</span>(!p.length) obj[key] = value;
+      <span class="keyword">else</span> <span class="keyword">if</span> (obj[key]) obj = obj[key];
+      <span class="keyword">else</span> obj = obj[key] = {};
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h4 id="uid">uid</h4>
+<p>Some sudo Objects use a unique integer as a <code>tag</code> for identification.
+(Views for example). This ensures they are indeed unique.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  uid: <span class="number">0</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <h4 id="unique">unique</h4>
+<p>An integer used as &#39;tags&#39; by some sudo Objects as well
+as a unique string for views when needed</p>
+<p><code>param</code> {string} prefix. Optional string identifier</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unique: <span class="function"><span class="keyword">function</span> <span class="title">unique</span><span class="params">(prefix)</span> {</span>
+    <span class="keyword">return</span> prefix ? prefix + <span class="keyword">this</span>.uid++ : <span class="keyword">this</span>.uid++;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <h3 id="unsetpath">unsetPath</h3>
+<p>Remove a key:value pair from this object&#39;s data store
+located at <path></p>
+<p><code>param</code> {String} <code>path</code>
+<code>param</code> {Object} <code>obj</code> The object to operate on.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unsetPath: <span class="function"><span class="keyword">function</span> <span class="title">unsetPath</span><span class="params">(path, obj)</span> {</span>
+    <span class="keyword">var</span> p = path.split(<span class="string">'.'</span>), key;
+    <span class="keyword">for</span> (; p.length &amp;&amp; (key = p.shift());) {
+      <span class="keyword">if</span>(!p.length) <span class="keyword">delete</span> obj[key];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>this can fail if a faulty path is passed.
+using getPath beforehand can prevent that</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">else</span> obj = obj[key];
+    }
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <h2 id="base-class-object">Base Class Object</h2>
+<p>All sudo.js objects inherit base, giving the ability
+to utilize delegation, the <code>base</code> function and the 
+<code>construct</code> convenience method.</p>
+<p><code>constructor</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Base = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>can delegate</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">this</span>.delegates = [];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>a beautiful and unique snowflake</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">this</span>.uid = sudo.unique();
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <h3 id="adddelegate">addDelegate</h3>
+<p>Push an instance of a Class Object into this object&#39;s <code>_delegates_</code> list.</p>
+<p><code>param</code> {Object} <code>del</code>. An instance of a sudo.delegates Class Object
+<code>returns</code> {Object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.addDelegate = <span class="function"><span class="keyword">function</span><span class="params">(del)</span> {</span>
+  del.delegator = <span class="keyword">this</span>;
+  <span class="keyword">this</span>.delegates.push(del);
+  <span class="keyword">if</span>(<span class="string">'addedAsDelegate'</span> <span class="keyword">in</span> del) del.addedAsDelegate(<span class="keyword">this</span>);
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <h3 id="base">base</h3>
+<p>Lookup the function matching the name passed in  and call it with
+any passed in argumets scoped to the calling object.
+This method will avoid the recursive-loop problem by making sure
+that the first match is not the function that called <code>base</code>.</p>
+<p><code>params</code> {*} any other number of arguments to be passed to the looked up method
+along with the initial method name</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.base = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="keyword">var</span> args = slice.call(arguments),
+    name = args.shift(),
+    found = <span class="literal">false</span>,
+    obj = <span class="keyword">this</span>,
+    curr;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>find method on the prototype, excluding the caller</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">while</span>(!found) {
+    curr = getProto(obj);
+    <span class="keyword">if</span>(curr[name] &amp;&amp; curr[name] !== <span class="keyword">this</span>[name]) found = <span class="literal">true</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>keep digging</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">else</span> obj = curr;
+  }
+  <span class="keyword">return</span> curr[name].apply(<span class="keyword">this</span>, args);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <h3 id="construct">construct</h3>
+<p>A convenience method that alleviates the need to place:
+<code>Object.getPrototypeOf(this).consturctor.apply(this, arguments)</code>
+in every constructor</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.construct = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  getProto(<span class="keyword">this</span>).constructor.apply(<span class="keyword">this</span>, arguments || []);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <h3 id="delegate">delegate</h3>
+<p>From this object&#39;s list of delegates find the object whose <code>_role_</code> matches
+the passed <code>name</code> and:</p>
+<ol>
+<li>if <code>meth</code> is falsy return the delegate.
+2 if <code>meth</code> is truthy bind its method (to the delegate) and return the method</li>
+</ol>
+<p><code>param</code> {String} <code>role</code> The role property to match in this object&#39;s delegates list
+<code>param</code> {String} <code>meth</code> Optional method to bind to the action this delegate is being used for
+<code>returns</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.delegate = <span class="function"><span class="keyword">function</span><span class="params">(role, meth)</span> {</span>
+  <span class="keyword">var</span> del = <span class="keyword">this</span>.delegates, i;
+  <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; del.length; i++) {
+    <span class="keyword">if</span>(del[i].role === role) {
+      <span class="keyword">if</span>(!meth) <span class="keyword">return</span> del[i];
+      <span class="keyword">return</span> del[i][meth].bind(del[i]);
+    }
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <h3 id="getdelegate">getDelegate</h3>
+<p>Fetch a delegate whose role property matches the passed in argument.
+Uses the <code>delegate</code> method in its &#39;single argument&#39; form, included for 
+API consistency</p>
+<p><code>param</code> {String} <code>role</code>
+&#39;returns&#39; {Object|undefined}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.getDelegate = <span class="function"><span class="keyword">function</span><span class="params">(role)</span> {</span><span class="keyword">return</span> <span class="keyword">this</span>.delegate(role);};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <h3 id="removedelegate">removeDelegate</h3>
+<p>From this objects <code>delegates</code> list remove the object (there should only ever be 1)
+whose role matches the passed in argument</p>
+<p><code>param</code> {String} <code>role</code>
+<code>returns</code> {Object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Base.prototype.removeDelegate = <span class="function"><span class="keyword">function</span><span class="params">(role)</span> {</span>
+  <span class="keyword">var</span> del = <span class="keyword">this</span>.delegates, i;
+  <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; del.length; i++) {
+    <span class="keyword">if</span>(del[i].role === role) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>no <em>delegator</em> for you</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      del[i].delegator = <span class="keyword">void</span> <span class="number">0</span>;
+      del.splice(i, <span class="number">1</span>);
+      <span class="keyword">return</span> <span class="keyword">this</span>;
+    }
+  }
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p><code>private</code></p>
+<h2 id="model-class-object">Model Class Object</h2>
+<p>Model Objects expose methods for setting and getting data, and
+can be observed if implementing the <code>Observable Extension</code></p>
+<p><code>param</code> {object} data. An initial state for this model.</p>
+<p><code>constructor</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Model = <span class="function"><span class="keyword">function</span><span class="params">(data)</span> {</span>
+  sudo.Base.call(<span class="keyword">this</span>);
+  <span class="keyword">this</span>.data = data || {};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>only models are <code>observable</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">this</span>.callbacks = [];
+  <span class="keyword">this</span>.changeRecords = [];
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>Model inherits from sudo.Base
+<code>private</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.inherit(sudo.Base, sudo.Model);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <h3 id="get">get</h3>
+<p>Returns the value associated with a key.</p>
+<p><code>param</code> {String} <code>k</code>. The name of the key
+<code>returns</code> {*}. The value associated with the key or false if not found.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.get = <span class="function"><span class="keyword">function</span><span class="params">(k)</span> {</span><span class="keyword">return</span> <span class="keyword">this</span>.data[k];};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <h3 id="getpath">getPath</h3>
+<p>Uses the sudo namespace&#39;s getpath function operating on the model&#39;s
+data hash.</p>
+<p><code>param</code> {string} <code>path</code>
+<code>returns</code> {*|undefined}. The value at keypath or undefined if not found.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.getPath = <span class="function"><span class="keyword">function</span><span class="params">(path)</span> {</span>
+  <span class="keyword">return</span> sudo.getPath(path, <span class="keyword">this</span>.data);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <h3 id="gets">gets</h3>
+<p>Assembles and returns an object of key:value pairs for each key
+contained in the passed in Array.</p>
+<p><code>param</code> {array} <code>ary</code>. An array of keys.
+<code>returns</code> {object}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.gets = <span class="function"><span class="keyword">function</span><span class="params">(ary)</span> {</span>
+  <span class="keyword">var</span> obj = {};
+  ary.forEach(<span class="function"><span class="keyword">function</span><span class="params">(str)</span> {</span>
+    obj[str] = !~str.indexOf(<span class="string">'.'</span>) ? <span class="keyword">this</span>.get(str) : <span class="keyword">this</span>.getPath(str);
+  }.bind(<span class="keyword">this</span>));
+  <span class="keyword">return</span> obj;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p><code>private</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.role = <span class="string">'model'</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <h3 id="set">set</h3>
+<p>Set a key:value pair.</p>
+<p><code>param</code> {String} <code>k</code>. The name of the key.
+<code>param</code> {*} <code>v</code>. The value associated with the key.
+<code>returns</code> {Object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.set = <span class="function"><span class="keyword">function</span><span class="params">(k, v)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p><em>NOTE: intentional possibilty of setting a falsy value</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">this</span>.data[k] = v;
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <h3 id="setpath">setPath</h3>
+<p>Uses the sudo namespace&#39;s setpath function operating on the model&#39;s
+data hash.</p>
+<p><code>param</code> {String} <code>path</code>
+<code>param</code> {*} <code>v</code>
+<code>returns</code> {Object} this.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.setPath = <span class="function"><span class="keyword">function</span><span class="params">(path, v)</span> {</span>
+  sudo.setPath(path, v, <span class="keyword">this</span>.data);
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <h3 id="sets">sets</h3>
+<p>Invokes <code>set()</code> or <code>setPath()</code> for each key value pair in <code>obj</code>.
+Any listeners for those keys or paths will be called.</p>
+<p><code>param</code> {Object} <code>obj</code>. The keys and values to set.
+<code>returns</code> {Object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.sets = <span class="function"><span class="keyword">function</span><span class="params">(obj)</span> {</span>
+  keys(obj).forEach(<span class="function"><span class="keyword">function</span><span class="params">(k)</span> {</span>
+    !~k.indexOf(<span class="string">'.'</span>) ? <span class="keyword">this</span>.set(k, obj[k]) : <span class="keyword">this</span>.setPath(k, obj[k]);
+  }.bind(<span class="keyword">this</span>));
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <h3 id="unset">unset</h3>
+<p>Remove a key:value pair from this object&#39;s data store</p>
+<p><code>param</code> {String} <code>k</code>
+<code>returns</code> {Object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.unset = <span class="function"><span class="keyword">function</span><span class="params">(k)</span> {</span>
+  <span class="keyword">delete</span> <span class="keyword">this</span>.data[k];
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <h3 id="unsetpath">unsetPath</h3>
+<p>Uses <code>sudo.unsetPath</code> operating on this models data hash</p>
+<p><code>param</code> {String} path
+<code>returns</code> {Object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.unsetPath = <span class="function"><span class="keyword">function</span><span class="params">(path)</span> {</span>
+  sudo.unsetPath(path, <span class="keyword">this</span>.data);
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <h3 id="unsets">unsets</h3>
+<p>Deletes a number of keys or paths from this object&#39;s data store</p>
+<p><code>param</code> {array} <code>ary</code>. An array of keys or paths.
+<code>returns</code> {Objaect} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Model.prototype.unsets = <span class="function"><span class="keyword">function</span><span class="params">(ary)</span> {</span>
+  ary.forEach(<span class="function"><span class="keyword">function</span><span class="params">(k)</span> {</span>
+    !~k.indexOf(<span class="string">'.'</span>) ? <span class="keyword">this</span>.unset(k) : <span class="keyword">this</span>.unsetPath(k);
+  }.bind(<span class="keyword">this</span>));
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <h2 id="container-class-object">Container Class Object</h2>
+<p>A container is any object that can both contain other objects and
+itself be contained.</p>
+<p><code>param</code> {Array|Object} &#39;arg&#39;. Optional array or hash
+of child objects which the Container will add as child objects
+via <code>addChildren</code></p>
+<p><code>constructor</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Container = <span class="function"><span class="keyword">function</span><span class="params">(arg)</span> {</span>
+  sudo.Base.call(<span class="keyword">this</span>);
+  <span class="keyword">this</span>.children = [];
+  <span class="keyword">this</span>.childNames = {};
+  <span class="keyword">if</span>(arg) <span class="keyword">this</span>.addChildren(arg);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>Container is a subclass of sudo.Base</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.inherit(sudo.Base, sudo.Container);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <h3 id="addchild">addChild</h3>
+<p>Adds a View to this container&#39;s list of children.
+Also adds an &#39;index&#39; property and an entry in the childNames hash.
+If <code>addedToParent</code> if found on the child, call it, sending <code>this</code> as an argument.</p>
+<p><code>param</code> {Object} <code>c</code>. View (or View subclass) instance.
+<code>param</code> {String} <code>name</code>. An optional name for the child that will go in the childNames hash.
+<code>returns</code> {Object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.addChild = <span class="function"><span class="keyword">function</span><span class="params">(c, name)</span> {</span>
+  <span class="keyword">var</span> ch = <span class="keyword">this</span>.children;
+  c.parent = <span class="keyword">this</span>;
+  c.index = ch.length;
+  <span class="keyword">if</span>(name) {
+    c.name = name;
+    <span class="keyword">this</span>.childNames[name] = c.index;
+  }
+  ch.push(c);
+  <span class="keyword">if</span>(<span class="string">'addedToParent'</span> <span class="keyword">in</span> c) c.addedToParent(<span class="keyword">this</span>);
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <h3 id="addchildren">addChildren</h3>
+<p>Allows for multiple children to be added to this Container by passing
+either an Array or an Object literal.</p>
+<p>see <code>addChild</code></p>
+<p><code>param</code> {Array|Object} <code>arg</code>. An array of children to add or an
+Object literal in the form {name: child}
+<code>returns</code> {Object} <code>this</code> </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.addChildren = <span class="function"><span class="keyword">function</span><span class="params">(arg)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <p>normalize the arg</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> _keys = isArray(arg) ? <span class="literal">undefined</span> : keys(arg), ary = _keys || arg;
+  ary.forEach(<span class="function"><span class="keyword">function</span><span class="params">(c)</span> {</span>
+    _keys ? <span class="keyword">this</span>.addChild(arg[c], c) : <span class="keyword">this</span>.addChild(c);
+  }.bind(<span class="keyword">this</span>));
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-45">&#182;</a>
+              </div>
+              <h3 id="bubble">bubble</h3>
+<p>By default, <code>bubble</code> returns the current view&#39;s parent (if it has one)</p>
+<p><code>returns</code> {Object|undefined}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.bubble = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span><span class="keyword">return</span> <span class="keyword">this</span>.parent;};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-46">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-46">&#182;</a>
+              </div>
+              <h3 id="eachchild">eachChild</h3>
+<p>Call a named method and pass any args to each child in a container&#39;s
+collection of children</p>
+<p><code>param</code> {*} Any number of arguments the first of which must be
+The named method to look for and call. Other args are passed through
+<code>returns</code> {object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.eachChild = <span class="function"><span class="keyword">function</span><span class="params">(<span class="comment">/*args*/</span>)</span> {</span>
+  <span class="keyword">var</span> args = slice.call(arguments), meth = args.shift();
+  <span class="keyword">this</span>.children.forEach(<span class="function"><span class="keyword">function</span><span class="params">(c)</span> {</span><span class="keyword">if</span>(meth <span class="keyword">in</span> c) c[meth].apply(c, args);});
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-47">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-47">&#182;</a>
+              </div>
+              <h3 id="getchild">getChild</h3>
+<p>If a child was added with a name, via <code>addChild</code>,
+that object can be fetched by name. This prevents us from having to reference a 
+containers children by index. That is possible however, though not preferred.</p>
+<p><code>param</code> {String|Number} <code>id</code>. The string <code>name</code> or numeric <code>index</code> of the child to fetch.
+<code>returns</code> {Object|undefined} The found child</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.getChild = <span class="function"><span class="keyword">function</span><span class="params">(id)</span> {</span>
+  <span class="keyword">return</span> <span class="keyword">typeof</span> id === <span class="string">'string'</span> ? <span class="keyword">this</span>.children[<span class="keyword">this</span>.childNames[id]] :
+    <span class="keyword">this</span>.children[id];
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-48">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-48">&#182;</a>
+              </div>
+              <h3 id="_indexchildren_"><em>indexChildren</em></h3>
+<p>Method is called with the <code>index</code> property of a subview that is being removed.
+Beginning at <code>i</code> decrement subview indices.
+<code>param</code> {Number} <code>i</code>
+<code>private</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype._indexChildren_ = <span class="function"><span class="keyword">function</span><span class="params">(i)</span> {</span>
+  <span class="keyword">var</span> c = <span class="keyword">this</span>.children, obj = <span class="keyword">this</span>.childNames, len;
+  <span class="keyword">for</span> (len = c.length; i &lt; len; i++) {
+    c[i].index--;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-49">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-49">&#182;</a>
+              </div>
+              <p>adjust any entries in childNames</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span>(c[i].name <span class="keyword">in</span> obj) obj[c[i].name] = c[i].index; 
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
+              </div>
+              <h3 id="removechild">removeChild</h3>
+<p>Find the intended child from my list of children and remove it, removing the name reference and re-indexing
+remaining children. This method does not remove the child&#39;s DOM.
+Override this method, doing whatever you want to the child&#39;s DOM, then call <code>base(&#39;removeChild&#39;)</code> to do so.</p>
+<p>If the child being removed has a <code>removedFromParent</code> method it will be called after the parenth has
+finished, passing itself(the parent) as an argument.</p>
+<p><code>param</code> {String|Number|Object} <code>arg</code>. Children will always have an <code>index</code> number, and optionally a <code>name</code>.
+If passed a string <code>name</code> is assumed, so be sure to pass an actual number if expecting to use index.
+An object will be assumed to be an actual sudo Class Object.
+<code>returns</code> {Object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.removeChild = <span class="function"><span class="keyword">function</span><span class="params">(arg)</span> {</span>
+  <span class="keyword">var</span> i, t = <span class="keyword">typeof</span> arg, c;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-51">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-51">&#182;</a>
+              </div>
+              <p>normalize the input</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span>(t === <span class="string">'object'</span>) c = arg; 
+  <span class="keyword">else</span> c = t === <span class="string">'string'</span> ? <span class="keyword">this</span>.children[<span class="keyword">this</span>.childNames[arg]] : <span class="keyword">this</span>.children[arg];
+  i = c.index;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-52">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-52">&#182;</a>
+              </div>
+              <p>remove from the children Array</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">this</span>.children.splice(i, <span class="number">1</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-53">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-53">&#182;</a>
+              </div>
+              <p>remove from the named child hash if present</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">delete</span> <span class="keyword">this</span>.childNames[c.name];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-54">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-54">&#182;</a>
+              </div>
+              <p>child is now an <code>orphan</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">delete</span> c.parent;
+  <span class="keyword">delete</span> c.index;
+  <span class="keyword">delete</span> c.name;
+  <span class="keyword">this</span>._indexChildren_(i);
+  <span class="keyword">if</span>(<span class="string">'removedFromParent'</span> <span class="keyword">in</span> c) c.removedFromParent(<span class="keyword">this</span>);
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-55">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-55">&#182;</a>
+              </div>
+              <h3 id="removechildren">removeChildren</h3>
+<p>Remove all children, name references and adjust indexes accordingly.
+This method calls removeFromParent as each child may have overridden logic there.</p>
+<p>see <code>removeChild</code>
+<code>returns</code> {object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.removeChildren = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  keys(<span class="keyword">this</span>.childNames).forEach(<span class="function"><span class="keyword">function</span><span class="params">(n)</span> {</span>
+    <span class="keyword">this</span>.removeChild(<span class="keyword">this</span>.getChild(n));
+  }.bind(<span class="keyword">this</span>));
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-56">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-56">&#182;</a>
+              </div>
+              <p>This is a container, yes.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.role = <span class="string">'container'</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-57">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-57">&#182;</a>
+              </div>
+              <h3 id="send">send</h3>
+<p>The call to the specific method on a (un)specified target happens here.
+If this Object is part of a <code>sudo.Container</code> maintained hierarchy
+the &#39;target&#39; may be left out, causing the <code>bubble()</code> method to be called.
+What this does is allow children of a <code>sudo.Container</code> to simply pass
+events  upward, delegating the responsibility of deciding what to do to the parent.</p>
+<p>TODO Currently, only the first target method found is called, then the
+bubbling is stopped. Should bubbling continue all the way up the &#39;chain&#39;?</p>
+<p><code>param</code> {*} Any number of arguments is supported, but the first is the only one searched for info. 
+A sendMethod will be located by:</p>
+<ol>
+<li>using the first argument if it is a string</li>
+<li>looking for a <code>sendMethod</code> property if it is an object
+In the case a specified target exists at <code>this.data.sendTarget</code> it will be used
+Any other args will be passed to the sendMethod after <code>this</code>
+<code>returns</code> {Object} <code>this</code></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Container.prototype.send = <span class="function"><span class="keyword">function</span><span class="params">(<span class="comment">/*args*/</span>)</span> {</span>
+  <span class="keyword">var</span> args = slice.call(arguments),
+    d = <span class="keyword">this</span>.data, meth, targ, fn;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-58">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-58">&#182;</a>
+              </div>
+              <p>normalize the input, common use cases first</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span>(d &amp;&amp; <span class="string">'sendMethod'</span> <span class="keyword">in</span> d) meth = d.sendMethod;
+  <span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">typeof</span> args[<span class="number">0</span>] === <span class="string">'string'</span>) meth = args.shift();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-59">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-59">&#182;</a>
+              </div>
+              <p>less common but viable options</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span>(!meth) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-60">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-60">&#182;</a>
+              </div>
+              <p>passed as a custom data attr bound in events</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    meth = <span class="string">'data'</span> <span class="keyword">in</span> args[<span class="number">0</span>] ? args[<span class="number">0</span>].data.sendMethod :</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-61">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-61">&#182;</a>
+              </div>
+              <p>passed in a hash from something or not passed at all</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      args[<span class="number">0</span>].sendMethod || <span class="literal">undefined</span>;
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-62">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-62">&#182;</a>
+              </div>
+              <p>target is either specified or my parent</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  targ = d &amp;&amp; d.sendTarget || <span class="keyword">this</span>.bubble();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-63">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-63">&#182;</a>
+              </div>
+              <p>obvious chance for errors here, don&#39;t be dumb</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  fn = targ[meth];
+  <span class="keyword">while</span>(!fn &amp;&amp; (targ = targ.bubble())) {
+    fn = targ[meth];
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-64">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-64">&#182;</a>
+              </div>
+              <p>sendMethods expect a signature (sender, ...)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span>(fn) {
+    args.unshift(<span class="keyword">this</span>);
+    fn.apply(targ, args);
+  }
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-65">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-65">&#182;</a>
+              </div>
+              <h2 id="view-class-object">View Class Object</h2>
+<p>Create an instance of a sudo.View object. A view is any object
+that maintains its own <code>el</code>, that being some type of DOM element.
+Pass in a string selector or an actual dom node reference to have the object
+set that as its <code>el</code>. If no <code>el</code> is specified one will be created upon instantiation
+based on the <code>tagName</code> (<code>div</code> by default) if present in the <code>data</code> arg. 
+Specify <code>className</code>, <code>id</code> (or other attributes if desired)
+as an (optional) <code>attributes</code> object literal on the <code>data</code> arg.</p>
+<p>The <code>this.el</code> and <code>this.qs</code> methods scope queries to this objects <code>el</code>, i.e it&#39;s
+a shortcut for <code>this.el.querySelector(selector)</code>
+in addition <code>this.qsa</code> does the same for the querySelectorAll method</p>
+<p><code>param</code> {string|element} <code>el</code>. Otional el for the View instance.
+<code>param</code> {object} <code>data</code>. Optional data object-literal which becomes the initial state
+of <code>this.data</code> on the View.</p>
+<p><code>constructor</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.View = <span class="function"><span class="keyword">function</span><span class="params">(el, data)</span> {</span>
+  sudo.Container.call(<span class="keyword">this</span>);
+  <span class="keyword">this</span>.data = data;
+  <span class="keyword">this</span>.setEl(el);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-66">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-66">&#182;</a>
+              </div>
+              <p>View inherits from Container
+<code>private</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.inherit(sudo.Container, sudo.View);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-67">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-67">&#182;</a>
+              </div>
+              <p>the el needs to be normalized before use
+<code>private</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.View.prototype._normalizedEl_ = <span class="function"><span class="keyword">function</span><span class="params">(el)</span> {</span>
+  <span class="keyword">var</span> _el = <span class="keyword">typeof</span> el === <span class="string">'string'</span> ? document.querySelector(el) : el;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-68">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-68">&#182;</a>
+              </div>
+              <p>if there is not a top level query returned the desired node may be 
+in a document fragment not in the DOM yet. We will check the parent&#39;s el
+if available, or return the empty query</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">return</span> _el ? _el : (<span class="keyword">this</span>.parent ? <span class="keyword">this</span>.parent.qs(el) : _el);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-69">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-69">&#182;</a>
+              </div>
+              <p><code>private</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.View.prototype.role = <span class="string">'view'</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-70">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-70">&#182;</a>
+              </div>
+              <h3 id="setel">setEl</h3>
+<p>A view must have an element, set that here.
+Node is always then available as <code>this.el</code>.</p>
+<p><code>param</code> {string=|element} <code>el</code>
+<code>returns</code> {Object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.View.prototype.setEl = <span class="function"><span class="keyword">function</span><span class="params">(el)</span> {</span>
+  <span class="keyword">var</span> d = <span class="keyword">this</span>.data, a, t;
+  <span class="keyword">if</span>(!el) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-71">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-71">&#182;</a>
+              </div>
+              <p>normalize any relevant data</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    t = d ? d.tagName || <span class="string">'div'</span>: <span class="string">'div'</span>;
+    <span class="keyword">this</span>.el = document.createElement(t);
+    <span class="keyword">if</span>(d &amp;&amp; (a = d.attributes)) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-72">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-72">&#182;</a>
+              </div>
+              <p>iterate and set the attributes</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      keys(a).forEach(<span class="function"><span class="keyword">function</span><span class="params">(k)</span> {</span>
+        <span class="keyword">this</span>.el.setAttribute(k, a[k]);
+      }.bind(<span class="keyword">this</span>));
+    }
+  } <span class="keyword">else</span> <span class="keyword">this</span>.el = <span class="keyword">this</span>._normalizedEl_(el);
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-73">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-73">&#182;</a>
+              </div>
+              <h3 id="this-qs">this.qs</h3>
+<p>Return a single Element matching <code>sel</code> scoped to this View&#39;s el.
+This is an alias to <code>this.el.querySelector(sel)</code>.</p>
+<p><code>param</code> {string} <code>sel</code>. A DOM compatible selector
+<code>returns</code> {node|null} A &#39;querified&#39; result matching the selector</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.View.prototype.qs = <span class="function"><span class="keyword">function</span><span class="params">(sel)</span> {</span>
+  <span class="keyword">return</span> <span class="keyword">this</span>.el.querySelector(sel);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-74">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-74">&#182;</a>
+              </div>
+              <h3 id="this-qsa">this.qsa</h3>
+<p>Return multiple Elements (a NodeList) matching <code>sel</code> scoped to this View&#39;s el.
+This is an alias to <code>this.el.querySelectorAll(sel)</code>.</p>
+<p><code>param</code> {string} <code>sel</code>. A querySelectorAll compatible selector
+<code>returns</code> {Elements | undefined} Results matching the selector (or undefined if not)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.View.prototype.qsa = <span class="function"><span class="keyword">function</span><span class="params">(sel)</span> {</span>
+  <span class="keyword">return</span> <span class="keyword">this</span>.el.querySelectorAll(sel);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-75">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-75">&#182;</a>
+              </div>
+              <h3 id="templating">Templating</h3>
+<p>Allow the default {{ js code }}, {{= key }}, and {{- escape stuff }} 
+micro templating delimiters to be overridden if desired</p>
+<p><code>type</code> {Object}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.templateSettings = {
+ evaluate:    <span class="regexp">/\[%([\s\S]+?)%\]/g</span>,
+ interpolate: <span class="regexp">/\[%=([\s\S]+?)%\]/g</span>,
+ escape:      <span class="regexp">/\[%-([\s\S]+?)%\]/g</span>
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-76">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-76">&#182;</a>
+              </div>
+              <p>Certain characters need to be escaped so that they can be put 
+into a string literal when templating.</p>
+<p><code>type</code> {Object}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>(<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="keyword">var</span> e = {
+    <span class="string">'\\'</span>: <span class="string">'\\'</span>,
+    <span class="string">"'"</span>: <span class="string">"'"</span>,
+    r: <span class="string">'\r'</span>,
+    n: <span class="string">'\n'</span>,
+    t: <span class="string">'\t'</span>,
+    u2028: <span class="string">'\u2028'</span>,
+    u2029: <span class="string">'\u2029'</span>
+  };
+  <span class="keyword">for</span>(<span class="keyword">var</span> key <span class="keyword">in</span> e) <span class="keyword">if</span>(e.hasOwnProperty(key)) escapes[e[key]] = key;
+}());</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-77">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-77">&#182;</a>
+              </div>
+              <h3 id="escape">escape</h3>
+<p>Remove unsafe characters from a string</p>
+<p><code>param</code> {String} str</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.escape = <span class="function"><span class="keyword">function</span><span class="params">(str)</span> {</span>
+  <span class="keyword">return</span> str.replace(htmlEscaper, <span class="function"><span class="keyword">function</span><span class="params">(match)</span> {</span>
+    <span class="keyword">return</span> htmlEscapes[match];
+  });
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-78">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-78">&#182;</a>
+              </div>
+              <h3 id="unescape">unescape</h3>
+<p>Within an interpolation, evaluation, or escaping,
+remove HTML escaping that had been previously added.</p>
+<p><code>param</code> {string} str</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.unescape = <span class="function"><span class="keyword">function</span> <span class="title">unescape</span><span class="params">(str)</span> {</span>
+  <span class="keyword">return</span> str.replace(unescaper, <span class="function"><span class="keyword">function</span><span class="params">(match, escape)</span> {</span>
+    <span class="keyword">return</span> escapes[escape];
+  });
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-79">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-79">&#182;</a>
+              </div>
+              <h3 id="template">template</h3>
+<p>JavaScript micro-templating, similar to John Resig&#39;s (and it&#39;s offspring) implementation.
+sudo templating preserves whitespace, and correctly escapes quotes within interpolated code.
+Unlike others sudo.template requires a scope name (to avoid the use of <code>with</code>) and will spit at you
+if it is not present.</p>
+<p><code>param</code> {string} <code>str</code>. The &#39;templated&#39; string.
+<code>param</code> {Object} <code>data</code>. Optional hash of key:value pairs.
+<code>param</code> {string} <code>scope</code>. Optional context name of your <code>data object</code>, set to &#39;data&#39; if falsy.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.template = <span class="function"><span class="keyword">function</span> <span class="title">template</span><span class="params">(str, data, scope)</span> {</span>
+  scope || (scope = <span class="string">'data'</span>);
+  <span class="keyword">var</span> settings = <span class="keyword">this</span>.templateSettings, render, tmpl,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-80">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-80">&#182;</a>
+              </div>
+              <p>Compile the template source, taking care to escape characters that
+cannot be included in a string literal and then unescape them in code blocks.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  source = <span class="string">"_p+='"</span> + str.replace(escaper, <span class="function"><span class="keyword">function</span><span class="params">(match)</span> {</span>
+    <span class="keyword">return</span> <span class="string">'\\'</span> + escapes[match];
+  }).replace(settings.escape, <span class="function"><span class="keyword">function</span><span class="params">(match, code)</span> {</span>
+    <span class="keyword">return</span> <span class="string">"'+\n((_t=("</span> + sudo.unescape(code) + <span class="string">"))==null?'':sudo.escape(_t))+\n'"</span>;
+  }).replace(settings.interpolate, <span class="function"><span class="keyword">function</span><span class="params">(match, code)</span> {</span>
+    <span class="keyword">return</span> <span class="string">"'+\n((_t=("</span> + sudo.unescape(code) + <span class="string">"))==null?'':_t)+\n'"</span>;
+  }).replace(settings.evaluate, <span class="function"><span class="keyword">function</span><span class="params">(match, code)</span> {</span>
+    <span class="keyword">return</span> <span class="string">"';\n"</span> + sudo.unescape(code) + <span class="string">"\n_p+='"</span>;
+  }) + <span class="string">"';\n"</span>;
+  source = <span class="string">"var _t,_p='';"</span> + source + <span class="string">"return _p;\n"</span>;
+  render = <span class="keyword">new</span> Function(scope, source);
+  <span class="keyword">if</span> (data) <span class="keyword">return</span> render(data);
+  tmpl = <span class="function"><span class="keyword">function</span><span class="params">(data)</span> {</span>
+    <span class="keyword">return</span> render.call(<span class="keyword">this</span>, data);
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-81">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-81">&#182;</a>
+              </div>
+              <p>Provide the compiled function source as a convenience for reflection/compilation</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  tmpl.source = <span class="string">'function('</span> + scope + <span class="string">'){\n'</span> + source + <span class="string">'}'</span>;
+  <span class="keyword">return</span> tmpl;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-82">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-82">&#182;</a>
+              </div>
+              <h2 id="navigator-class-object">Navigator Class Object</h2>
+<p>Abstracts location and history events, parsing their information into a 
+normalized object that is then set to an Observable class instance</p>
+<p><code>constructor</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Navigator = <span class="function"><span class="keyword">function</span><span class="params">(data)</span> {</span>
+  <span class="keyword">this</span>.started = <span class="literal">false</span>;
+  <span class="keyword">this</span>.slashStripper = <span class="regexp">/^\/+|\/+$/g</span>;
+  <span class="keyword">this</span>.leadingStripper = <span class="regexp">/^[#\/]|\s+$/g</span>;
+  <span class="keyword">this</span>.trailingStripper = <span class="regexp">/\/$/</span>;
+  <span class="keyword">this</span>.construct(data);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-83">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-83">&#182;</a>
+              </div>
+              <p>Navigator inherits from <code>sudo.Model</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype = create(sudo.Model.prototype);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-84">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-84">&#182;</a>
+              </div>
+              <h3 id="buildpath">buildPath</h3>
+<p>Put together a path from the arguments passed in.
+If you want a hash paramaterized pass it as the last arg.</p>
+<p><code>params</code> {*} N number of path fragments
+<code>returns</code> {string} /a/completed/path?withParams=ifPresent</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.buildPath = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="keyword">var</span> args = slice.call(arguments), query;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-85">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-85">&#182;</a>
+              </div>
+              <p>check if the last arg is a hash</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span>($.isObject(args[args.length - <span class="number">1</span>])) {query = <span class="keyword">this</span>.getQuery(args.pop());}
+  <span class="keyword">return</span> <span class="keyword">this</span>.data.root + args.join(<span class="string">'/'</span>) + (query || <span class="string">''</span>);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-86">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-86">&#182;</a>
+              </div>
+              <h3 id="buildrelativepath">buildRelativePath</h3>
+<p>Extend the already existing getUrl type functionality with the ability to append
+to that path as well as paramaterize a hash</p>
+<p><code>params</code> {*} N number of path fragments
+<code>returns</code> {string} /a/completed/path?withParams=ifPresent</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.buildRelativePath = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="keyword">var</span> args = slice.call(arguments);
+  args.unshift(<span class="keyword">this</span>.data.fragment);
+  <span class="keyword">return</span> <span class="keyword">this</span>.buildPath.apply(<span class="keyword">this</span>, args);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-87">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-87">&#182;</a>
+              </div>
+              <h3 id="getfragment">getFragment</h3>
+<p>&#39;Fragment&#39; is defined as any URL information after the &#39;root&#39; path
+including the <code>search</code> or <code>hash</code></p>
+<p><code>returns</code> {String} <code>fragment</code>
+<code>returns</code> {String} the normalized current fragment</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.getFragment = <span class="function"><span class="keyword">function</span><span class="params">(fragment)</span> {</span>
+  <span class="keyword">var</span> root = <span class="keyword">this</span>.data.root;
+  <span class="keyword">if</span>(!fragment) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-88">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-88">&#182;</a>
+              </div>
+              <p>intentional use of coersion</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> (<span class="keyword">this</span>.isPushState) {
+      fragment = window.location.pathname;
+      root = root.replace(<span class="keyword">this</span>.trailingStripper, <span class="string">''</span>);
+      <span class="keyword">if</span>(!fragment.indexOf(root)) fragment = fragment.substr(root.length);
+    } <span class="keyword">else</span> {
+      fragment = <span class="keyword">this</span>.getHash();
+    }
+  }
+  <span class="keyword">return</span> decodeURIComponent(fragment.replace(<span class="keyword">this</span>.leadingStripper, <span class="string">''</span>));
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-89">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-89">&#182;</a>
+              </div>
+              <h3 id="gethash">getHash</h3>
+<p>Check either the passed in fragment, or the full location.href
+for a <code>hash</code> value</p>
+<p><code>param</code> {string} <code>fragment</code> Optional fragment to check
+<code>returns</code> {string} the normalized current <code>hash</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.getHash = <span class="function"><span class="keyword">function</span><span class="params">(fragment)</span> {</span>
+  fragment || (fragment = window.location.href);
+  <span class="keyword">var</span> match = fragment.match(<span class="regexp">/#(.*)$/</span>);
+  <span class="keyword">return</span> match ? match[<span class="number">1</span>] : <span class="string">''</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-90">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-90">&#182;</a>
+              </div>
+              <h3 id="getquery">getQuery</h3>
+<p>Take a hash and convert it to a <code>search</code> query</p>
+<p><code>param</code> {object} <code>obj</code>
+<code>returns</code> {string} the serialized query string</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.getQuery = <span class="function"><span class="keyword">function</span><span class="params">(obj)</span> {</span>
+  <span class="keyword">return</span> <span class="string">'?'</span> + ($.serialize(obj));
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-91">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-91">&#182;</a>
+              </div>
+              <h3 id="getsearch">getSearch</h3>
+<p>Check either the passed in fragment, or the full location.href
+for a <code>search</code> value</p>
+<p><code>param</code> {string} <code>fragment</code> Optional fragment to check
+<code>returns</code> {String} the normalized current <code>search</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.getSearch = <span class="function"><span class="keyword">function</span><span class="params">(fragment)</span> {</span>
+  fragment || (fragment = window.location.href);
+  <span class="keyword">var</span> match = fragment.match(<span class="regexp">/\?(.*)$/</span>);
+  <span class="keyword">return</span> match ? match[<span class="number">1</span>] : <span class="string">''</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-92">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-92">&#182;</a>
+              </div>
+              <h3 id="geturl">getUrl</h3>
+<p>fetch the URL in the form <root + fragment></p>
+<p><code>returns</code> {String}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.getUrl = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-93">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-93">&#182;</a>
+              </div>
+              <p>note that delegate(<em>role</em>) returns the deleagte</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">return</span> <span class="keyword">this</span>.data.root + <span class="keyword">this</span>.data.fragment;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-94">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-94">&#182;</a>
+              </div>
+              <h3 id="go">go</h3>
+<p>If the passed in &#39;fragment&#39; is different than the currently stored one,
+push a new state entry / hash event and set the data where specified</p>
+<p><code>param</code> {string} <code>fragment</code>
+<code>returns</code> {*} call to <code>setData</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.go = <span class="function"><span class="keyword">function</span><span class="params">(fragment)</span> {</span>
+  <span class="keyword">if</span>(!<span class="keyword">this</span>.started) <span class="keyword">return</span> <span class="literal">false</span>;
+  <span class="keyword">if</span>(!<span class="keyword">this</span>.urlChanged(fragment)) <span class="keyword">return</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-95">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-95">&#182;</a>
+              </div>
+              <p>TODO ever use replaceState?</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span>(<span class="keyword">this</span>.isPushState) {
+    window.history.pushState({}, document.title, <span class="keyword">this</span>.getUrl());
+  } <span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">this</span>.isHashChange) {
+    window.location.hash = <span class="string">'#'</span> + <span class="keyword">this</span>.data.fragment;
+  }
+  <span class="keyword">return</span> <span class="keyword">this</span>.setData();
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-96">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-96">&#182;</a>
+              </div>
+              <h3 id="handlechange">handleChange</h3>
+<p>Bound to either the <code>popstate</code> or <code>hashchange</code> events, if the
+URL has indeed changed then parse the relevant data and set it -
+triggering change observers</p>
+<p><code>returns</code> {*} call to <code>setData</code> or undefined</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.handleChange = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="keyword">if</span>(<span class="keyword">this</span>.urlChanged()) {
+    <span class="keyword">return</span> <span class="keyword">this</span>.setData();
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-97">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-97">&#182;</a>
+              </div>
+              <h3 id="parsequery">parseQuery</h3>
+<p>Parse and return a hash of the key value pairs contained in 
+the current <code>query</code></p>
+<p><code>returns</code> {object}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.parseQuery = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span><span class="keyword">return</span> $.deserialize(<span class="keyword">this</span>.data.query);};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-98">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-98">&#182;</a>
+              </div>
+              <h3 id="setdata">setData</h3>
+<p>Using the current <code>fragment</code> (minus any search or hash data) as a key,
+use <code>parseQuery</code> as the value for the key, setting it into the specified
+model (a stated <code>Observable</code> or <code>this.data</code>)</p>
+<p><code>returns</code> {object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.setData = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="keyword">var</span> frag = <span class="keyword">this</span>.data.fragment,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-99">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-99">&#182;</a>
+              </div>
+              <p>data is set in a specified model or in self</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    observable = <span class="keyword">this</span>.data.observable || <span class="keyword">this</span>;
+  <span class="keyword">if</span>(<span class="keyword">this</span>.data.query) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-100">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-100">&#182;</a>
+              </div>
+              <p>we want to set the key minus any search/hash</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    frag = ~frag.indexOf(<span class="string">'?'</span>) ? frag.split(<span class="string">'?'</span>)[<span class="number">0</span>] : frag.split(<span class="string">'#'</span>)[<span class="number">0</span>];
+  }
+  observable.set(frag, <span class="keyword">this</span>.parseQuery());
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-101">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-101">&#182;</a>
+              </div>
+              <h3 id="start">start</h3>
+<p>Gather the necessary information about the current environment and 
+bind to either (push|pop)state or hashchange.
+Also, if given an imcorrect URL for the current environment (hashchange 
+vs pushState) normalize it and set accordingly (or don&#39;t).</p>
+<p><code>returns</code> {object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.start = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="keyword">var</span> hasPushState, atRoot, tmp;
+  <span class="keyword">if</span>(<span class="keyword">this</span>.started) <span class="keyword">return</span>;
+  hasPushState = window.history &amp;&amp; window.history.pushState;
+  <span class="keyword">this</span>.started = <span class="literal">true</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-102">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-102">&#182;</a>
+              </div>
+              <p>setup the initial configuration</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">this</span>.isHashChange = <span class="keyword">this</span>.data.useHashChange &amp;&amp; <span class="string">'onhashchange'</span> <span class="keyword">in</span> window || 
+    (!hasPushState &amp;&amp; <span class="string">'onhashchange'</span> <span class="keyword">in</span> window);
+  <span class="keyword">this</span>.isPushState = !<span class="keyword">this</span>.isHashChange &amp;&amp; !!hasPushState;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-103">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-103">&#182;</a>
+              </div>
+              <p>normalize the root to always contain a leading and trailing slash</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">this</span>.data.root = (<span class="string">'/'</span> + <span class="keyword">this</span>.data.root + <span class="string">'/'</span>).replace(<span class="keyword">this</span>.slashStripper, <span class="string">'/'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-104">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-104">&#182;</a>
+              </div>
+              <p>Get a snapshot of the current fragment</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">this</span>.urlChanged();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-105">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-105">&#182;</a>
+              </div>
+              <p>monitor URL changes via popState or hashchange</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span> (<span class="keyword">this</span>.isPushState) {
+    $(window).on(<span class="string">'popstate'</span>, <span class="keyword">this</span>.handleChange.bind(<span class="keyword">this</span>));
+  } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.isHashChange) {
+    $(window).on(<span class="string">'hashchange'</span>, <span class="keyword">this</span>.handleChange.bind(<span class="keyword">this</span>));
+  } <span class="keyword">else</span> <span class="keyword">return</span>;
+  atRoot = window.location.pathname.replace(<span class="regexp">/[^\/]$/</span>, <span class="string">'$&amp;/'</span>) === <span class="keyword">this</span>.data.root;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-106">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-106">&#182;</a>
+              </div>
+              <p>somehow a URL got here not in my &#39;format&#39;, unless explicitly told not too, correct this</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span>(!<span class="keyword">this</span>.data.stay) {
+   <span class="keyword">if</span>(<span class="keyword">this</span>.isHashChange &amp;&amp; !atRoot) {
+      window.location.replace(<span class="keyword">this</span>.data.root + window.location.search + <span class="string">'#'</span> + 
+        <span class="keyword">this</span>.data.fragment);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-107">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-107">&#182;</a>
+              </div>
+              <p>return early as browser will redirect</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">return</span> <span class="literal">true</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-108">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-108">&#182;</a>
+              </div>
+              <p>the converse of the above</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    } <span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">this</span>.isPushState &amp;&amp; atRoot &amp;&amp; window.location.hash) {
+      tmp = <span class="keyword">this</span>.getHash().replace(<span class="keyword">this</span>.leadingStripper, <span class="string">''</span>);
+      window.history.replaceState({}, document.title, <span class="keyword">this</span>.data.root + 
+        tmp + window.location.search);
+    } 
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-109">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-109">&#182;</a>
+              </div>
+              <p>TODO provide option to <code>go</code> from inital <code>start</code> state?</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-110">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-110">&#182;</a>
+              </div>
+              <h3 id="urlchanged">urlChanged</h3>
+<p>Is a passed in fragment different from the one currently set at <code>this.get(&#39;fragment&#39;)</code>?
+If so set the fragment to the passed fragment passed in (as well as any &#39;query&#39; data), else
+simply return false</p>
+<p><code>param</code> {String} <code>fragment</code>
+<code>returns</code> {bool} </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.Navigator.prototype.urlChanged = <span class="function"><span class="keyword">function</span><span class="params">(fragment)</span> {</span>
+  <span class="keyword">var</span> current = <span class="keyword">this</span>.getFragment(fragment);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-111">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-111">&#182;</a>
+              </div>
+              <p>nothing has changed</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span> (current === <span class="keyword">this</span>.data.fragment) <span class="keyword">return</span> <span class="literal">false</span>;
+  <span class="keyword">this</span>.data.fragment = current;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-112">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-112">&#182;</a>
+              </div>
+              <p>the fragment and the href need to checked here, optimized for the &#39;go&#39; scenario</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">this</span>.data.query = (<span class="keyword">this</span>.getSearch(current) || <span class="keyword">this</span>.getSearch()) || 
+    (<span class="keyword">this</span>.getHash(current) || <span class="keyword">this</span>.getHash());
+  <span class="keyword">return</span> <span class="literal">true</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-113">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-113">&#182;</a>
+              </div>
+              <h2 id="observable-extension-object">Observable Extension Object</h2>
+<p>Implementaion of the ES6 Harmony Observer pattern.
+Extend a <code>sudo.Model</code> class with this object if
+data-mutation-observation is required</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.extensions.observable = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-114">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-114">&#182;</a>
+              </div>
+              <h3 id="_deliver_"><em>deliver</em></h3>
+<p>Called from deliverChangeRecords when ready to send
+changeRecords to observers.</p>
+<p><code>private</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _deliver_: <span class="function"><span class="keyword">function</span><span class="params">(obj)</span> {</span>
+    <span class="keyword">this</span>.callbacks.forEach(<span class="function"><span class="keyword">function</span><span class="params">(cb)</span> {</span>
+      cb(obj);
+    });
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-115">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-115">&#182;</a>
+              </div>
+              <h3 id="deliverchangerecords">deliverChangeRecords</h3>
+<p>Iterate through the changeRecords array(emptying it as you go), delivering them to the
+observers. You can override this method to change the standard delivery behavior.</p>
+<p><code>returns</code> {Object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  deliverChangeRecords: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> rec, cr = <span class="keyword">this</span>.changeRecords;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-116">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-116">&#182;</a>
+              </div>
+              <p>FIFO</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">for</span>(; cr.length &amp;&amp; (rec = cr.shift());) {<span class="keyword">this</span>._deliver_(rec);}
+    <span class="keyword">return</span> <span class="keyword">this</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-117">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-117">&#182;</a>
+              </div>
+              <h3 id="observe">observe</h3>
+<p>In a quasi-ES6 Object.observe pattern, calling observe on an <code>observable</code> and 
+passing a callback will cause that callback to be called whenever any
+property on the observable&#39;s data store is set, changed or deleted 
+via set, unset, setPath or unsetPath with an object containing:
+   {
+     type: <new, updated, deleted>,
+     object: <the object being observed>,
+     name: <the key that was modified>,
+     oldValue: <if a previous value existed for this key>
+   }
+For ease of &#39;unobserving&#39; the same Function passed in is returned.</p>
+<p><code>param</code> {Function} <code>fn</code> The callback to be called with changeRecord(s)
+<code>returns</code> {Function} the Function passed in as an argument</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  observe: <span class="function"><span class="keyword">function</span><span class="params">(fn)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-118">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-118">&#182;</a>
+              </div>
+              <p>this will fail if mixed-in and no <code>callbacks</code> created so don&#39;t do that.
+Per the spec, do not allow the same callback to be added</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">var</span> d = <span class="keyword">this</span>.callbacks;
+    <span class="keyword">if</span>(!~d.indexOf(fn)) d.push(fn);
+    <span class="keyword">return</span> fn;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-119">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-119">&#182;</a>
+              </div>
+              <h3 id="observes">observes</h3>
+<p>Allow an array of callbacks to be registered as changeRecord recipients</p>
+<p><code>param</code> {Array} ary
+<code>returns</code> {Array} the Array passed in to observe</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  observes: <span class="function"><span class="keyword">function</span><span class="params">(ary)</span> {</span>
+    ary.forEach(<span class="function"><span class="keyword">function</span><span class="params">(fn)</span> {</span><span class="keyword">this</span>.observe(fn);}.bind(<span class="keyword">this</span>));
+    <span class="keyword">return</span> ary;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-120">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-120">&#182;</a>
+              </div>
+              <h3 id="set">set</h3>
+<p>Overrides sudo.Base.set to check for observers</p>
+<p><code>param</code> {String} <code>key</code>. The name of the key
+<code>param</code> {*} <code>value</code>
+<code>param</code> {Bool} <code>hold</code> Call <em>deliver</em> (falsy) or store the change notification
+to be delivered upon a call to deliverChangeRecords (truthy)</p>
+<p><code>returns</code> {Object|*} <code>this</code> or calls deliverChangeRecords</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  set: <span class="function"><span class="keyword">function</span><span class="params">(k, v, hold)</span> {</span>
+    <span class="keyword">var</span> obj = {name: k, object: <span class="keyword">this</span>.data};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-121">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-121">&#182;</a>
+              </div>
+              <p>did this key exist already</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span>(k <span class="keyword">in</span> <span class="keyword">this</span>.data) {
+      obj.type = <span class="string">'updated'</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-122">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-122">&#182;</a>
+              </div>
+              <p>then there is an oldValue</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      obj.oldValue = <span class="keyword">this</span>.data[k];
+    } <span class="keyword">else</span> obj.type = <span class="string">'new'</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-123">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-123">&#182;</a>
+              </div>
+              <p>now actually set the value</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">this</span>.data[k] = v;
+    <span class="keyword">this</span>.changeRecords.push(obj);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-124">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-124">&#182;</a>
+              </div>
+              <p>call the observers or not</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span>(hold) <span class="keyword">return</span> <span class="keyword">this</span>;
+    <span class="keyword">return</span> <span class="keyword">this</span>.deliverChangeRecords();
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-125">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-125">&#182;</a>
+              </div>
+              <h3 id="setpath">setPath</h3>
+<p>Overrides sudo.Base.setPath to check for observers.
+Change records originating from a <code>setPath</code> operation
+send back the passed in <code>path</code> as <code>name</code> as well as the
+top level object being observed (this observable&#39;s data).
+this allows for easy filtering either manually or via a 
+<code>change delegate</code></p>
+<p><code>param</code> {String} <code>path</code>
+<code>param</code> {<em>} <code>value</code>
+<code>param</code> {Bool} <code>hold</code> Call <em>deliver</em> (falsy) or store the change notification
+to be delivered upon a call to deliverChangeRecords (truthy)
+<code>returns</code> {Object|</em>} <code>this</code> or calls deliverChangeRecords</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  setPath: <span class="function"><span class="keyword">function</span><span class="params">(path, v, hold)</span> {</span>
+    <span class="keyword">var</span> curr = <span class="keyword">this</span>.data, obj = {name: path, object: <span class="keyword">this</span>.data},
+      p = path.split(<span class="string">'.'</span>), k;
+    <span class="keyword">for</span>(; p.length &amp;&amp; (k = p.shift());) {
+      <span class="keyword">if</span>(!p.length) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-126">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-126">&#182;</a>
+              </div>
+              <p>reached the last refinement, pre-existing?</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="keyword">if</span> (k <span class="keyword">in</span> curr) {
+          obj.type = <span class="string">'updated'</span>;
+          obj.oldValue = curr[k];
+        } <span class="keyword">else</span> obj.type = <span class="string">'new'</span>;
+        curr[k] = v;
+      } <span class="keyword">else</span> <span class="keyword">if</span> (curr[k]) {
+        curr = curr[k];
+      } <span class="keyword">else</span> {
+        curr = curr[k] = {};
+      }
+    }
+    <span class="keyword">this</span>.changeRecords.push(obj);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-127">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-127">&#182;</a>
+              </div>
+              <p>call all observers or not</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span>(hold) <span class="keyword">return</span> <span class="keyword">this</span>;
+    <span class="keyword">return</span> <span class="keyword">this</span>.deliverChangeRecords();
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-128">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-128">&#182;</a>
+              </div>
+              <h3 id="sets">sets</h3>
+<p>Overrides Base.sets to hold the call to <em>deliver</em> until
+all operations are done</p>
+<p><code>returns</code> {Object|*} <code>this</code> or calls deliverChangeRecords</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  sets: <span class="function"><span class="keyword">function</span><span class="params">(obj, hold)</span> {</span>
+    keys(obj).forEach(<span class="function"><span class="keyword">function</span><span class="params">(k)</span> {</span>
+      !~k.indexOf(<span class="string">'.'</span>) ? <span class="keyword">this</span>.set(k, obj[k], <span class="literal">true</span>) :
+        <span class="keyword">this</span>.setPath(k, obj[k], <span class="literal">true</span>);      
+    }.bind(<span class="keyword">this</span>));
+    <span class="keyword">if</span>(hold) <span class="keyword">return</span> <span class="keyword">this</span>;
+    <span class="keyword">return</span> <span class="keyword">this</span>.deliverChangeRecords();
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-129">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-129">&#182;</a>
+              </div>
+              <h3 id="unobserve">unobserve</h3>
+<p>Remove a particular callback from this observable</p>
+<p><code>param</code> {Function} the function passed in to <code>observe</code>
+<code>returns</code> {Object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unobserve: <span class="function"><span class="keyword">function</span><span class="params">(fn)</span> {</span>
+    <span class="keyword">var</span> cb = <span class="keyword">this</span>.callbacks, i = cb.indexOf(fn);
+    <span class="keyword">if</span>(~i) cb.splice(i, <span class="number">1</span>);
+    <span class="keyword">return</span> <span class="keyword">this</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-130">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-130">&#182;</a>
+              </div>
+              <h3 id="unobserves">unobserves</h3>
+<p>Allow an array of callbacks to be unregistered as changeRecord recipients</p>
+<p><code>param</code> {Array} ary
+<code>returns</code> {Object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unobserves: <span class="function"><span class="keyword">function</span><span class="params">(ary)</span> {</span>
+    ary.forEach(<span class="function"><span class="keyword">function</span><span class="params">(fn)</span> {</span><span class="keyword">this</span>.unobserve(fn);}.bind(<span class="keyword">this</span>));
+    <span class="keyword">return</span> <span class="keyword">this</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-131">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-131">&#182;</a>
+              </div>
+              <h3 id="unset">unset</h3>
+<p>Overrides sudo.Base.unset to check for observers</p>
+<p><code>param</code> {String} <code>key</code>. The name of the key
+<code>param</code> {Bool} <code>hold</code></p>
+<p><code>returns</code> {Object|*} <code>this</code> or calls deliverChangeRecords</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unset: <span class="function"><span class="keyword">function</span><span class="params">(key, hold)</span> {</span>
+    <span class="keyword">var</span> obj = {name: key, object: <span class="keyword">this</span>.data, type: <span class="string">'deleted'</span>}, 
+      val = !!<span class="keyword">this</span>.data[key];
+    <span class="keyword">delete</span> <span class="keyword">this</span>.data[key];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-132">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-132">&#182;</a>
+              </div>
+              <p>call the observers if there was a val to delete</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">return</span> <span class="keyword">this</span>._unset_(obj, val, hold);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-133">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-133">&#182;</a>
+              </div>
+              <h3 id="_unset_"><em>unset</em></h3>
+<p>Helper for the unset functions</p>
+<p><code>private</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _unset_: <span class="function"><span class="keyword">function</span><span class="params">(o, v, h)</span> {</span>
+    <span class="keyword">if</span>(v) {
+      <span class="keyword">this</span>.changeRecords.push(o);
+      <span class="keyword">if</span>(h) <span class="keyword">return</span> <span class="keyword">this</span>;
+      <span class="keyword">return</span> <span class="keyword">this</span>.deliverChangeRecords();
+    }
+    <span class="keyword">return</span> <span class="keyword">this</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-134">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-134">&#182;</a>
+              </div>
+              <h3 id="setpath">setPath</h3>
+<p>Overrides sudo.Base.unsetPath to check for observers</p>
+<p><code>param</code> {String} <code>path</code>
+<code>param</code> {*} <code>value</code>
+<code>param</code> {bool} <code>hold</code></p>
+<p><code>returns</code> {Object|*} <code>this</code> or calls deliverChangeRecords</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unsetPath: <span class="function"><span class="keyword">function</span><span class="params">(path, hold)</span> {</span>
+    <span class="keyword">var</span> obj = {name: path, object: <span class="keyword">this</span>.data, type: <span class="string">'deleted'</span>}, 
+      curr = <span class="keyword">this</span>.data, p = path.split(<span class="string">'.'</span>), 
+      k, v;
+    <span class="keyword">for</span> (; p.length &amp;&amp; (k = p.shift());) {
+      <span class="keyword">if</span>(!p.length) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-135">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-135">&#182;</a>
+              </div>
+              <p>reached the last refinement</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        v = !!curr[k];
+        <span class="keyword">delete</span> curr[k];
+      } <span class="keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-136">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-136">&#182;</a>
+              </div>
+              <p>this can obviously fail, but can be prevented by checking
+with <code>getPath</code> first.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        curr = curr[k];
+      }
+    }
+    <span class="keyword">return</span> <span class="keyword">this</span>._unset_(obj, v, hold);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-137">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-137">&#182;</a>
+              </div>
+              <h3 id="unsets">unsets</h3>
+<p>Override of Base.unsets to hold the call to <em>deliver</em> until done</p>
+<p><code>param</code> ary 
+<code>param</code> hold
+<code>returns</code> {Object|*} <code>this</code> or calls deliverChangeRecords</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unsets: <span class="function"><span class="keyword">function</span><span class="params">(ary, hold)</span> {</span>
+    ary.forEach(<span class="function"><span class="keyword">function</span><span class="params">(k)</span> {</span>
+      !~k.indexOf(<span class="string">'.'</span>) ? <span class="keyword">this</span>.unset(k, <span class="literal">true</span>) : <span class="keyword">this</span>.unsetPath(k, <span class="literal">true</span>);   
+    }.bind(<span class="keyword">this</span>));
+    <span class="keyword">if</span>(hold) <span class="keyword">return</span> <span class="keyword">this</span>;
+    <span class="keyword">return</span> <span class="keyword">this</span>.deliverChangeRecords();	
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-138">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-138">&#182;</a>
+              </div>
+              <h2 id="listener-extension-object">Listener Extension Object</h2>
+<p>Handles event binding/unbinding via an events array in the form:
+events: [{
+on: <code>eventName</code>,
+sel: <code>an_optional_delegator</code>,
+ data: an_optional_hash_of_data,
+fn: <code>function name</code>
+}, {...
+This array will be searched for via <code>this.data.events</code>. There is a 
+single-event use case as well, pass a single object literal in the above form.
+with the key <code>event</code>:
+event: {...same as above}
+Details about the hashes in the array:
+A. on -&gt; DOM compatible event name
+B. sel -&gt; Optional DOM compatible selector used to delegate events
+ C. data: A hash that will be passed as the custom Event.data object
+D. fn -&gt; If a {String} bound to the named function on this object, if a 
+    function assumed to be anonymous and called with no scope manipulation</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.extensions.listener = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-139">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-139">&#182;</a>
+              </div>
+              <h3 id="bindevents">bindEvents</h3>
+<p>Bind the events in the data store to this object&#39;s el</p>
+<p><code>returns</code> {Object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  bindEvents: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> e;
+    <span class="keyword">if</span>((e = <span class="keyword">this</span>.data.event || <span class="keyword">this</span>.data.events)) <span class="keyword">this</span>._handleEvents_(e, <span class="number">1</span>);
+    <span class="keyword">return</span> <span class="keyword">this</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-140">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-140">&#182;</a>
+              </div>
+              <p>Use the cash <code>on</code> or &#39;off&#39; method, optionally delegating to a selector if present
+<code>private</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _handleEvents_: <span class="function"><span class="keyword">function</span><span class="params">(e, which)</span> {</span>
+    isArray(e) ? 
+      e.forEach(<span class="function"><span class="keyword">function</span><span class="params">(ev)</span> {</span><span class="keyword">this</span>._handleEvent_(ev, which);}.bind(<span class="keyword">this</span>)) :
+      <span class="keyword">this</span>._handleEvent_(e, which);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-141">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-141">&#182;</a>
+              </div>
+              <p>helper for binding and unbinding an individual event
+<code>param</code> {Object} e. An event descriptor
+<code>param</code> {String} which. <code>on</code> or <code>off</code>
+<code>private</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _handleEvent_: <span class="function"><span class="keyword">function</span><span class="params">(e, which)</span> {</span>
+    which ?
+      $(<span class="keyword">this</span>.el).on(e.on, <span class="keyword">typeof</span> e.fn === <span class="string">'string'</span> ? <span class="keyword">this</span>[e.fn].bind(<span class="keyword">this</span>) : e.fn, e.sel, e.data) :</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-142">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-142">&#182;</a>
+              </div>
+              <p>do not send the fn going to off otherwise the unbind will fail
+because of how we bind the string names, if this is ever an issue we
+can hash them and look it up, but I don&#39;t see that as necessary atm</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      $(<span class="keyword">this</span>.el).off(e.on);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-143">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-143">&#182;</a>
+              </div>
+              <h3 id="rebindevents">rebindEvents</h3>
+<p>Convenience method for <code>this.unbindEvents().bindEvents()</code></p>
+<p>&#39;returns&#39; {object} &#39;this&#39;</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  rebindEvents: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> <span class="keyword">this</span>.unbindEvents().bindEvents();
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-144">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-144">&#182;</a>
+              </div>
+              <h3 id="unbindevents">unbindEvents</h3>
+<p>Unbind the events in the data store from this object&#39;s el</p>
+<p><code>returns</code> {Object} <code>this</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unbindEvents: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> e;
+    <span class="keyword">if</span>((e = <span class="keyword">this</span>.data.event || <span class="keyword">this</span>.data.events)) <span class="keyword">this</span>._handleEvents_(e);
+    <span class="keyword">return</span> <span class="keyword">this</span>;
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-145">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-145">&#182;</a>
+              </div>
+              <h2 id="sudo-persistable-extension">sudo persistable extension</h2>
+<p>A mixin providing restful CRUD operations for a sudo.Model instance.</p>
+<p> create : POST
+ read : GET
+ update : PUT or PATCH (configurable)
+ destroy : DELETE</p>
+<p>Before use be sure to set an <code>ajax</code> property {object} with at least
+a <code>baseUrl: ...</code> key. The model&#39;s id (if present -- indicating a persisted model)
+is appended to the baseUrl (baseUrl/id) by default. You can override this behavior
+by simply setting a <code>url: ...</code> in the <code>ajax</code> options hash or pass in the same when 
+calling any of the methods (or override the model.url() method).</p>
+<p>Place any other default options in the <code>ajax</code> hash
+that you would want sent to an ajax call. Again, you can also override those
+defaults by passing in a hash of options to any method:
+ <code>this.model.update({patch: true})</code> etc...</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.extensions.persistable = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-146">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-146">&#182;</a>
+              </div>
+              <h3 id="create">create</h3>
+<p>Save this model on the server. If a subset of this model&#39;s attributes
+have not been stated (ajax:{data:{...}}) send all of the model&#39;s data.
+Anticipate that the server response will send back the 
+state of the model on the server and set it here (via a success callback).</p>
+<p><code>param</code> {object} <code>params</code> Hash of options for the XHR call
+<code>returns</code> {object} The XHR object</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  create: <span class="function"><span class="keyword">function</span><span class="params">(params)</span> {</span>
+    <span class="keyword">return</span> <span class="keyword">this</span>._sendData_(<span class="string">'POST'</span>, params);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-147">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-147">&#182;</a>
+              </div>
+              <h3 id="destroy">destroy</h3>
+<p>Delete this model on the server</p>
+<p><code>param</code> {object} <code>params</code> Optional hash of options for the XHR
+<code>returns</code> {object} Xhr</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  destroy: <span class="function"><span class="keyword">function</span><span class="params">(params)</span> {</span>
+    <span class="keyword">return</span> <span class="keyword">this</span>._sendData_(<span class="string">'DELETE'</span>, params);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-148">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-148">&#182;</a>
+              </div>
+              <h3 id="_normalizeparams_"><em>normalizeParams</em></h3>
+<p>Abstracted logic for preparing the options object. This looks at 
+the set <code>ajax</code> property, allowing any passed in params to override.</p>
+<p>Sets defaults: <code>text</code> responseType and an onload callback that simply <code>sets()</code> the 
+parsed response returned from the server</p>
+<p><code>returns</code> {object} A normalized params object for the XHR call</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _normalizeParams_: <span class="function"><span class="keyword">function</span><span class="params">(verb, opts, params)</span> {</span>
+    <span class="keyword">var</span> self = <span class="keyword">this</span>;
+    opts || (opts = $.extend({}, <span class="keyword">this</span>.data.ajax));
+    opts.url || (opts.url = <span class="keyword">this</span>.url(opts.baseUrl));
+    opts.verb || (opts.verb = verb);
+    opts.responseType || (opts.responseType = <span class="string">'text'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-149">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-149">&#182;</a>
+              </div>
+              <p>used in the <em>sendData</em> to determine a Content-Type header</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    opts.contentType || (opts.contentType = <span class="string">'json'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-150">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-150">&#182;</a>
+              </div>
+              <p>the default success callback is to set the data returned from the server
+or just the status as <code>ajaxStatus</code> if no data was returned</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    opts.onload || (opts.onload = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-151">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-151">&#182;</a>
+              </div>
+              <p>try to json parse it by default, pass in an &#39;onload&#39; to override</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span>(<span class="keyword">this</span>.responseText) self.sets(JSON.parse(<span class="keyword">this</span>.responseText));
+      <span class="keyword">else</span> self.sets({ajaxStatus: <span class="keyword">this</span>.status, ajaxStatusText: <span class="keyword">this</span>.statusText});
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-152">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-152">&#182;</a>
+              </div>
+              <p>allow the passed in params to override any set in this model&#39;s <code>ajax</code> options</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">return</span> params ? $.extend(opts, params) : opts;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-153">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-153">&#182;</a>
+              </div>
+              <h3 id="read">read</h3>
+<p>Fetch this models state from the server and set it here. The 
+<code>Model.sets()</code> method is used with the returned data (we are 
+asssuming the default json dataType). Pass in (via the params arg)
+a success function to override this default.</p>
+<p>Maps to the http GET method.</p>
+<p><code>param</code> {object} <code>params</code>. Optional info for the XHR call. If
+present will override any set in this model&#39;s <code>ajax</code> options object.
+<code>returns</code> {object} The XHR object</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  read: <span class="function"><span class="keyword">function</span><span class="params">(params)</span> {</span>
+    <span class="keyword">var</span> opts = <span class="keyword">this</span>._normalizeParams_(<span class="string">'GET'</span>, <span class="literal">null</span>, params),
+      xhr = $.getXhr(opts);
+    xhr.send();
+    <span class="keyword">return</span> xhr;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-154">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-154">&#182;</a>
+              </div>
+              <h3 id="save">save</h3>
+<p>Convenience method removing the need to know if a model is new (not yet persisted)
+or has been loaded/refreshed from the server. </p>
+<p><code>param</code> {object} <code>params</code> Hash of options for the XHR call
+<code>returns</code> {object} The XHR object</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  save: <span class="function"><span class="keyword">function</span><span class="params">(params)</span> {</span>
+    <span class="keyword">return</span> (<span class="string">'id'</span> <span class="keyword">in</span> <span class="keyword">this</span>.data) ? <span class="keyword">this</span>.update(params) : <span class="keyword">this</span>.create(params);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-155">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-155">&#182;</a>
+              </div>
+              <h3 id="_senddata_"><em>sendData</em></h3>
+<p>The Create, Update and Patch methods all send data to the server,
+varying only in their HTTP method. Abstracted logic is here.</p>
+<p><code>returns</code> {object} Xhr</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _sendData_: <span class="function"><span class="keyword">function</span><span class="params">(verb, params)</span> {</span>
+    <span class="keyword">var</span> opts = <span class="keyword">this</span>._normalizeParams_(verb, <span class="literal">null</span>, params),
+      xhr = $.getXhr(opts);
+    xhr.send(opts.data || JSON.stringify(<span class="keyword">this</span>.data));
+    <span class="keyword">return</span> xhr;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-156">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-156">&#182;</a>
+              </div>
+              <h3 id="update">update</h3>
+<p>If this model has been persisted to/from the server (it has an <code>id</code> attribute)
+send the specified data (or all the model&#39;s data) to the server at <code>url</code> via
+the <code>PUT</code> http verb or <code>PATCH</code> if {patch: true} is in the ajax options (or the
+passed in params)</p>
+<p>NOTE: update does not check is this is a new model or not, do that yourself
+or use the <code>save()</code> method (that does check).</p>
+<p><code>param</code> {object} <code>params</code> Optional hash of options for the XHR
+<code>returns</code> {object|bool} the Xhr if called false if not</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  update: <span class="function"><span class="keyword">function</span><span class="params">(params)</span> {</span>
+    <span class="keyword">return</span> <span class="keyword">this</span>._sendData_((<span class="keyword">this</span>.data.ajax.patch || params &amp;&amp; params.patch) ? 
+      <span class="string">'PATCH'</span> : <span class="string">'PUT'</span>, params);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-157">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-157">&#182;</a>
+              </div>
+              <h3 id="url">url</h3>
+<p>Takes the base url and appends this models id if present
+(narmalizing the trailong slash if needed).
+Override if you need to change the format of the calculated url.</p>
+<p><code>param</code> {string} <code>base</code> the baseUrl set in this models ajax options</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  url: <span class="function"><span class="keyword">function</span><span class="params">(base)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-158">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-158">&#182;</a>
+              </div>
+              <p>could possibly be 0...</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span>(<span class="string">'id'</span> <span class="keyword">in</span> <span class="keyword">this</span>.data) {
+      <span class="keyword">return</span> base + (base.charAt(base.length - <span class="number">1</span>) === <span class="string">'/'</span> ? 
+        <span class="string">''</span> : <span class="string">'/'</span>) + encodeURIComponent(<span class="keyword">this</span>.data.id);
+    } <span class="keyword">else</span> <span class="keyword">return</span> base;
+  }
+};<span class="comment">//##Filtered Delegate</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-159">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-159">&#182;</a>
+              </div>
+              <p>The base type for both the Data and Change delegates.</p>
+<p><code>param</code> {Object} data</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.delegates.Filtered = <span class="function"><span class="keyword">function</span><span class="params">(data)</span> {</span>
+  sudo.Base.call(<span class="keyword">this</span>);
+  <span class="keyword">this</span>.data = data;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-160">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-160">&#182;</a>
+              </div>
+              <p>The filtered delegate</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.inherit(sudo.Base, sudo.delegates.Filtered);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-161">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-161">&#182;</a>
+              </div>
+              <h3 id="addfilter">addFilter</h3>
+<p>Place an entry into this object&#39;s hash of filters</p>
+<p><code>param</code> {string} <code>k</code>
+<code>param</code> {string} <code>v</code>
+<code>returns</code> {object} this</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.delegates.Filtered.prototype.addFilter = <span class="function"><span class="keyword">function</span><span class="params">(k, v)</span> {</span>
+  <span class="keyword">this</span>.data.filters[k] = v;
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-162">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-162">&#182;</a>
+              </div>
+              <h3 id="removefilter">removeFilter</h3>
+<p>Remove an entry from this object&#39;s hash of filters</p>
+<p><code>param</code> {string} <code>k</code>
+<code>returns</code> {object} this</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.delegates.Filtered.prototype.removeFilter = <span class="function"><span class="keyword">function</span><span class="params">(k)</span> {</span>
+  <span class="keyword">delete</span> <span class="keyword">this</span>.data.filters[k];
+  <span class="keyword">return</span> <span class="keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-163">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-163">&#182;</a>
+              </div>
+              <p><code>private</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.delegates.Filtered.prototype.role = <span class="string">'filtered'</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-164">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-164">&#182;</a>
+              </div>
+              <h2 id="change-delegate">Change Delegate</h2>
+<p>Delegates, if present, can override or extend the behavior
+of objects. The change delegate is specifically designed to
+filter change records from an Observable instance and only forward
+the ones matching a given <code>filters</code> criteria (key or path).
+The forwarded messages will be sent to the specified method
+on the delegates <code>delegator</code> (bound to the <em>delegator</em> scope)</p>
+<p><code>param</code> {Object} data</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.delegates.Change = <span class="function"><span class="keyword">function</span><span class="params">(data)</span> {</span>
+  <span class="keyword">this</span>.construct(data);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-165">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-165">&#182;</a>
+              </div>
+              <p>Delegates inherit from the Filtered Delegate</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.delegates.Change.prototype = create(sudo.delegates.Filtered.prototype);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-166">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-166">&#182;</a>
+              </div>
+              <h3 id="filter">filter</h3>
+<p>Change records are delivered here and filtered, calling any matching
+methods specified in <code>this.get(&#39;filters&#39;)</code>.</p>
+<p><code>returns</code> {Object} a call to the specified <em>delegator</em> method, passing
+a hash containing:</p>
+<ol>
+<li>the <code>type</code> of Change</li>
+<li>the <code>name</code> of the changed property</li>
+<li>the value located at the key/path</li>
+<li>the <code>oldValue</code> of the key if present</li>
+<li>the <code>object</code> that was changed</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.delegates.Change.prototype.filter = <span class="function"><span class="keyword">function</span> <span class="title">filter</span><span class="params">(change)</span> {</span>
+  <span class="keyword">var</span> filters = <span class="keyword">this</span>.data.filters, name = change.name,
+    type = change.type, obj = {object: change &amp;&amp; change.object};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-167">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-167">&#182;</a>
+              </div>
+              <p>does my delegator care about this?</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span>(name <span class="keyword">in</span> filters &amp;&amp; filters.hasOwnProperty(name)) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-168">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-168">&#182;</a>
+              </div>
+              <p>assemble the object to return to the method</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    obj.type = type;
+    obj.name = name;
+    obj.oldValue = change.oldValue;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-169">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-169">&#182;</a>
+              </div>
+              <p>delete operations will not have any value so no need to look</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span>(type !== <span class="string">'deleted'</span>) {
+      obj.value = !~name.indexOf(<span class="string">'.'</span>) ? change.object[change.name] :
+        sudo.getPath(name, change.object);
+    }
+    <span class="keyword">return</span> <span class="keyword">this</span>.delegator[filters[name]].call(<span class="keyword">this</span>.delegator, obj);
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-170">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-170">&#182;</a>
+              </div>
+              <p><code>private</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>sudo.delegates.Change.prototype.role = <span class="string">'change'</span>;
+sudo.version = <span class="string">"0.9.9"</span>;
+window.sudo = sudo;
+<span class="keyword">if</span>(!window._) window._ = sudo;
+}(window));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
