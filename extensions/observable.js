@@ -24,7 +24,7 @@ sudo.extensions.observable = {
   deliverChangeRecords: function() {
     var rec, cr = this.changeRecords;
     // FIFO
-    for(rec; cr.length && (rec = cr.shift());) {this._deliver_(rec);}
+    for(; cr.length && (rec = cr.shift());) {this._deliver_(rec);}
     return this;
   },
   // ###observe
@@ -98,7 +98,7 @@ sudo.extensions.observable = {
   setPath: function(path, v, hold) {
     var curr = this.data, obj = {name: path, object: this.data},
       p = path.split('.'), k;
-    for(k; p.length && (k = p.shift());) {
+    for(; p.length && (k = p.shift());) {
       if(!p.length) {
         // reached the last refinement, pre-existing?
         if (k in curr) {
@@ -187,7 +187,7 @@ sudo.extensions.observable = {
     var obj = {name: path, object: this.data, type: 'deleted'}, 
       curr = this.data, p = path.split('.'), 
       k, v;
-    for (k; p.length && (k = p.shift());) {
+    for (; p.length && (k = p.shift());) {
       if(!p.length) {
         // reached the last refinement
         v = !!curr[k];

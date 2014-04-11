@@ -22,7 +22,7 @@ sudo = {
   getPath: function getPath(path, obj) {
     var key, p;
     p = path.split('.');
-    for (key; p.length && (key = p.shift());) {
+    for (; p.length && (key = p.shift());) {
       if(!p.length) return obj[key];
       else obj = obj[key] || {};
     }
@@ -67,7 +67,7 @@ sudo = {
   // `param` {Object} `obj`. The object literal to operate on.
   setPath: function setPath(path, value, obj) {
     var p = path.split('.'), key;
-    for (key; p.length && (key = p.shift());) {
+    for (; p.length && (key = p.shift());) {
       if(!p.length) obj[key] = value;
       else if (obj[key]) obj = obj[key];
       else obj = obj[key] = {};
@@ -93,7 +93,7 @@ sudo = {
   // `param` {Object} `obj` The object to operate on.
   unsetPath: function unsetPath(path, obj) {
     var p = path.split('.'), key;
-    for (key; p.length && (key = p.shift());) {
+    for (; p.length && (key = p.shift());) {
       if(!p.length) delete obj[key];
       // this can fail if a faulty path is passed.
       // using getPath beforehand can prevent that
