@@ -1,4 +1,4 @@
-/*global keys*/
+/*global keys create*/
 
 //##Data Delegate
 
@@ -14,7 +14,7 @@ sudo.delegates.Data = function(data) {
   this.construct(data);
 };
 // inherits from the Filtered Delegate
-sudo.delegates.Data.prototype = Object.create(sudo.delegates.Filtered.prototype);
+sudo.delegates.Data.prototype = create(sudo.delegates.Filtered.prototype);
 // ###filter
 // iterates over a given object literal and returns a value (if present)
 // located at a given key or path

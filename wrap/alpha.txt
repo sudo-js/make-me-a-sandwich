@@ -1,3 +1,6 @@
 (function(window) {
 var slice = Array.prototype.slice, isArray = Array.isArray, keys = Object.keys, 
-getProto = Object.getPrototypeOf, create = Object.create;
+getProto = Object.getPrototypeOf, create = Object.create, escapes = {},
+htmlEscapes = {'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;',"'": '&#x27;','/': '&#x2F;'},
+escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g, htmlEscaper = /[&<>"'\/]/g,
+unescaper = /\\(\\|'|r|n|t|u2028|u2029)/g, sudo;

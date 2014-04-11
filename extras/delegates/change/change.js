@@ -1,3 +1,5 @@
+/*global create*/
+
 //##Change Delegate
 
 // Delegates, if present, can override or extend the behavior
@@ -12,7 +14,7 @@ sudo.delegates.Change = function(data) {
   this.construct(data);
 };
 // Delegates inherit from the Filtered Delegate
-sudo.delegates.Change.prototype = Object.create(sudo.delegates.Filtered.prototype);
+sudo.delegates.Change.prototype = create(sudo.delegates.Filtered.prototype);
 // ###filter
 // Change records are delivered here and filtered, calling any matching
 // methods specified in `this.get('filters')`.
@@ -26,7 +28,7 @@ sudo.delegates.Change.prototype = Object.create(sudo.delegates.Filtered.prototyp
 // 5. the `object` that was changed
 sudo.delegates.Change.prototype.filter = function filter(change) {
   var filters = this.data.filters, name = change.name,
-    type = change.type, obj = { object: change && change.object };
+    type = change.type, obj = {object: change && change.object};
   // does my delegator care about this?
   if(name in filters && filters.hasOwnProperty(name)) {
     // assemble the object to return to the method
@@ -35,7 +37,7 @@ sudo.delegates.Change.prototype.filter = function filter(change) {
     obj.oldValue = change.oldValue;
     // delete operations will not have any value so no need to look
     if(type !== 'deleted') {
-      obj.value = name.indexOf('.') === -1 ? change.object[change.name] :
+      obj.value = !~name.indexOf('.') ? change.object[change.name] :
         sudo.getPath(name, change.object);
     }
     return this.delegator[filters[name]].call(this.delegator, obj);

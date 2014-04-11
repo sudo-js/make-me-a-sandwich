@@ -1,3 +1,5 @@
+/*global escapes escaper unescaper htmlEscapes htmlEscaper*/
+
 // ###Templating
 
 // Allow the default {{ js code }}, {{= key }}, and {{- escape stuff }} 
@@ -5,16 +7,15 @@
 //
 // `type` {Object}
 sudo.templateSettings = {
-  evaluate: /\{\{([\s\S]+?)\}\}/g,
-  interpolate: /\{\{=([\s\S]+?)\}\}/g,
-  escape: /\{\{-([\s\S]+?)\}\}/g
+ evaluate:    /\[%([\s\S]+?)%\]/g,
+ interpolate: /\[%=([\s\S]+?)%\]/g,
+ escape:      /\[%-([\s\S]+?)%\]/g
 };
 // Certain characters need to be escaped so that they can be put 
 // into a string literal when templating.
 //
 // `type` {Object}
-sudo.escapes = {};
-(function(s) {
+(function() {
   var e = {
     '\\': '\\',
     "'": "'",
@@ -24,38 +25,15 @@ sudo.escapes = {};
     u2028: '\u2028',
     u2029: '\u2029'
   };
-  for (var key in e) if(e.hasOwnProperty(key)) s.escapes[e[key]] = key;
-}(sudo));
-// lookup hash for `escape`
-//
-// `type` {Object}
-sudo.htmlEscapes = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&#x27;',
-  '/': '&#x2F;'
-};
-// Escapes certain characters for templating
-//
-// `type` {regexp}
-sudo.escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
-// Escape unsafe HTML
-//
-// `type` {regexp}
-sudo.htmlEscaper = /[&<>"'\/]/g;
-// Unescapes certain characters for templating
-//
-// `type` {regexp}
-sudo.unescaper = /\\(\\|'|r|n|t|u2028|u2029)/g;
+  for(var key in e) if(e.hasOwnProperty(key)) escapes[e[key]] = key;
+}());
 // ###escape
 // Remove unsafe characters from a string
 //
 // `param` {String} str
 sudo.escape = function(str) {
-  return str.replace(sudo.htmlEscaper, function(match) {
-    return sudo.htmlEscapes[match];
+  return str.replace(htmlEscaper, function(match) {
+    return htmlEscapes[match];
   });
 };
 // ###unescape
@@ -64,8 +42,8 @@ sudo.escape = function(str) {
 //
 // `param` {string} str
 sudo.unescape = function unescape(str) {
-  return str.replace(sudo.unescaper, function(match, escape) {
-    return sudo.escapes[escape];
+  return str.replace(unescaper, function(match, escape) {
+    return escapes[escape];
   });
 };
 // ###template
@@ -79,11 +57,11 @@ sudo.unescape = function unescape(str) {
 // `param` {string} `scope`. Optional context name of your `data object`, set to 'data' if falsy.
 sudo.template = function template(str, data, scope) {
   scope || (scope = 'data');
-  var settings = sudo.templateSettings, render, tmpl,
+  var settings = this.templateSettings, render, tmpl,
   // Compile the template source, taking care to escape characters that
   // cannot be included in a string literal and then unescape them in code blocks.
-  source = "_p+='" + str.replace(sudo.escaper, function(match) {
-    return '\\' + sudo.escapes[match];
+  source = "_p+='" + str.replace(escaper, function(match) {
+    return '\\' + escapes[match];
   }).replace(settings.escape, function(match, code) {
     return "'+\n((_t=(" + sudo.unescape(code) + "))==null?'':sudo.escape(_t))+\n'";
   }).replace(settings.interpolate, function(match, code) {

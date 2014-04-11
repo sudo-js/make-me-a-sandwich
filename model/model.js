@@ -42,7 +42,7 @@ sudo.Model.prototype.getPath = function(path) {
 sudo.Model.prototype.gets = function(ary) {
   var obj = {};
   ary.forEach(function(str) {
-    obj[str] = str.indexOf('.') === -1 ? this.get(str) : this.getPath(str);
+    obj[str] = !~str.indexOf('.') ? this.get(str) : this.getPath(str);
   }.bind(this));
   return obj;
 };
@@ -78,7 +78,7 @@ sudo.Model.prototype.setPath = function(path, v) {
 // `returns` {Object} `this`
 sudo.Model.prototype.sets = function(obj) {
   keys(obj).forEach(function(k) {
-    k.indexOf('.') === -1 ? this.set(k, obj[k]) : this.setPath(k, obj[k]);
+    !~k.indexOf('.') ? this.set(k, obj[k]) : this.setPath(k, obj[k]);
   }.bind(this));
   return this;
 };
@@ -107,7 +107,7 @@ sudo.Model.prototype.unsetPath = function(path) {
 // `returns` {Objaect} `this`
 sudo.Model.prototype.unsets = function(ary) {
   ary.forEach(function(k) {
-    k.indexOf('.') === -1 ? this.unset(k) : this.unsetPath(k);
+    !~k.indexOf('.') ? this.unset(k) : this.unsetPath(k);
   }.bind(this));
   return this;
 };

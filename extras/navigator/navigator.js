@@ -1,4 +1,4 @@
-/*global slice*/
+/*global slice create*/
 
 // ##Navigator Class Object
 
@@ -14,7 +14,7 @@ sudo.Navigator = function(data) {
   this.construct(data);
 };
 // Navigator inherits from `sudo.Model`
-sudo.Navigator.prototype = Object.create(sudo.Model.prototype);
+sudo.Navigator.prototype = create(sudo.Model.prototype);
 // ###buildPath
 // Put together a path from the arguments passed in.
 // If you want a hash paramaterized pass it as the last arg.
@@ -143,7 +143,7 @@ sudo.Navigator.prototype.setData = function() {
     observable = this.data.observable || this;
   if(this.data.query) {
     // we want to set the key minus any search/hash
-    frag = frag.indexOf('?') !== -1 ? frag.split('?')[0] : frag.split('#')[0];
+    frag = ~frag.indexOf('?') ? frag.split('?')[0] : frag.split('#')[0];
   }
   observable.set(frag, this.parseQuery());
   return this;

@@ -1,7 +1,7 @@
 /*global create*/
 
 // #Sudo Namespace
-var sudo = {
+sudo = {
   // Namespace for `Delegate` Class Objects used to delegate functionality
   // from a `delegator`
   //
