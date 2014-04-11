@@ -1,5 +1,8 @@
 # sudo.js
 
+######Annotated Source 
+[Here](http://sudo-js.github.io/make-me-a-sandwich/)
+
 ## Overview
 
 High-level, "Model/View" (or "Presentation Model") style object oriented library made to aide you in your quest for Javascript
