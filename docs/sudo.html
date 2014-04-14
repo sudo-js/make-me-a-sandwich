@@ -32,10 +32,7 @@
             
             <div class="content"><div class='highlight'><pre>(<span class="function"><span class="keyword">function</span><span class="params">(window)</span> {</span>
 <span class="keyword">var</span> slice = Array.prototype.slice, isArray = Array.isArray, keys = Object.keys, 
-getProto = Object.getPrototypeOf, create = Object.create, escapes = {},
-htmlEscapes = {<span class="string">'&amp;'</span>: <span class="string">'&amp;amp;'</span>,<span class="string">'&lt;'</span>: <span class="string">'&amp;lt;'</span>,<span class="string">'&gt;'</span>: <span class="string">'&amp;gt;'</span>,<span class="string">'"'</span>: <span class="string">'&amp;quot;'</span>,<span class="string">"'"</span>: <span class="string">'&amp;#x27;'</span>,<span class="string">'/'</span>: <span class="string">'&amp;#x2F;'</span>},
-escaper = <span class="regexp">/\\|'|\r|\n|\t|\u2028|\u2029/g</span>, htmlEscaper = <span class="regexp">/[&amp;&lt;&gt;"'\/]/g</span>,
-unescaper = <span class="regexp">/\\(\\|'|r|n|t|u2028|u2029)/g</span>, sudo;</pre></div></div>
+getProto = Object.getPrototypeOf, create = Object.create, sudo;</pre></div></div>
             
         </li>
         
@@ -46,7 +43,11 @@ unescaper = <span class="regexp">/\\(\\|'|r|n|t|u2028|u2029)/g</span>, sudo;</pr
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <h1 id="sudo-namespace">Sudo Namespace</h1>
+              <p>uncomment these lines if using the template module (and change the above semi to a comma)
+escapes = {}, htmlEscapes = {&#39;&amp;&#39;: &#39;&amp;&#39;,&#39;&lt;&#39;: &#39;&lt;&#39;,&#39;&gt;&#39;: &#39;&gt;&#39;,&#39;&quot;&#39;: &#39;&quot;&#39;,&quot;&#39;&quot;: &#39;&#x27;&#39;,&#39;/&#39;: &#39;&#x2F;&#39;},
+escaper = /\|&#39;|\r|\n|\t|\u2028|\u2029/g, htmlEscaper = /[&amp;&lt;&gt;&quot;&#39;\/]/g,
+unescaper = /\(\|&#39;|r|n|t|u2028|u2029)/g;</p>
+<h1 id="sudo-namespace">Sudo Namespace</h1>
 
             </div>
             

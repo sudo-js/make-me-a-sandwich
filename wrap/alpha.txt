@@ -1,6 +1,7 @@
 (function(window) {
 var slice = Array.prototype.slice, isArray = Array.isArray, keys = Object.keys, 
-getProto = Object.getPrototypeOf, create = Object.create, escapes = {},
-htmlEscapes = {'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;',"'": '&#x27;','/': '&#x2F;'},
-escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g, htmlEscaper = /[&<>"'\/]/g,
-unescaper = /\\(\\|'|r|n|t|u2028|u2029)/g, sudo;
+getProto = Object.getPrototypeOf, create = Object.create, sudo;
+// uncomment these lines if using the template module (and change the above semi to a comma)
+// escapes = {}, htmlEscapes = {'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;',"'": '&#x27;','/': '&#x2F;'},
+// escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g, htmlEscaper = /[&<>"'\/]/g,
+// unescaper = /\\(\\|'|r|n|t|u2028|u2029)/g;
