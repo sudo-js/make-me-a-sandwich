@@ -49,7 +49,7 @@ sudo.Navigator.prototype.getFragment = function(fragment) {
   if(!fragment) {
     // intentional use of coersion
     if (this.isPushState) {
-      fragment = window.location.pathname;
+      fragment = window.location.pathname + window.location.search;
       root = root.replace(this.trailingStripper, '');
       if(!fragment.indexOf(root)) fragment = fragment.substr(root.length);
     } else {
