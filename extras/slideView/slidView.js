@@ -4,37 +4,32 @@ _.namespace('lib.views');
 lib.views.slidView = function(el, data) {
   // the slideview will pass the template
   this.construct(el, data);
-  
-  // toss these out when done with touch and swipe testing
-  this.touchStart = '<h1>TouchStarted</h1>';
-  this.swipeLeft = '<h1>SwipingLeft</h1>';
-  this.swipeRight = '<h1>SwipingRight</h1>';
 };
 
 lib.views.slidView.prototype = $.extend(Object.create(_.View.prototype), {
   addedToParent: function addedToParent(parent) {
     // i might still have the .template on me, remove it if so
     if(this.el.classList.contains('template')) this.el.classList.remove('template');
-    // parent has saved a ref to this
-    parent.slides.appendChild(this.el);
-    // do the anim/trans out the parent can record a .direction to tell
-    // me which way to go
-  },
-  removedFromParent: function removedFromParent(parent) {
-    // do the anim/trans out the parent can record a .direction to tell
-    // me which way to go
+    // parent has saved a ref to this, I might be the first
+    if(!parent.direction) parent.slides.appendChild(this.el);
+    // otherwise do the anim/trans when i am added
+    else this[parent.direction === 'left' ? 'inRight': 'inleft']();
   },
   
-  // touch and swipe testing, called by the parent who actually recieves the events
-  swipedLeft: function swipedLeft() {
-    this.el.innerHTML = this.swipeLeft;
+  inLeft: function inLeft() {
+    this.parent.slides.appendChild(this.el);
   },
   
-  swipedRight: function swipedRight() {
-    this.el.innerHTML = this.swipeRight;
+  outLeft: function swipedLeft() {
+    // regardless, i remove my DOM
+    this.parent.slides.removeChild(this.el);
   },
   
-  touchStarted: function touchStarted() {
-    this.el.innerHTML = this.touchStart;
+  inRight: function inRight() {
+    this.parent.slides.appendChild(this.el);
+  },
+  
+  outRight: function swipedRight() {
+    this.parent.slides.removeChild(this.el);
   }
 });

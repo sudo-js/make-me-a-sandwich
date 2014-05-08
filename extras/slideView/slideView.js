@@ -23,11 +23,8 @@ lib.views.slideView = function(el, data) {
   // the swipable area is initally empty, important so that reverse sliding
   // back to 0 knows how to hydrate
   this.hydrateChild(this.currentSlide);
-  
-  // evetually call this here, for now do it manually to test swipe detection
-  // this.setup();
 
-  // because this does not exist in static
+  // because this does not exist in static TODO needed?
   this.transitionEnd = '';
   this.animationEnd = '';
 };
@@ -46,13 +43,21 @@ lib.views.slideView.prototype = $.extend(Object.create(_.View.prototype), {
     this.isMoving = false;
   },
   
-  hydrateChild: function hydrateChild(n) {
+  dehydrateChild: function dehydrateChild(n, dir) {
+    // a child will get removed from the swipable area before a new one is added
+    this.visibleChild = null;
+    this.children[n][dir === 'left' ? 'outLeft' : 'outRight']();
+    // now add the next
+    this.hydrateChild(this.currentSlide, dir);
+  },
+  
+  hydrateChild: function hydrateChild(n, dir) {
     if(!this.children[n]) {
       // doubt they need a name
-      this.addChild(new lib.views.slidView(this.childTemplates[n].cloneNode()));
+      this.addChild(new lib.views.slidView(this.childTemplates[n].cloneNode(true)));
     } else {
       // we have that child -- show it
-      // TODO this
+      this.children[n][dir === 'left' ? 'inRight' : 'inLeft']();
     }
 
     // the visible child is either the index or the last one added
@@ -60,11 +65,26 @@ lib.views.slideView.prototype = $.extend(Object.create(_.View.prototype), {
   },
   
   swipeLeft: function swipeLeft() {
-    this.visibleChild.swipedLeft();
+    this.direction = 'left';
+    // if we are at the last child there is nothing to do. we cannot have 
+    // more children than templates
+    if(this.currentSlide === (this.childTemplates.length - 1)) return;
+    // we are increasing
+    this.currentSlide++;
+    // there should be a prev now that we are moving up
+    if(this.children[this.currentSlide - 1]) this.dehydrateChild(this.currentSlide - 1, 'left');
+    else this.hydrateChild(this.currentSlide, 'left');
   },
   
   swipeRight: function swipeRight() {
-    this.visibleChild.swipedRight();
+    this.direction = 'right';
+    // if we are at the first child there is nothing to do.
+    if(this.currentSlide === 0) return;
+    // we are decreasing
+    this.currentSlide--;
+    // there should be a prev now that we are moving down, prob don't need the if
+    // but i will look at that later
+    if(this.children[this.currentSlide + 1]) this.dehydrateChild(this.currentSlide + 1, 'right');
   },
   // we have a swipe. maybe
   touchMoved: function touchMoved(e) {
@@ -84,8 +104,6 @@ lib.views.slideView.prototype = $.extend(Object.create(_.View.prototype), {
   touchStarted: function touchStarted(e) {
     // the touches would represent fingers so we only care when it's 1
     if(e.touches.length !== 1) return;
-    // as part of the touch/swipe test, throw out later
-    this.visibleChild.touchStarted();
     
     this.startX = e.touches[0].pageX;
     this.isMoving = true;
