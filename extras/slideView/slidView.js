@@ -20,7 +20,7 @@ lib.views.slidView.prototype = $.extend(Object.create(_.View.prototype), {
     this.parent.slides.appendChild(this.el);
   },
   
-  outLeft: function swipedLeft() {
+  outLeft: function outLeft() {
     // regardless, i remove my DOM
     this.parent.slides.removeChild(this.el);
   },
@@ -29,7 +29,7 @@ lib.views.slidView.prototype = $.extend(Object.create(_.View.prototype), {
     this.parent.slides.appendChild(this.el);
   },
   
-  outRight: function swipedRight() {
+  outRight: function outRight() {
     this.parent.slides.removeChild(this.el);
   }
 });
