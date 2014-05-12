@@ -42,25 +42,21 @@ lib.views.slideView.prototype = $.extend(Object.create(_.View.prototype), {
     this.isMoving = false;
   },
 
-  dehydrateChild: function dehydrateChild(n, dir) {
+  dehydrateChild: function dehydrateChild(dir) {
     // a child will get removed from the swipable area before a new one is added
     this.visibleChild = null;
-    this.children[n][dir === 'left' ? 'outLeft' : 'outRight']();
-    // now add the next
-    this.hydrateChild(this.currentSlide, dir);
+    // always the zeroth as we delete the other after transition
+    this.children[0][dir === 'left' ? 'outLeft' : 'outRight']();
+    // now add the next, there will be a brief window with 2 children
+    this.hydrateChild(this.currentSlide);
   },
 
-  hydrateChild: function hydrateChild(n, dir) {
-    if(!this.children[n]) {
-      // doubt they need a name
-      this.addChild(new lib.views.slidView(this.childTemplates[n].cloneNode(true)));
-    } else {
-      // we have that child -- show it
-      this.children[n][dir === 'left' ? 'inRight' : 'inLeft']();
-    }
-
-    // the visible child is either the index or the last one added
-    this.visibleChild = this.children[n];
+  hydrateChild: function hydrateChild(n) {
+    var child = new lib.views.slidView(this.childTemplates[n].cloneNode(true));
+    // children are always created new, so none will be saved
+    this.addChild(child);
+    // the visible child is the index sent
+    this.visibleChild = child;
   },
 
   swipeLeft: function swipeLeft() {
@@ -71,8 +67,7 @@ lib.views.slideView.prototype = $.extend(Object.create(_.View.prototype), {
     // we are increasing
     this.currentSlide++;
     // there should be a prev now that we are moving up
-    if(this.children[this.currentSlide - 1]) this.dehydrateChild(this.currentSlide - 1, 'left');
-    else this.hydrateChild(this.currentSlide, 'left');
+    this.dehydrateChild('left');
   },
 
   swipeRight: function swipeRight() {
@@ -81,9 +76,8 @@ lib.views.slideView.prototype = $.extend(Object.create(_.View.prototype), {
     if(this.currentSlide === 0) return;
     // we are decreasing
     this.currentSlide--;
-    // there should be a prev now that we are moving down, prob don't need the if
-    // but i will look at that later
-    if(this.children[this.currentSlide + 1]) this.dehydrateChild(this.currentSlide + 1, 'right');
+
+    this.dehydrateChild('right');
   },
   // we have a swipe. maybe
   touchMoved: function touchMoved(e) {
@@ -107,10 +101,5 @@ lib.views.slideView.prototype = $.extend(Object.create(_.View.prototype), {
     this.startX = e.touches[0].pageX;
     this.isMoving = true;
     $(this.slides).on('touchmove', this.touchMoved.bind(this));
-  },
-
-  removeChild: function removeChild(child) {
-    debugger;
-    this.base('removeChild', child);
   }
 });
