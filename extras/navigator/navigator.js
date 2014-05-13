@@ -127,10 +127,12 @@ sudo.Navigator.prototype.handleChange = function() {
 };
 // ###parseQuery
 // Parse and return a hash of the key value pairs contained in 
-// the current `query`
+// the current `query` if there is one
 //
 // `returns` {object}
-sudo.Navigator.prototype.parseQuery = function() {return $.deserialize(this.data.query);};
+sudo.Navigator.prototype.parseQuery = function() {
+  return this.data.query && $.deserialize(this.data.query);
+};
 // ###setData
 // Using the current `fragment` (minus any search or hash data) as a key,
 // use `parseQuery` as the value for the key, setting it into the specified
@@ -205,7 +207,6 @@ sudo.Navigator.prototype.urlChanged = function(fragment) {
   if (current === this.data.fragment) return false;
   this.data.fragment = current;
   // the fragment and the href need to checked here, optimized for the 'go' scenario
-  this.data.query = (this.getSearch(current) || this.getSearch()) || 
-    (this.getHash(current) || this.getHash());
+  this.data.query = this.getSearch(current) || this.getHash(current);
   return true;
 };
