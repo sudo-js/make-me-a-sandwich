@@ -64,9 +64,17 @@ describe('Sudo Container Class', function() {
     expect(c.length).toBe(0);
   });
 
-  it('Removes all children', function() {
+  it('Removes all named children', function() {
     container.addChild(child1, 'Galahad').addChild(child2, 'Robin');
     expect(container.children.length).toBe(2);
+    container.removeChildren();
+    expect(container.children.length).toBe(0);
+  });
+  
+  it('Removes all named children, even unnammed', function() {
+    container.addChild(child1, 'Galahad').addChild(child2, 'Robin').addChild(
+      new _.View());
+    expect(container.children.length).toBe(3);
     container.removeChildren();
     expect(container.children.length).toBe(0);
   });

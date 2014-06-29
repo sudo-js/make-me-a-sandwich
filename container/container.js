@@ -127,15 +127,16 @@ sudo.Container.prototype.removeChild = function(arg) {
   return this;
 };
 // ###removeChildren
-// Remove all children, name references and adjust indexes accordingly.
-// This method calls removeFromParent as each child may have overridden logic there.
+// Remove all children.
 //
 // see `removeChild`
 // `returns` {object} `this`
 sudo.Container.prototype.removeChildren = function() {
-  keys(this.childNames).forEach(function(n) {
-    this.removeChild(this.getChild(n));
-  }.bind(this));
+  var n = this.children.length;
+  while(n > 0) {
+    this.removeChild(this.children[n - 1]);
+    n--;
+  }
   return this;
 };
 // This is a container, yes.
