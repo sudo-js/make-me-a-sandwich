@@ -32,10 +32,7 @@
             
             <div class="content"><div class='highlight'><pre>(<span class="function"><span class="keyword">function</span><span class="params">(window)</span> {</span>
 <span class="keyword">var</span> slice = Array.prototype.slice, isArray = Array.isArray, keys = Object.keys, 
-getProto = Object.getPrototypeOf, create = Object.create, escapes = {},
-htmlEscapes = {<span class="string">'&amp;'</span>: <span class="string">'&amp;amp;'</span>,<span class="string">'&lt;'</span>: <span class="string">'&amp;lt;'</span>,<span class="string">'&gt;'</span>: <span class="string">'&amp;gt;'</span>,<span class="string">'"'</span>: <span class="string">'&amp;quot;'</span>,<span class="string">"'"</span>: <span class="string">'&amp;#x27;'</span>,<span class="string">'/'</span>: <span class="string">'&amp;#x2F;'</span>},
-escaper = <span class="regexp">/\\|'|\r|\n|\t|\u2028|\u2029/g</span>, htmlEscaper = <span class="regexp">/[&amp;&lt;&gt;"'\/]/g</span>,
-unescaper = <span class="regexp">/\\(\\|'|r|n|t|u2028|u2029)/g</span>, sudo;</pre></div></div>
+getProto = Object.getPrototypeOf, create = Object.create, sudo;</pre></div></div>
             
         </li>
         
@@ -46,7 +43,11 @@ unescaper = <span class="regexp">/\\(\\|'|r|n|t|u2028|u2029)/g</span>, sudo;</pr
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <h1 id="sudo-namespace">Sudo Namespace</h1>
+              <p>uncomment these lines if using the template module (and change the above semi to a comma)
+escapes = {}, htmlEscapes = {&#39;&amp;&#39;: &#39;&amp;&#39;,&#39;&lt;&#39;: &#39;&lt;&#39;,&#39;&gt;&#39;: &#39;&gt;&#39;,&#39;&quot;&#39;: &#39;&quot;&#39;,&quot;&#39;&quot;: &#39;&#x27;&#39;,&#39;/&#39;: &#39;&#x2F;&#39;},
+escaper = /\|&#39;|\r|\n|\t|\u2028|\u2029/g, htmlEscaper = /[&amp;&lt;&gt;&quot;&#39;\/]/g,
+unescaper = /\(\|&#39;|r|n|t|u2028|u2029)/g;</p>
+<h1 id="sudo-namespace">Sudo Namespace</h1>
 
             </div>
             
@@ -1135,17 +1136,18 @@ An object will be assumed to be an actual sudo Class Object.
                 <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
               <h3 id="removechildren">removeChildren</h3>
-<p>Remove all children, name references and adjust indexes accordingly.
-This method calls removeFromParent as each child may have overridden logic there.</p>
+<p>Remove all children.</p>
 <p>see <code>removeChild</code>
 <code>returns</code> {object} <code>this</code></p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>sudo.Container.prototype.removeChildren = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-  keys(<span class="keyword">this</span>.childNames).forEach(<span class="function"><span class="keyword">function</span><span class="params">(n)</span> {</span>
-    <span class="keyword">this</span>.removeChild(<span class="keyword">this</span>.getChild(n));
-  }.bind(<span class="keyword">this</span>));
+  <span class="keyword">var</span> n = <span class="keyword">this</span>.children.length;
+  <span class="keyword">while</span>(n &gt; <span class="number">0</span>) {
+    <span class="keyword">this</span>.removeChild(<span class="keyword">this</span>.children[n - <span class="number">1</span>]);
+    n--;
+  }
   <span class="keyword">return</span> <span class="keyword">this</span>;
 };</pre></div></div>
             
@@ -1598,9 +1600,9 @@ observers. You can override this method to change the standard delivery behavior
                 <a class="pilcrow" href="#section-79">&#182;</a>
               </div>
               <h3 id="observe">observe</h3>
-<p>In a quasi-ES6 Object.observe pattern, calling observe on an <code>observable</code> and 
+<p>In a quasi-ES6 Object.observe pattern, calling observe on an <code>observable</code> and
 passing a callback will cause that callback to be called whenever any
-property on the observable&#39;s data store is set, changed or deleted 
+property on the observable&#39;s data store is set, changed or deleted
 via set, unset, setPath or unsetPath with an object containing:
    {
      type: <new, updated, deleted>,
@@ -1757,7 +1759,7 @@ to be delivered upon a call to deliverChangeRecords (truthy)</p>
 Change records originating from a <code>setPath</code> operation
 send back the passed in <code>path</code> as <code>name</code> as well as the
 top level object being observed (this observable&#39;s data).
-this allows for easy filtering either manually or via a 
+this allows for easy filtering either manually or via a
 <code>change delegate</code></p>
 <p><code>param</code> {String} <code>path</code>
 <code>param</code> {<em>} <code>value</code>
@@ -1835,7 +1837,7 @@ all operations are done</p>
             <div class="content"><div class='highlight'><pre>  sets: <span class="function"><span class="keyword">function</span><span class="params">(obj, hold)</span> {</span>
     keys(obj).forEach(<span class="function"><span class="keyword">function</span><span class="params">(k)</span> {</span>
       !~k.indexOf(<span class="string">'.'</span>) ? <span class="keyword">this</span>.set(k, obj[k], <span class="literal">true</span>) :
-        <span class="keyword">this</span>.setPath(k, obj[k], <span class="literal">true</span>);      
+        <span class="keyword">this</span>.setPath(k, obj[k], <span class="literal">true</span>);
     }.bind(<span class="keyword">this</span>));
     <span class="keyword">if</span>(hold) <span class="keyword">return</span> <span class="keyword">this</span>;
     <span class="keyword">return</span> <span class="keyword">this</span>.deliverChangeRecords();
@@ -1902,7 +1904,7 @@ all operations are done</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  unset: <span class="function"><span class="keyword">function</span><span class="params">(key, hold)</span> {</span>
-    <span class="keyword">var</span> obj = {name: key, object: <span class="keyword">this</span>.data, type: <span class="string">'deleted'</span>}, 
+    <span class="keyword">var</span> obj = {name: key, object: <span class="keyword">this</span>.data, type: <span class="string">'deleted'</span>},
       val = !!<span class="keyword">this</span>.data[key];
     <span class="keyword">delete</span> <span class="keyword">this</span>.data[key];</pre></div></div>
             
@@ -1955,7 +1957,7 @@ all operations are done</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-96">&#182;</a>
               </div>
-              <h3 id="setpath">setPath</h3>
+              <h3 id="unsetpath">unsetPath</h3>
 <p>Overrides sudo.Base.unsetPath to check for observers</p>
 <p><code>param</code> {String} <code>path</code>
 <code>param</code> {*} <code>value</code>
@@ -1965,8 +1967,8 @@ all operations are done</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  unsetPath: <span class="function"><span class="keyword">function</span><span class="params">(path, hold)</span> {</span>
-    <span class="keyword">var</span> obj = {name: path, object: <span class="keyword">this</span>.data, type: <span class="string">'deleted'</span>}, 
-      curr = <span class="keyword">this</span>.data, p = path.split(<span class="string">'.'</span>), 
+    <span class="keyword">var</span> obj = {name: path, object: <span class="keyword">this</span>.data, type: <span class="string">'deleted'</span>},
+      curr = <span class="keyword">this</span>.data, p = path.split(<span class="string">'.'</span>),
       k, v;
     <span class="keyword">for</span> (; p.length &amp;&amp; (k = p.shift());) {
       <span class="keyword">if</span>(!p.length) {</pre></div></div>
@@ -2019,7 +2021,7 @@ with <code>getPath</code> first.</p>
               </div>
               <h3 id="unsets">unsets</h3>
 <p>Override of Base.unsets to hold the call to <em>deliver</em> until done</p>
-<p><code>param</code> ary 
+<p><code>param</code> ary
 <code>param</code> hold
 <code>returns</code> {Object|*} <code>this</code> or calls deliverChangeRecords</p>
 
@@ -2027,10 +2029,10 @@ with <code>getPath</code> first.</p>
             
             <div class="content"><div class='highlight'><pre>  unsets: <span class="function"><span class="keyword">function</span><span class="params">(ary, hold)</span> {</span>
     ary.forEach(<span class="function"><span class="keyword">function</span><span class="params">(k)</span> {</span>
-      !~k.indexOf(<span class="string">'.'</span>) ? <span class="keyword">this</span>.unset(k, <span class="literal">true</span>) : <span class="keyword">this</span>.unsetPath(k, <span class="literal">true</span>);   
+      !~k.indexOf(<span class="string">'.'</span>) ? <span class="keyword">this</span>.unset(k, <span class="literal">true</span>) : <span class="keyword">this</span>.unsetPath(k, <span class="literal">true</span>);
     }.bind(<span class="keyword">this</span>));
     <span class="keyword">if</span>(hold) <span class="keyword">return</span> <span class="keyword">this</span>;
-    <span class="keyword">return</span> <span class="keyword">this</span>.deliverChangeRecords();	
+    <span class="keyword">return</span> <span class="keyword">this</span>.deliverChangeRecords();
   }
 };
 sudo.version = <span class="string">"0.9.9"</span>;
