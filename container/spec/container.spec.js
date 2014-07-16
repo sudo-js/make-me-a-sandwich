@@ -30,7 +30,7 @@ describe('Sudo Container Class', function() {
     container.addChildren(ary);
     expect(container.children.length).toBe(2);
   });
-  
+
   it('Adds many children via an object literal', function() {
     var obj = {'Galahad': child1, 'Robin': child2};
     container.addChildren(obj);
@@ -64,13 +64,23 @@ describe('Sudo Container Class', function() {
     expect(c.length).toBe(0);
   });
 
+  it('Attempts removal by name but does not error if there is no child by that name', function() {
+    var c = container.children;
+    container.addChild(child1, 'Galahad');
+    expect(c.length).toBe(1);
+    expect(container.removeChild('OtherName')).toBe(container);
+    expect(c.length).toBe(1);
+    container.removeChild(child1);
+    expect(c.length).toBe(0);
+  });
+
   it('Removes all named children', function() {
     container.addChild(child1, 'Galahad').addChild(child2, 'Robin');
     expect(container.children.length).toBe(2);
     container.removeChildren();
     expect(container.children.length).toBe(0);
   });
-  
+
   it('Removes all named children, even unnammed', function() {
     container.addChild(child1, 'Galahad').addChild(child2, 'Robin').addChild(
       new _.View());
@@ -123,5 +133,5 @@ describe('Sudo Container Class', function() {
       expect(spy1).toHaveBeenCalledWith('baz');
       expect(spy2).toHaveBeenCalledWith('baz');
   });
-  
+
 });
