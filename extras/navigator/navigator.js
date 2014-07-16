@@ -2,7 +2,7 @@
 
 // ##Navigator Class Object
 
-// Abstracts location and history events, parsing their information into a 
+// Abstracts location and history events, parsing their information into a
 // normalized object that is then set to an Observable class instance
 //
 // `constructor`
@@ -99,16 +99,18 @@ sudo.Navigator.prototype.getUrl = function() {
 };
 // ###go
 // If the passed in 'fragment' is different than the currently stored one,
-// push a new state entry / hash event and set the data where specified
+// push a new state entry / hash event and set the data where specified.
+// If the second argument is true and pushState is being used, replaceState
+// rather than pushing a new state onto window.history.
 //
 // `param` {string} `fragment`
+// `param` {boolean} `bool`
 // `returns` {*} call to `setData`
-sudo.Navigator.prototype.go = function(fragment) {
+sudo.Navigator.prototype.go = function(fragment, bool) {
   if(!this.started) return false;
   if(!this.urlChanged(fragment)) return;
-  // TODO ever use replaceState?
   if(this.isPushState) {
-    window.history.pushState({}, document.title, this.getUrl());
+    window.history[bool ? 'replaceState' : 'pushState']({}, document.title, this.getUrl());
   } else if(this.isHashChange) {
     window.location.hash = '#' + this.data.fragment;
   }
@@ -126,7 +128,7 @@ sudo.Navigator.prototype.handleChange = function() {
   }
 };
 // ###parseQuery
-// Parse and return a hash of the key value pairs contained in 
+// Parse and return a hash of the key value pairs contained in
 // the current `query` if there is one
 //
 // `returns` {object}
@@ -151,9 +153,9 @@ sudo.Navigator.prototype.setData = function() {
   return this;
 };
 // ###start
-// Gather the necessary information about the current environment and 
+// Gather the necessary information about the current environment and
 // bind to either (push|pop)state or hashchange.
-// Also, if given an imcorrect URL for the current environment (hashchange 
+// Also, if given an imcorrect URL for the current environment (hashchange
 // vs pushState) normalize it and set accordingly (or don't).
 //
 // `returns` {object} `this`
@@ -163,7 +165,7 @@ sudo.Navigator.prototype.start = function() {
   hasPushState = window.history && window.history.pushState;
   this.started = true;
   // setup the initial configuration
-  this.isHashChange = this.data.useHashChange && 'onhashchange' in window || 
+  this.isHashChange = this.data.useHashChange && 'onhashchange' in window ||
     (!hasPushState && 'onhashchange' in window);
   this.isPushState = !this.isHashChange && !!hasPushState;
   // normalize the root to always contain a leading and trailing slash
@@ -180,16 +182,16 @@ sudo.Navigator.prototype.start = function() {
   // somehow a URL got here not in my 'format', unless explicitly told not too, correct this
   if(!this.data.stay) {
    if(this.isHashChange && !atRoot) {
-      window.location.replace(this.data.root + window.location.search + '#' + 
+      window.location.replace(this.data.root + window.location.search + '#' +
         this.data.fragment);
       // return early as browser will redirect
       return true;
       // the converse of the above
     } else if(this.isPushState && atRoot && window.location.hash) {
       tmp = this.getHash().replace(this.leadingStripper, '');
-      window.history.replaceState({}, document.title, this.data.root + 
+      window.history.replaceState({}, document.title, this.data.root +
         tmp + window.location.search);
-    } 
+    }
   }
   // TODO provide option to `go` from inital `start` state?
   return this;
@@ -200,7 +202,7 @@ sudo.Navigator.prototype.start = function() {
 // simply return false
 //
 // `param` {String} `fragment`
-// `returns` {bool} 
+// `returns` {bool}
 sudo.Navigator.prototype.urlChanged = function(fragment) {
   var current = this.getFragment(fragment);
   // nothing has changed
