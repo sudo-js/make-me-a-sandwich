@@ -366,7 +366,7 @@ sudo.Container.prototype.addChild = function(c, name) {
 //
 // `param` {Array|Object} `arg`. An array of children to add or an
 // Object literal in the form {name: child}
-// `returns` {Object} `this` 
+// `returns` {Object} `this`
 sudo.Container.prototype.addChildren = function(arg) {
   // normalize the arg
   var _keys = isArray(arg) ? undefined : keys(arg), ary = _keys || arg;
@@ -394,7 +394,7 @@ sudo.Container.prototype.eachChild = function(/*args*/) {
 };
 // ###getChild
 // If a child was added with a name, via `addChild`,
-// that object can be fetched by name. This prevents us from having to reference a 
+// that object can be fetched by name. This prevents us from having to reference a
 // containers children by index. That is possible however, though not preferred.
 //
 // `param` {String|Number} `id`. The string `name` or numeric `index` of the child to fetch.
@@ -413,7 +413,7 @@ sudo.Container.prototype._indexChildren_ = function(i) {
   for (len = c.length; i < len; i++) {
     c[i].index--;
     // adjust any entries in childNames
-    if(c[i].name in obj) obj[c[i].name] = c[i].index; 
+    if(c[i].name in obj) obj[c[i].name] = c[i].index;
   }
 };
 // ###removeChild
@@ -431,8 +431,10 @@ sudo.Container.prototype._indexChildren_ = function(i) {
 sudo.Container.prototype.removeChild = function(arg) {
   var i, t = typeof arg, c;
   // normalize the input
-  if(t === 'object') c = arg; 
+  if(t === 'object') c = arg;
   else c = t === 'string' ? this.children[this.childNames[arg]] : this.children[arg];
+  // if no child exists based on the argument, don't try to remove it
+  if(!c) return this;
   i = c.index;
   // remove from the children Array
   this.children.splice(i, 1);
@@ -471,7 +473,7 @@ sudo.Container.prototype.role = 'container';
 // TODO Currently, only the first target method found is called, then the
 // bubbling is stopped. Should bubbling continue all the way up the 'chain'?
 //
-// `param` {*} Any number of arguments is supported, but the first is the only one searched for info. 
+// `param` {*} Any number of arguments is supported, but the first is the only one searched for info.
 // A sendMethod will be located by:
 //   1. using the first argument if it is a string
 //   2. looking for a `sendMethod` property if it is an object
