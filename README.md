@@ -116,15 +116,14 @@ the `Observable` extension. The `sudo.js` build tool is built with this.
 
 The latest concatonated (but unminified) version of `sudo.js` is always
 located in `build/debug`. If you are making changes, adding new modules, or creating a custom build and need the `debug/`
-files to be rebuilt `cd` into the `build/lib` directory and run:
+files to be rebuilt run:
 
-    node build sudo.html [foo.html] [bar.html] ...
+    node build sudo
 
-Note that the `foo.html` above would represent an HTML configuration file you created for a custom build of sudo.js.
+This puts together the `build/debug/sudo.js` file. You can make a custom build file of your own by putting an `html` file into root, listing
+whichever modules you want then running `node build <filename>`. Note, the `.html` extension is not passed.
 
-You will need `Node.js` installed as well as the `sudoclass` module mentioned above along with the `jsdom` and `walk` modules (both available via npm). The arguments that follow the invocation of
-`build` are the html files that the build tool uses to load the 'modules'. If you are adding new 'modules'
-be sure to add them to sudo.html (and/or other foo.html) config file(s) or they will not be added to the concatonated `debug/` file(s).
+You will need `Node.js` installed as well as the `sudoclass` module mentioned above along with the `jsdom` and `walk` modules (both available via npm).
 
 ### Extras
 

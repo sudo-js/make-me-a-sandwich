@@ -14,10 +14,10 @@ var Pathfinder = function(config) {
   this.sets({
     // the directory this script is in
     dirname: __dirname,
-    rel_build_path: '..',
-    rel_root_path: '../..',
-    rel_debug_path: '../debug',
-    rel_wrap_path: '../../wrap'
+    rel_build_path: './build',
+    rel_root_path: './',
+    rel_debug_path: './build/debug',
+    rel_wrap_path: './wrap'
   });
   // the config can override these
   if(config) this.sets(config);
