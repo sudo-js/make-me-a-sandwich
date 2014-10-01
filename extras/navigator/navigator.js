@@ -56,7 +56,7 @@ sudo.Navigator.prototype.getFragment = function(fragment) {
       fragment = this.getHash();
     }
   }
-  return decodeURIComponent(fragment.replace(this.leadingStripper, ''));
+  return fragment.replace(this.leadingStripper, '');
 };
 // ###getHash
 // Check either the passed in fragment, or the full location.href
