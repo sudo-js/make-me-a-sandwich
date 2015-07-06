@@ -1,7 +1,10 @@
+require('babel/register');
+var Base = require('../emitter');
+
 describe('Sudo Base Object', function() {
   beforeEach(function() {
-    b = new _.Base();
-    d = new _.Base();
+    b = new Base();
+    d = new Base();
     d.role = 'encyclopediaSalesman';
     d.burgle = function() {
       return this.role;
@@ -12,7 +15,7 @@ describe('Sudo Base Object', function() {
   });
 
   it('is an instance of the Base class', function() {
-    expect(b instanceof _.Base).toBe(true);
+    expect(b instanceof Base).toBe(true);
   });
 
   it('has a unique id', function() {
@@ -51,7 +54,7 @@ describe('Sudo Base Object', function() {
   });
 
   it('can remove a delegate', function() {
-    e = new _.Base();
+    e = new Base();
     e.role = 'suspiciousHomeOwner';
     b.addDelegate(d);
     b.addDelegate(e);

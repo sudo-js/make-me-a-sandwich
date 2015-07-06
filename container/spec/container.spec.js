@@ -1,14 +1,19 @@
+require('babel/register');
+
+var Container = require('../container');
+var Store = require('../../store/store');
+
 describe('Sudo Container Class', function() {
   beforeEach(function() {
-    container = new _.View();
-    child1 = new _.View(null, {attributes: {id: 'theChaste'}});
-    child2 = new _.View(null, {attributes: {id: 'theBrave'}});
+    container = new Container;
+    child1 = new Store({id: 'theChaste'});
+    child2 = new Store({id: 'theBrave'});
     cid1 = child1.uid;
     cid2 = child2.uid;
   });
 
   it('Is an instance of Container', function() {
-    expect(container instanceof _.Container).toBe(true);
+    expect(container instanceof Container).toBe(true);
   });
 
   it('has a children array', function() {
@@ -17,12 +22,6 @@ describe('Sudo Container Class', function() {
 
   it('has a childnames hash', function() {
     expect(typeof container.childNames).toBe('object');
-  });
-
-  it('Adds a child view, not appending the DOM', function() {
-    container.addChild(child1, 'Galahad');
-    expect(container.children.length).toBe(1);
-    expect(container.el.innerHTML).toBeFalsy();
   });
 
   it('Adds many children via an array', function() {
@@ -40,7 +39,7 @@ describe('Sudo Container Class', function() {
   });
 
   it('Adds children passed to the constructor', function() {
-    var c = new _.Container([child1, child2]);
+    var c = new Container([child1, child2]);
     expect(c.children.length).toBe(2);
   });
 
@@ -82,8 +81,7 @@ describe('Sudo Container Class', function() {
   });
 
   it('Removes all named children, even unnammed', function() {
-    container.addChild(child1, 'Galahad').addChild(child2, 'Robin').addChild(
-      new _.View());
+    container.addChild(child1, 'Galahad').addChild(child2, 'Robin').addChild(new Store);
     expect(container.children.length).toBe(3);
     container.removeChildren();
     expect(container.children.length).toBe(0);
@@ -95,28 +93,6 @@ describe('Sudo Container Class', function() {
     expect(child2.index).toBe(1);
     container.removeChild(0);
     expect(child2.index).toBe(0);
-  });
-
-  it('Can override methods and use `base` to call super', function() {
-    container.addChild = function addChild(child, name) {
-      this.base('addChild', child, name);
-      this.el.appendChild(child.el);
-      return this;
-    };
-    container.removeChild = function removeChild(id) {
-      this.el.removeChild(this.getChild(id).el);
-      this.base('removeChild', id);
-      return this;
-    };
-    container.addChild(child1, 'Galahad').addChild(child2, 'Robin');
-    expect(container.children.length).toBe(2);
-    expect(container.qs('#theChaste')).toBeTruthy();
-    expect(container.qs('#theBrave')).toBeTruthy();
-
-    container.removeChild('Galahad').removeChild('Robin');
-    expect(container.children.length).toBe(0);
-    expect(container.qs('#theChaste')).toBeFalsy();
-    expect(container.qs('#theBrave')).toBeFalsy();
   });
 
   it('uses the eachChild method correctly', function() {

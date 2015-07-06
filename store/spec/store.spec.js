@@ -1,16 +1,13 @@
-describe('Sudo Model Object', function() {
+require('babel/register');
+var Store = require('../store');
 
-  var a = new _.Model({arrowToThe: 'knee'}),
-  b = new _.Model(),
-  // any setting of values in '2' will reflect in '3'
-  // since they share a model.
-  v = new _.View(),
-  v2 = new _.View();
-  v.model = a;
-  v2.model = a;
-  
+describe('Sudo Store Object', function() {
+
+  var a = new Store({arrowToThe: 'knee'});
+  var b = new Store;
+
   it('is an instance of the Model class', function() {
-    expect(b instanceof _.Model).toBe(true);
+    expect(b instanceof Store).toBe(true);
   });
 
   it('sets and gets the value with the key', function(){
@@ -19,20 +16,11 @@ describe('Sudo Model Object', function() {
   });
 
   it('should not share the key', function() {
-    expect(v.model.get('spam')).toBeFalsy();
+    expect(a.get('spam')).toBeFalsy();
   });
 
   it('should return undefined for non-existant keys', function(){
     expect(a.get('aabbcc')).toBeFalsy();
-  });
-
-  it('should share model data', function() {
-    expect(v.model.get('arrowToThe')).toEqual(v2.model.get('arrowToThe'));
-  });
-
-  it('should reflect changes in both models', function() {
-    v.model.set('Fus-Ro','-Da');
-    expect(v2.model.get('Fus-Ro')).toEqual('-Da');
   });
 
   it('should correctly use paths', function() {

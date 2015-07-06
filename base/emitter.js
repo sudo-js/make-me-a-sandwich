@@ -1,13 +1,13 @@
+var EventEmitter = require('events').EventEmitter;
 var _ = require('../sudo');
 var delegates = require('../mixins/delegates');
 
-// ##Base Class Object
+// ##Emitterbase Class Object
 //
-// All sudo.js objects inherit base, giving the ability
-// to utilize delegation
-//
-class Base {
+// A Base Class extending the core Node module EventEmitter.
+class Emitterbase extends EventEmitter {
   constructor() {
+    super();
     // can delegate
     this.delegates = [];
     // a beautiful and unique snowflake
@@ -18,6 +18,6 @@ class Base {
 }
 
 // add the actual methods
-_.mixin(Base.prototype, delegates);
+_.mixin(Emitterbase.prototype, delegates);
 
-module.exports = Base;
+module.exports = Emitterbase;

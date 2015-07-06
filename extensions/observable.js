@@ -1,11 +1,9 @@
-/*global keys*/
-
-// ## Observable Extension Object
+// ## Observable Mixin Object
 //
 // Implementaion of the ES6 Harmony Observer pattern.
 // Extend a `sudo.Model` class with this object if
 // data-mutation-observation is required
-sudo.extensions.observable = {
+module.exports = {
   // ###_deliver_
   // Called from deliverChangeRecords when ready to send
   // changeRecords to observers.
@@ -123,7 +121,7 @@ sudo.extensions.observable = {
   //
   // `returns` {Object|*} `this` or calls deliverChangeRecords
   sets: function(obj, hold) {
-    keys(obj).forEach(function(k) {
+    Object.keys(obj).forEach(function(k) {
       !~k.indexOf('.') ? this.set(k, obj[k], true) :
         this.setPath(k, obj[k], true);
     }.bind(this));
