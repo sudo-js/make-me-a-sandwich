@@ -12,7 +12,7 @@ class Store extends Emitterbase {
   constructor(data) {
     super();
 
-    this.role = 'model';
+    this.role = 'store';
     // stores operate on the inner data hash...
     this.data = data || {};
   }

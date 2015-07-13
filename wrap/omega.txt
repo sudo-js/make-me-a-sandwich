@@ -1,3 +1,0 @@
-window.sudo = sudo;
-if(!window._) window._ = sudo;
-}(window));

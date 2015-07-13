@@ -1,56 +1,58 @@
-// responder chain type stuff
-// view classes used here as they have a model
+require('babel/register');
+var Child = require('./fixture.js').Child;
+var Parent = require('./fixture.js').Parent;
+var Grandparent = require('./fixture.js').Grandparent;
 
-describe('Sudo Container Send Functionality', function() {
+describe('Container Send Functionality', function() {
 
-  var Z = function(el, data) {
-    this.construct(el, data);
-  };
-  Z.prototype = Object.create(_.View.prototype);
+  var one = new Child('one');
+  var two = new Child('two');
+  var parent = new Parent('parent');
+  var grandParent = new Grandparent('gp');
 
-  Z.prototype.sendersName = function(sender, whatevs) {
-    console.log('sender\'s name: ' + sender.data.name + ' sent ' + whatevs);
-    console.log('my name: ' + this.data.name);
-  };
+  parent.addChildren([one, two]);
+  grandParent.addChild(parent);
 
-  var a = new Z(null, {name: 'A'});
-  var b = new Z(null, {name: 'B'}); 
-  var c = new Z(null, {name: 'C'});
-  var d = new Z(null, {name: 'D'});
-
-  it('sets a method and gets it', function() {
-    b.data.sendMethod =  'sendersName';
-    expect(b.data.sendMethod).toEqual('sendersName');
+  it('successfully sends its message to an unknown target (1 step in heirarchy)', function() {
+    // parent has foo 'sendTarget'
+    one.send('foo', {from: one.name, key: 'hey', value: 'gimme some money!'});
+    expect(parent.fooRecieved.one).toBeTruthy();
+    // two has sent nothing...
+    expect(parent.fooRecieved.two).toBeFalsy();
+    // grandParent does as well, but as parent did not send it again it will not have reached...
+    expect(grandParent.fooRecieved.one).toBeFalsy();
+    expect(parent.fooRecieved.one.key).toBe('hey');
+    expect(parent.fooRecieved.one.value).toBe('gimme some money!');
   });
 
-  it('should not have the action set', function() {
-    expect(c.data.sendMethod).toBeFalsy();
+  it('successfully sends its message to an unknown target (2 steps in heirarchy)', function() {
+    // grandParent has bar 'sendTarget'
+    one.send('bar', {from: one.name, key: 'hey', value: 'gimme some money?'});
+    expect(grandParent.barRecieved.one).toBeTruthy();
+    expect(grandParent.barRecieved.two).toBeFalsy();
+    // parent does not have bar...
+    expect(parent.barRecieved).toBeFalsy();
+    expect(grandParent.barRecieved.one.key).toBe('hey');
+    expect(grandParent.barRecieved.one.value).toBe('gimme some money?');
   });
 
-  it('sets a target and gets it', function() {
-    b.data.sendTarget = c;
-    expect(b.data.sendTarget).toEqual(c);
+  // same, but from other child
+  it('successfully sends its message to an unknown target again (1 step in heirarchy)', function() {
+    // two is the nice one...
+    two.send('foo', {from: two.name, key: 'hello', value: 'please gimme some money?'});
+    expect(parent.fooRecieved.two).toBeTruthy();
+    // grandParent does as well, but as parent did not send it again it will not have reached...
+    expect(grandParent.fooRecieved.two).toBeFalsy();
+    expect(parent.fooRecieved.two.key).toBe('hello');
+    expect(parent.fooRecieved.two.value).toBe('please gimme some money?');
   });
 
-  it('successfully sends its message to its target with (self) arg', function() {
-    var spy = spyOn(c, 'sendersName').andCallThrough();
-    b.send('Ni!');
-    expect(spy).toHaveBeenCalledWith(b, 'Ni!');
-  });
-
-  it('sucessfully sends a message to a different target', function() {
-    // actions and targets can be declared 'on-the-fly'
-    var spy = spyOn(a, 'sendersName').andCallThrough();
-    d.data.sendTarget = a;
-    d.send('sendersName', ' Go boil your bottoms...');
-    expect(spy).toHaveBeenCalledWith(d, ' Go boil your bottoms...');
-  });
-
-  it('sends messages on the fly', function() {
-    var spy = spyOn(b, 'sendersName').andCallThrough();
-    a.parent = b;
-    a.send('sendersName', ' Found Them? In Mercia?');
-    expect(spy).toHaveBeenCalledWith(a, ' Found Them? In Mercia?');
+  it('successfully sends its message to an unknown target again (2 steps in heirarchy)', function() {
+    // grandParent has bar 'sendTarget'
+    two.send('bar', {from: two.name, key: 'hello', value: 'blah blah money...'});
+    expect(grandParent.barRecieved.two).toBeTruthy();
+    expect(parent.barRecieved).toBeFalsy();
+    expect(grandParent.barRecieved.two.key).toBe('hello');
+    expect(grandParent.barRecieved.two.value).toBe('blah blah money...');
   });
 });
-

@@ -1,5 +1,5 @@
 var Base = require('../base/base');
-// ##Container Class Object
+// ##Container
 //
 // A container is any object that can both contain other objects and
 // itself be contained.
@@ -152,43 +152,32 @@ class Container extends Base {
   // What this does is allow children of a `sudo.Container` to simply pass
   // events  upward, delegating the responsibility of deciding what to do to the parent.
   //
-  // TODO Currently, only the first target method found is called, then the
-  // bubbling is stopped. Should bubbling continue all the way up the 'chain'?
+  // NOTE Only the first target method found is called, bubbling stops there.
+  // If you wish it to continue call `send` again...
   //
   // `param` {*} Any number of arguments is supported, but the first is the only one searched for info.
   // A sendMethod will be located by:
   //   1. using the first argument if it is a string
   //   2. looking for a `sendMethod` property if it is an object
-  // In the case a specified target exists at `this.data.sendTarget` it will be used
-  // Any other args will be passed to the sendMethod after `this`
+  // Any args will be passed to the sendMethod
   // `returns` {Object} `this`
   send(...args) {
     let d = this.data;
     let meth;
     let targ;
     let fn;
-    // normalize the input, common use cases first
+    // .sendMethod useful for direct event binding to a send
     if(d && 'sendMethod' in d) meth = d.sendMethod;
+    // this.send('foo', ...args)
     else if(typeof args[0] === 'string') meth = args.shift();
-    // less common but viable options
-    if(!meth) {
-      // passed as a custom data attr bound in events
-      meth = 'data' in args[0] ? args[0].data.sendMethod :
-        // passed in a hash from something or not passed at all
-        args[0].sendMethod || undefined;
-    }
+    // if there was no send target specified bail out
+    if (!meth) return;
     // target is either specified or my parent
     targ = d && d.sendTarget || this.bubble();
     // obvious chance for errors here, don't be dumb
     fn = targ[meth];
-    while(!fn && (targ = targ.bubble())) {
-      fn = targ[meth];
-    }
-    // sendMethods expect a signature (sender, ...)
-    if(fn) {
-      args.unshift(this);
-      fn.apply(targ, args);
-    }
+    while(!fn && (targ = targ.bubble())) fn = targ[meth];
+    if(fn) fn.apply(targ, args);
     return this;
   }
 }
