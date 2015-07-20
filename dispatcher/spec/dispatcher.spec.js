@@ -1,9 +1,10 @@
 require('babel/register');
 
-// var Container = require('../../container');
-// var Dispatcher = require('../../store/store');
+var store = require('../store/store');
+var dispatcher = require('../dispatcher');
+var child1 = require('../view/view');
 //
-describe('Sudo Container Class', function() {
+describe('Dispatcher Class', function() {
 //   beforeEach(function() {
 //     container = new Container;
 //     child1 = new Store({id: 'theChaste'});
