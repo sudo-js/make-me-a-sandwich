@@ -78,3 +78,5 @@ class Dispatcher extends Container {
   // Allows a store to stop listening for dispatch
   unregister(id) { delete this.callbacks[id]; }
 }
+
+module.exports = Dispatcher;
