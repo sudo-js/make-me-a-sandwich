@@ -6,16 +6,15 @@ var babelify = require("babelify");
 var source = require('vinyl-source-stream');
 
 // create the browser compat sudo.js bundle
-gulp.task('bundle', function() {
+gulp.task('view-test', function() {
   browserify({
-    entries: ['./container/container.js', './dispatcher/dispatcher.js',
-      './store/store.js', './view/view.js'],
+    entries: ['./view/test/index.js'],
     debug: true
   })
   .transform(babelify)
   .bundle()
-  .pipe(source('sudo.js'))
-  .pipe(gulp.dest('./dist/debug'));
+  .pipe(source('bundle.js'))
+  .pipe(gulp.dest('./view/test'));
 });
 
 gulp.task('jasmine', function() {
