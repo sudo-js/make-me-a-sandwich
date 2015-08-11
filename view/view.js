@@ -10,6 +10,7 @@ class View extends Container {
 
     this.role = 'view';
     this.data = data;
+    this.state = {};
   }
 
   // ###addedToParent
@@ -25,7 +26,9 @@ class View extends Container {
   // There is a path for a simple, non-templated, non Shadow Dom element. Simply
   // provide a selector via `el` and it will become the `host`. Since the state
   // hydration for temlated (and non) is the same this will work
-  addedToParent(parent) {
+  //
+  // `arg` {object} `parent`. The Container instance adding this object
+  addedToParent() {
     let tmplHost, tmpl;
     // if my .template is a string identifier, locate it
     if(typeof this.data.template === 'string') {
@@ -39,11 +42,20 @@ class View extends Container {
     let tmplContent = tmpl && document.importNode(tmpl.content, true);
     // the eventual location, assumed to be in the main doc
     this.host = document.querySelector(this.data.shadowHost || this.data.el);
-    if (tmplContent && this.host && ("createShadowRoot" in this.host)) {
+    if (tmplContent && this.host && ('createShadowRoot' in this.host)) {
       this.root = this.host.createShadowRoot();
       // place the template content into the host
       this.root && this.root.appendChild(tmplContent);
     }
+  }
+
+  // ###mergeState
+  mergeState(state) {
+    Object.keys(state).forEach(key => {
+      this.state[key] = state[key];
+    });
+
+    return this.render(this.state);
   }
 
   // ###render
@@ -61,7 +73,7 @@ class View extends Container {
   //    </div>
   //
   // Then passed this `state` object:
-  //    { '.foo': 'Bar', h3: 'Foo'}
+  //    { '.foo': 'Bar', h3: 'Foo' }
   //
   // Will result in:
   //    <div id="#fooHost">
@@ -69,17 +81,49 @@ class View extends Container {
   //      <span class="foo">Bar</span>
   //    </div>
   //
+  // You can, obviously, override this to provide different behavior
+  //
   // The actual presentation details, of course, are abstracted away in the
   // Shadow Dom, via your template. NOTE: We do expect that you have processed the
   // values to be inserted down to a simple `textContent` by this point
-  render(state) {
-    // state and host are mandatory
-    if (!this.host || !state) return;
+  //
+  // `param` {Object} `state`. A hash of key:val pairs that map to this component's markup.
+  // `param` {Bool} `reset`. Optional flag to remove any previous state, using the
+  // passed-in state object as the new baseline.
+  // `returns` {oject} `this`
+  render(state = this.state) {
+    // host is mandatory
+    if (!this.host) return;
+
+    // TODO diff based on a _prevState_ ??
     Object.keys(state).forEach(key => {
-      this.host.querySelector(key).textContent = state[key];
+      this.host.querySelector(key).textContent = this.state[key];
     });
     return this;
   }
+
+  // ###resetState
+  // Given a hash of key:val pairs set any that are present and empty any previous
+  // keys in my state object.
+  // Essentially this 'blanks out' any previous keys that were present, but are
+  // not present in the passed-in object, by setting their value to an empty string.
+  // `mergeState` is then called with the passed-in object.
+  //
+  // `param` {Object} `state`
+  resetState(state) {
+    // empty the value of any keys not in the passed-in state object
+    Object.keys(this.state).forEach(key => {
+      if(!(key in state)) this.state[key] = '';
+    });
+    // now that any prev entries are erased (but kept) the new state can be merged
+    return this.mergeState(state);
+  }
+
+  // ###update
+  // Default implementation is a noop. An overridden method may exist on your
+  // subclass to map the data passed in to one suitable for passing to render.
+  // This is the preferred method for parents to call with dispatch data
+  update() {}
 }
 
 module.exports = View;

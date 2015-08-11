@@ -1,13 +1,3 @@
-var Dispatcher = require('../../dispatcher/dispatcher');
+var Dispatcher = require('flux').Dispatcher;
 
-class TestDispatcher extends Dispatcher {
-  // send target for button component
-  buttonPressed(name) {
-    console.log('send target hit');
-    // which button was pressed ?
-    this.dispatch({action: 'buttonPress', identifier: name});
-  }
-  
-}
-
-module.exports = TestDispatcher;
+module.exports = new Dispatcher;

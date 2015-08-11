@@ -9,8 +9,6 @@ class Buttons extends View {
   }
 
   handleClick(e) {
-    // which button was clicked?
-    // console.log('button clicked: ' + e.target.name);
     if (e.target.name) {
       this.send('buttonPressed', e.target.name);
     }

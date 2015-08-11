@@ -1,4 +1,4 @@
-<template>
+<template id="main">
   <style>
     .dyna-one {
       font-size: 25px;
@@ -9,15 +9,21 @@
       font-size: 16px;
       color: blue;
     }
+    
+    .one-count, .two-count {
+      font-weight: bold;
+    }
   </style>
 
   <div class="static">
     <h2>That Just Happened:</h2>
   </div>
   <div class="dyna-one">
-    <content select=".one"></content>
+    <content select=".one-notification"></content>
+    <content select=".one-count"></content>
   </div>
   <div class="dyna-two">
-    <content select=".two"></content>
+    <content select=".two-notification"></content>
+    <content select=".two-count"></content>
   </div>
 </template>

@@ -13,6 +13,7 @@
     "Sandwiches"
   ],
   "dependencies" : {
+    "flux": "*",
     "browserify": "*",
     "babel": "*",
     "babelify": "*",

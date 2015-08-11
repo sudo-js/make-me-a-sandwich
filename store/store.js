@@ -45,6 +45,24 @@ class Store extends Emitterbase {
     });
     return obj;
   }
+  // ###handleDispatch
+  // A noop by default, override in you subclass to perform the necessary
+  // computation on the recieved dispatch payload.
+  handleDispatch() {}
+  // ###register
+  // Register a callback with the dispatcher, assigning the returned
+  // "dispatch token" as `this.dispatchId`.
+  //
+  // `param` {Object} `dispatcher`. The dispatcher instance to register with
+  // `param` {String|Function} Optional argument indicating the function to
+  // register with. If falsy, `handleDispatch` is assumed. If a String, the
+  // method is bound to this instance when registered. If a Function, it is
+  // simply passed as-is
+  register(dispatcher, fn = 'handleDispatch') {
+    let cb = typeof fn === 'string' ? this[fn].bind(this) : fn;
+    // if there is no cb to register, indicate with an falsy ID
+    this.dispatchId = cb ? dispatcher.register(cb) : null;
+  }
   // ###set
   // Set a key:value pair.
   //

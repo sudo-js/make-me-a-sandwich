@@ -1,16 +1,34 @@
 var Store = require('../../store/store');
+var dispatcher = require('./test-dispatcher');
 
 class TestStore extends Store {
-  handleDispatch(payload) {
-    console.log('handle dispatch hit');
-    // depending on the payload, set some stuff and emit...
-    this.sets(payload);
-    this.emit('change');
+  constructor() {
+    super();
+    this.register(dispatcher);
+
+    this.sets({oneHappened: 0, twoHappened: 0});
   }
-  // pass in a dispatcher instance to register with it
-  register(dispatcher) {
-    this.dispatchId = dispatcher.register(this.handleDispatch.bind(this));
+
+  handleDispatch(payload) {
+    if (payload.type === 'buttonPress') {
+      // if there were more than 2 we'd switch...
+      if (payload.identifier === 'event-one') this.data.oneHappened += 1;
+      else this.data.twoHappened += 1;
+
+      this.data.currentEvent = payload.identifier;
+      this.emit('change');
+    }
+  }
+
+  getCurrentEvent() {
+    let event = this.data.currentEvent;
+
+    return {
+      event: event,
+      count: event === 'event-one' ? this.data.oneHappened :
+        this.data.twoHappened
+    };
   }
 }
 
-module.exports = TestStore;
+module.exports = new TestStore;
