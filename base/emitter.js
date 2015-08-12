@@ -1,5 +1,5 @@
 var EventEmitter = require('events').EventEmitter;
-var _ = require('../sudo');
+var _ = require('../util/util');
 var delegates = require('../mixins/delegates');
 
 // ##Emitterbase Class Object

@@ -1,10 +1,19 @@
 var Emitterbase = require('../base/emitter');
-var _ = require('../sudo');
+var _ = require('../util/util');
 // ##Store
 //
-// Store Objects expose methods for setting and getting data. Being a subclass
-// of Emitterbase, EventEmitter methods are available. After processing, a
-// store may emit the `change` event signifying it is ready to be queried
+// Store Objects expose methods for setting and getting key:val pairs on this
+// object's internal `data` hash. Notice there are no `get` or `set` operations
+// as for simple "one level deep" operations you should simply:
+//
+//     this.data.foo = 'bar';
+//     delete this.data.foo;
+//
+// The methods provided here are either for *path* based operations or give the
+// ability to (un)set / get multiple vals at once.
+//
+// Being a subclass of Emitterbase, EventEmitter methods are available. After
+// processing, a store may emit the `change` event signifying it is ready to be queried
 //
 // `param` {object} data. An initial state for this store.
 //
@@ -13,19 +22,12 @@ class Store extends Emitterbase {
   constructor(data) {
     super();
 
-    this.role = 'model';
+    this.role = 'store';
     // stores operate on the inner data hash...
     this.data = data || {};
   }
-  // ###get
-  // Returns the value associated with a key.
-  //
-  // `param` {String} `k`. The name of the key
-  // `returns` {*}. The value associated with the key or false if not found.
-  get(k) { return this.data[k]; }
   // ###getPath
-  // Uses the sudo namespace's getpath function operating on the model's
-  // data hash.
+  // Uses the `getpath` function operating on the store's data hash.
   //
   // `param` {string} `path`
   // `returns` {*|undefined}. The value at keypath or undefined if not found.
@@ -63,17 +65,6 @@ class Store extends Emitterbase {
     // if there is no cb to register, indicate with an falsy ID
     this.dispatchId = cb ? dispatcher.register(cb) : null;
   }
-  // ###set
-  // Set a key:value pair.
-  //
-  // `param` {String} `k`. The name of the key.
-  // `param` {*} `v`. The value associated with the key.
-  // `returns` {Object} `this`
-  set(k, v) {
-    // _NOTE: intentional possibilty of setting a falsy value_
-    this.data[k] = v;
-    return this;
-  }
   // ###setPath
   // Uses the `setpath` function operating on the model's
   // data hash.
@@ -95,15 +86,6 @@ class Store extends Emitterbase {
     Object.keys(obj).forEach(k => {
       !~k.indexOf('.') ? this.set(k, obj[k]) : this.setPath(k, obj[k]);
     });
-    return this;
-  }
-  // ###unset
-  // Remove a key:value pair from this object's data store
-  //
-  // `param` {String} `k`
-  // `returns` {Object} `this`
-  unset(k) {
-    delete this.data[k];
     return this;
   }
   // ###unsetPath

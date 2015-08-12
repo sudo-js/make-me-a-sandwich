@@ -1,4 +1,4 @@
-var _ = require('../sudo');
+var _ = require('../util/util');
 var delegates = require('../mixins/delegates');
 
 // ##Base Class Object
