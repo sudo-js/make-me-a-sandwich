@@ -1,7 +1,9 @@
 {
-  "version": "0.10.1",
+  "license": "MIT",
+  "name": "sudolib",
+  "version": "0.1.1",
   "author": "Rob Robbins",
-  "description": "Make me a sandwich.",
+  "description": "Make me a sandwich (with Javascript).",
   "repository": {
     "type": "git",
     "url": "https://github.com/sudo-js/make-me-a-sandwich.git"
@@ -24,5 +26,6 @@
     "gulp-jasmine": "*",
     "glob": "*",
     "vinyl-source-stream": "*"
-  }
+  },
+  "main": "sudo"
 }

@@ -10,19 +10,6 @@ describe('Sudo Store Object', function() {
     expect(b instanceof Store).toBe(true);
   });
 
-  it('sets and gets the value with the key', function(){
-    b.set('spam', 'eggs');
-    expect(b.get('spam')).toEqual('eggs');
-  });
-
-  it('should not share the key', function() {
-    expect(a.get('spam')).toBeFalsy();
-  });
-
-  it('should return undefined for non-existant keys', function(){
-    expect(a.get('aabbcc')).toBeFalsy();
-  });
-
   it('should correctly use paths', function() {
     a.setPath('Skyrim.Whiterun.Companions', 'Jarrvaskr');
     expect(a.getPath('Skyrim.Whiterun.Companions')).toEqual('Jarrvaskr');

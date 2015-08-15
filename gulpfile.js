@@ -6,15 +6,15 @@ var babelify = require("babelify");
 var source = require('vinyl-source-stream');
 
 // create the browser compat sudo.js bundle
-gulp.task('view-test', function() {
+gulp.task('exampleButtons', function() {
   browserify({
-    entries: ['./view/test/index.js'],
+    entries: ['./examples/buttons/index.js'],
     debug: true
   })
   .transform(babelify)
   .bundle()
   .pipe(source('bundle.js'))
-  .pipe(gulp.dest('./view/test'));
+  .pipe(gulp.dest('./examples/buttons'));
 });
 
 gulp.task('jasmine', function() {

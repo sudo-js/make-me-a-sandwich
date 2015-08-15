@@ -1,4 +1,4 @@
-var Emitterbase = require('../base/emitter');
+var Emitter = require('../base/emitter');
 var _ = require('../util/util');
 // ##Store
 //
@@ -18,7 +18,7 @@ var _ = require('../util/util');
 // `param` {object} data. An initial state for this store.
 //
 // `constructor`
-class Store extends Emitterbase {
+class Store extends Emitter {
   constructor(data) {
     super();
 
@@ -43,7 +43,7 @@ class Store extends Emitterbase {
   gets(ary) {
     let obj = {};
     ary.forEach(str => {
-      obj[str] = !~str.indexOf('.') ? this.get(str) : this.getPath(str);
+      obj[str] = !~str.indexOf('.') ? this.data[str] : this.getPath(str);
     });
     return obj;
   }
@@ -84,7 +84,7 @@ class Store extends Emitterbase {
   // `returns` {Object} `this`
   sets(obj) {
     Object.keys(obj).forEach(k => {
-      !~k.indexOf('.') ? this.set(k, obj[k]) : this.setPath(k, obj[k]);
+      !~k.indexOf('.') ? (this.data[k] = obj[k]) : this.setPath(k, obj[k]);
     });
     return this;
   }
@@ -103,7 +103,7 @@ class Store extends Emitterbase {
   // `param` {array} `ary`. An array of keys or paths.
   // `returns` {Objaect} `this`
   unsets(ary) {
-    ary.forEach(k => { !~k.indexOf('.') ? this.unset(k) : this.unsetPath(k); });
+    ary.forEach(k => { !~k.indexOf('.') ? (delete this.data[k]) : this.unsetPath(k); });
     return this;
   }
 }
