@@ -1,4 +1,4 @@
-var View = require('../view');
+var View = require('sudojs').View;
 
 class Buttons extends View {
   addedToParent(parent) {

@@ -1,7 +1,8 @@
 require('babel/register');
-var Child = require('./fixture.js').Child;
-var Parent = require('./fixture.js').Parent;
-var Grandparent = require('./fixture.js').Grandparent;
+
+var Child = require('../fixtures/fixture').Child;
+var Parent = require('../fixtures/fixture').Parent;
+var Grandparent = require('../fixtures/fixture').Grandparent;
 
 describe('Container Send Functionality', function() {
 

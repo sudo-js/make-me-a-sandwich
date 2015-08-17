@@ -1,4 +1,4 @@
-var View = require('../view');
+var View = require('sudojs').View;
 
 class Main extends View {
   constructor(data) {

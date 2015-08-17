@@ -1,4 +1,4 @@
-var Store = require('../../store/store');
+var Store = require('sudojs').Store;
 var dispatcher = require('./test-dispatcher');
 
 class TestStore extends Store {

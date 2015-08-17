@@ -1,6 +1,6 @@
 {
   "license": "MIT",
-  "name": "sudolib",
+  "name": "sudojs",
   "version": "0.1.1",
   "author": "Rob Robbins",
   "description": "Make me a sandwich (with Javascript).",
@@ -14,7 +14,7 @@
     "ES6",
     "Sandwiches"
   ],
-  "dependencies" : {
+  "devDependencies" : {
     "flux": "*",
     "browserify": "*",
     "babel": "*",
@@ -24,8 +24,14 @@
     "through2": "*",
     "gulp-util": "*",
     "gulp-jasmine": "*",
+    "gulp-concat": "*",
     "glob": "*",
-    "vinyl-source-stream": "*"
+    "vinyl-source-stream": "*",
+    "docco": "*"
   },
-  "main": "sudo"
+  "main": "sudo",
+  "scripts": {
+    "test": "gulp jasmine",
+    "docco": "node_modules/docco/bin/docco dist/debug/sudo.js"
+  }
 }

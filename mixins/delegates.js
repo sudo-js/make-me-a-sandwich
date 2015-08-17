@@ -1,5 +1,5 @@
 // ##Delegates mixin
-// Used by the two base classes, Base and Emitterbase
+// Used by the two base classes, Base and Emitter
 module.exports = {
   // ###addDelegate
   // Push an instance of a Class Object into this object's `_delegates_` list.

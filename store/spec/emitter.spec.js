@@ -2,7 +2,7 @@ require('babel/register');
 
 var Store = require('../store');
 
-describe('Sudo Model as Emitter', function() {
+describe('Sudo Store as Emitter', function() {
   var count = 0;
   var callback = function() { count++; };
   var dispatcher = {

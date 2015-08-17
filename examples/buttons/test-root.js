@@ -1,4 +1,4 @@
-var Container = require('../../container/container');
+var Container = require('sudojs').Container;
 
 var dispatcher = require('./test-dispatcher');
 var store = require('./test-store');
@@ -29,9 +29,9 @@ class Root extends Container {
 
   setupChildren() {
     // passed `el` as it's a  non-templated view component
-    this.addChild(new Buttons({el: '#button-content'}), 'buttons');
+    this.addChild(new Buttons({el: '#button-content'}), 'buttons')
 
-    this.addChild(new Main({
+    .addChild(new Main({
       shadowHost: '#main-content',
       template: '#main',
       import: '#main-content-template'
