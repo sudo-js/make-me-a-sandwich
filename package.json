@@ -30,6 +30,10 @@
     "docco": "*"
   },
   "main": "sudo",
+  "files": [
+    "base", "container", "docs", "mixins", "store", "util", "view",
+    "gulpfile.js", "sudo.js"
+  ],
   "scripts": {
     "test": "gulp jasmine",
     "docco": "node_modules/docco/bin/docco dist/debug/sudo.js"
