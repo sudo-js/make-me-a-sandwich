@@ -29,7 +29,7 @@
     "vinyl-source-stream": "*",
     "docco": "*"
   },
-  "main": "sudo",
+  "main": "./sudo",
   "files": [
     "base", "container", "docs", "mixins", "store", "util", "view",
     "gulpfile.js", "sudo.js"
