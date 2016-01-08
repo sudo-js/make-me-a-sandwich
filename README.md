@@ -72,4 +72,13 @@ a chain-of-responsibility.
 `npm test` to run them all. You can also run each individually with
 `gulp jasmine --spec path/to/spec/file.js`
 
+## Run The "Buttons" Example
+
+Use a static server as the new `import` functionality will not work with filesystem-level requests. I use [static](https://www.npmjs.com/package/node-static)
+which, once installed globally, would allow you to simply run (from project root) 
+
+    static examples/buttons
+    
+Then just point Chrome to `localhost:8080`
+
 ###### more soon...
